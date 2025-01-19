@@ -1,6 +1,0 @@
-*.ts.map
-*.js
-*.js.map
-node_modules/
-*.d.ts
-tsconfig.tsbuildinfo

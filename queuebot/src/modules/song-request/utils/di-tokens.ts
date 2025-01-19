@@ -1,1 +1,0 @@
-export const QUEUE_STRATEGIES = 'QUEUE_STRATEGIES';
