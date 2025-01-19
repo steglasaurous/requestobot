@@ -1,0 +1,16 @@
+{
+  "name": "@steglasaurous/chat",
+  "version": "0.0.1",
+  "dependencies": {
+    "@nestjs/common": "^10.0.2",
+    "@nestjs/event-emitter": "^2.0.4",
+    "@twurple/auth": "^7.1.0",
+    "@twurple/chat": "^7.1.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "ws": "^8.17.1"
+  },
+  "type": "commonjs",
+  "main": "./src/index.js",
+  "typings": "./src/index.d.ts"
+}

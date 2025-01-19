@@ -1,0 +1,9 @@
+<input
+  type="text"
+  [(ngModel)]="value"
+  [disabled]="disabled"
+  (input)="change(value)"
+  (blur)="touched()"
+  class="border-2 border-black w-full text-black"
+/>
+

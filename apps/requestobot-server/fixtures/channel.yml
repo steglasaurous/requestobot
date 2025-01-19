@@ -1,0 +1,33 @@
+entity: Channel
+items:
+  channelActive:
+    channelName: 'channelactive'
+    chatServiceName: 'test-external'
+    inChannel: true
+    enabled: true
+    joinedOn: '2023-01-01T12:53:12Z'
+    lang: 'en'
+    game: 1
+  channelDisabled:
+    channelName: 'channeldisabled'
+    chatServiceName: 'test-external'
+    inChannel: true
+    enabled: false
+    joinedOn: '2023-01-01T12:00:00Z'
+    lang: 'en'
+  channelNotJoined:
+    channelName: 'channelnotjoined'
+    chatServiceName: 'test-external'
+    inChannel: false
+    enabled: true
+    joinedOn: '2023-01-01T12:00:00Z'
+    leftOn: '2023-01-02T12:00:00Z'
+    lang: 'en'
+  channelWithRequests:
+    channelName: 'channelwithrequests'
+    chatServiceName: 'test-external'
+    inChannel: true
+    enabled: true
+    joinedOn: '2023-01-01T12:54:00Z'
+    lang: 'en'
+    game: 1

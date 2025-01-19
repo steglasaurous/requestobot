@@ -1,0 +1,78 @@
+<div class="h-screen text-center border rounded w-full flex flex-col items-center justify-center" *ngIf="channel.id < 1">
+  <div class="bg-purple-900 border rounded border-purple-900 p-5  flex flex-col items-center justify-center">
+    <h1 class="text-center text-xl font-bold mb-3">Connecting</h1>
+    <mat-spinner [diameter]="50"></mat-spinner>
+  </div>
+</div>
+<div class="flex flex-row m-5 gap-4 justify-center" *ngIf="channel.id > 0">
+  <div class="flex flex-col w-64">
+    <app-panel title="Current Game">
+      <img src="{{ channel.game.coverArtUrl }}" />
+    </app-panel>
+    <app-panel title="Game Select" class="mt-5">
+      <div class="">
+        <ul>
+          <li *ngFor="let game of games">
+            <button
+              class="btn-primary w-full mt-5"
+              (click)="selectGame(game)"
+              [ngClass]="{
+                'bg-purple-400': channel.game.id === game.id
+              }"
+            >
+              {{ game.displayName }}
+            </button>
+        </ul>
+      </div>
+    </app-panel>
+    <app-panel title="Server Status" class="mt-5">
+      <!-- FIXME: Implement this -->
+      <p>Server: <span class="font-bold text-green-400">Online</span></p>
+      <p>API: <span class="font-bold text-green-400">Online</span></p>
+      <p>Websocket: <span class="font-bold text-green-400">Connected</span></p>
+    </app-panel>
+  </div>
+  <div class="flex flex-row flex-grow">
+    <!-- queue list -->
+    <app-queue-list *ngIf="channel.id > 0" [channel]="channel" class="w-full"></app-queue-list>
+  </div>
+  <div class="flex flex-col w-64">
+    <!-- right col -->
+    <app-panel title="">
+      <!-- Login/logout -->
+      <div class="text-right">
+        <img src="assets/TwitchGlitchBlackOps.svg" class="w-6 inline" /> {{ channelName }} <app-button-primary (click)="logout()">Logout</app-button-primary>
+      </div>
+    </app-panel>
+    <app-panel title="Queue Status" class="mt-5 text-center">
+      <mat-slide-toggle [checked]="channel.queueOpen" (change)="toggleQueueOpen()"></mat-slide-toggle>
+      <span class="font-bold text-green-400" *ngIf="channel.queueOpen">Open</span>
+      <span class="font-bold text-red-400" *ngIf="!channel.queueOpen">Closed</span>
+    </app-panel>
+    <app-panel title="Queue Strategy" class="mt-5">
+      <!-- Queue strategy select -->
+      <div class="flex flex-col">
+        <button
+          class="btn-primary mt-5"
+          [ngClass]="{ 'btn-primary-selected': getChannelSetting('queuestrategy') === 'fifo' || getChannelSetting('queuestrategy') === '' }"
+          (click)="setChannelSetting('queuestrategy', 'fifo')"
+          title="First-in, First-out"
+        >FIFO</button>
+        <button
+          class="btn-primary mt-5"
+          [ngClass]="{ 'btn-primary-selected': getChannelSetting('queuestrategy') === 'oneperuser' }"
+          (click)="setChannelSetting('queuestrategy', 'oneperuser')"
+          title="Queues new requests such that users with fewer requests get higher priority"
+        >One-Per-User</button>
+      </div>
+    </app-panel>
+    <app-panel title="Queue Commands" class="mt-5">
+      <div class="flex flex-col">
+        <button
+          class="btn-primary mt-5"
+          (click)="clearQueue()"
+        >Clear Queue</button>
+      </div>
+    </app-panel>
+  </div>
+</div>

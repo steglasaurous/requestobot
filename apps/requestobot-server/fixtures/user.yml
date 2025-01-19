@@ -1,0 +1,14 @@
+entity: User
+items:
+  user1:
+    username: user1
+    displayName: user1
+  user2:
+    username: user2
+    displayName: user2
+  user3:
+    username: user3
+    displayName: user3
+  channelActiveUser:
+    username: channelactive
+    displayName: channelactive

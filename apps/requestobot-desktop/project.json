@@ -1,0 +1,66 @@
+{
+  "name": "requestobot-desktop",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/requestobot-desktop/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx-electron:build",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/requestobot-desktop",
+        "main": "apps/requestobot-desktop/src/main.ts",
+        "tsConfig": "apps/requestobot-desktop/tsconfig.app.json",
+        "assets": ["apps/requestobot-desktop/src/assets"]
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false,
+          "fileReplacements": [
+            {
+              "replace": "apps/requestobot-desktop/src/environments/environment.ts",
+              "with": "apps/requestobot-desktop/src/environments/environment.prod.ts"
+            }
+          ]
+        }
+      }
+    },
+    "serve": {
+      "executor": "nx-electron:execute",
+      "options": {
+        "buildTarget": "requestobot-desktop:build"
+      }
+    },
+    "package": {
+      "executor": "nx-electron:package",
+      "options": {
+        "name": "requestobot-desktop",
+        "frontendProject": "requestobot-client",
+        "sourcePath": "dist/apps",
+        "outputPath": "dist/packages",
+        "prepackageOnly": true
+      }
+    },
+    "make": {
+      "executor": "nx-electron:make",
+      "options": {
+        "name": "requestobot-desktop",
+        "frontendProject": "requestobot-client",
+        "sourcePath": "dist/apps",
+        "outputPath": "dist/executables"
+      }
+    },
+    "lint": {
+      "command": "eslint apps/requestobot-desktop/**/*.ts"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/requestobot-desktop/jest.config.ts"
+      }
+    }
+  }
+}

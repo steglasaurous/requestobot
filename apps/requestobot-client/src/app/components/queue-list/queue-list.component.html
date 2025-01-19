@@ -1,0 +1,36 @@
+<div class="mb-5">
+  <app-panel title="Request Queue" class="w-full">
+    <div class="text-center mt-2">
+      <button class="btn-primary text-3xl font-bold" (click)="nextSong()" [disabled]="nextSongDisabled">&gt;&gt; Next Song</button>
+    </div>
+  </app-panel>
+</div>
+
+<div cdkDropList (cdkDropListDropped)="drop($event)" class="w-full flex flex-col gap-4">
+  @for (queueItem of songRequests; track queueItem) {
+    <div cdkDrag class="flex flex-row rounded border-transparent bg-white text-black"
+    [ngClass]="{
+    'bg-yellow-500': queueItem.isActive
+    }"
+    >
+      <div class="pt-2 pb-2 pl-2 pr-2">
+        <app-local-song-status [song]="queueItem.song" [songState]="downloadedSongStatus.get(queueItem.song.id)"></app-local-song-status>
+      </div>
+      <div class="flex-grow pt-2 pb-2">
+        <div><span class="font-bold">{{ queueItem.song.title }}</span> - {{ queueItem.song.artist }} ({{ queueItem.song.mapper }})</div>
+        <div>{{ queueItem.requesterName }}</div>
+      </div>
+      <div class="pt-2 pb-2 pr-3 flex flex-row flex-nowrap items-baseline">
+        <button class="btn-primary" *ngIf="!queueItem.isActive" (click)="setSongRequestActive(queueItem.id)" title="Set as active song"><mat-icon>play_circle</mat-icon></button>
+        <button class="btn-primary" (click)="deleteSongRequest(queueItem.id)" title="Delete song from queue"><mat-icon>delete</mat-icon></button>
+      </div>
+      <div class="bg-contain bg-no-repeat w-[70px] flex-nowrap" [style]="'background-image: url(\'' + queueItem.song.coverArtUrl + '\')'" >
+        &nbsp;
+      </div>
+    </div>
+  }
+</div>
+
+@if (songRequests.length < 1) {
+  <div class="text-center w-full">Request queue is empty.</div>
+}

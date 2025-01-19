@@ -1,0 +1,11 @@
+sequenceDiagram
+  client ->> server: GET /api/channels/{name}
+  server ->> client: 404 Not found (no channel)
+  client ->> User: Show button to have bot join channel
+  User ->> client: Click join
+  client ->> server: POST /api/channels/{name}
+  server ->> client: 201 Created
+  client ->> websocket: subscribe {name}
+  websocket ->> client: queue_updated {data}
+  client ->> User: show normal UI
+

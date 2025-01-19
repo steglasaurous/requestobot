@@ -1,0 +1,18 @@
+<div class="flex flex-col items-center justify-center h-screen">
+  <div class="m-5">
+    <app-button-primary
+            (click)="openLoginPage()" class="text-center font-bold">
+      <img src="assets/TwitchGlitchBlackOps.svg" alt="Twitch Logo" class="w-4 float-left mr-2"/> Login to Twitch
+    </app-button-primary>
+  </div>
+
+  <!-- When run in dev mode on localhost, this finishes the auth process -->
+  <div>
+    <div class="font-bold">Auth Code Login</div>
+    <form [formGroup]="formGroup" (ngSubmit)="submitAuthCodeForm()">
+      <app-input-text formControlName="authCode"></app-input-text>
+      <app-button-primary [disabled]="!formGroup.valid" [type]="'submit'">Submit</app-button-primary>
+    </form>
+    <div *ngIf="auth.loginProcessState === LoginProcessState.Fail" class="text-red-400">Login failed.  Please check your code and try again.</div>
+  </div>
+</div>

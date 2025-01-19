@@ -1,0 +1,9 @@
+sequenceDiagram
+  client ->> server: /api/users?self=true
+  alt no jwt
+  server ->> client: 401 Not Authorized
+  end
+  alt jwt expired
+  server ->> client: 403 Forbidden?
+  end
+  client ->> server: /api/jwt-refresh

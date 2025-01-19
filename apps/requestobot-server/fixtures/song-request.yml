@@ -1,0 +1,22 @@
+entity: SongRequest
+items:
+  songRequest1:
+    id: 1
+    requesterName: 'user1'
+    requestTimestamp: '2024-01-01T00:00:00Z'
+    requestOrder: 1
+    requestPriority: 0
+    isActive: false
+    isDone: false
+    song: 1
+    channel: '@channelWithRequests'
+  songRequest2:
+    id: 2
+    requesterName: 'user2'
+    requestTimestamp: '2024-01-01T01:00:00Z'
+    requestOrder: 2
+    requestPriority: 0
+    isActive: false
+    isDone: false
+    song: 2
+    channel: '@channelWithRequests'

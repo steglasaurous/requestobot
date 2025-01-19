@@ -1,0 +1,30 @@
+{
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2018",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@requestobot/util-client-common": [
+        "libs/util-client-common/src/index.ts"
+      ],
+      "@requestobot/util-dto": ["libs/util-dto/src/index.ts"],
+      "@requestobot/util-neat-csv": ["libs/util-neat-csv/src/index.ts"],
+      "@steglasaurous/chat": ["libs/server/util-chat/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

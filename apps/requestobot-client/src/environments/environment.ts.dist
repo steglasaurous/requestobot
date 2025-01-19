@@ -1,0 +1,4 @@
+export const environment = {
+  queuebotApiBaseUrl: '${BASE_URL}',
+  websocketUrl: '${WEBSOCKET_URL}',
+};
