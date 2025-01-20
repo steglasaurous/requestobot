@@ -14,7 +14,7 @@
     }"
     >
       <div class="pt-2 pb-2 pl-2 pr-2">
-        <app-local-song-status [song]="queueItem.song" [songState]="downloadedSongStatus.get(queueItem.song.id)"></app-local-song-status>
+        <app-local-song-status [song]="queueItem.song"></app-local-song-status>
       </div>
       <div class="flex-grow pt-2 pb-2">
         <div><span class="font-bold">{{ queueItem.song.title }}</span> - {{ queueItem.song.artist }} ({{ queueItem.song.mapper }})</div>

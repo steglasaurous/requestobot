@@ -58,9 +58,6 @@ export class QueueListComponent implements OnInit, OnDestroy {
   songDownloadStates$ = this.store.select(selectSongDownloadStates);
 
   constructor(
-    private queuebotApiService: QueuebotApiService,
-    private websocketService: WebsocketService,
-    private ref: ChangeDetectorRef,
     private store: Store
   ) {}
 
