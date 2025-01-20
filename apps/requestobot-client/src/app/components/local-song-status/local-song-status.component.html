@@ -1,26 +1,8 @@
-<!--@if (songState && songState.downloadState === DownloadState.Waiting) {-->
-<!--  Requesting song...-->
-<!--} @else if (songState && songState.downloadState === DownloadState.InProgress) {-->
-<!--  Downloading...-->
-<!--} @else if (songState && songState.downloadState === DownloadState.Failed) {-->
-<!--  Download failed.-->
-<!--} @else if (songState && songState.downloadState === DownloadState.Complete) {-->
-
-<!--} @else {-->
-<!--  ?-->
-<!--}-->
-
-<!--<mat-progress-bar *ngIf="songState && (songState.downloadState === DownloadState.Waiting || songState.downloadState === DownloadState.InProgress)"-->
-<!--  [mode]="songState && songState.downloadState === DownloadState.Waiting ? 'indeterminate' : 'determinate'"-->
-<!--  [value]="songState && songState.downloadState === DownloadState.InProgress && songState.downloadProgress !== undefined ? songState.downloadProgress : 0">-->
-<!--</mat-progress-bar>-->
-
 <div class="text-center">
   @if (songState && songState.downloadState === DownloadState.Waiting) {
     <mat-icon>pending</mat-icon>
   } @else if (songState && songState.downloadState === DownloadState.InProgress) {
-    <mat-progress-spinner [value]="songState.downloadProgress | percent"></mat-progress-spinner>
-<!--    {{ songState.downloadProgress | percent }}-->
+    <mat-progress-spinner [value]="songState.downloadProgress ? songState.downloadProgress * 100 : 0" diameter="20"></mat-progress-spinner>
   } @else if (songState && songState.downloadState === DownloadState.Failed) {
     <mat-icon>error</mat-icon>
   } @else if (songState && songState.downloadState === DownloadState.Complete) {

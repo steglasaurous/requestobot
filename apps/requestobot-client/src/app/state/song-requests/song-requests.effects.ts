@@ -44,7 +44,7 @@ export class SongRequestsEffects {
           // Go through all the songs in the queue, compare with their local song status.
           for (const songRequest of songRequests) {
             let processSong = true;
-            if (songDownloadStates.has(songRequest.song.id)) {
+            if (songDownloadStates[songRequest.song.id]) {
               console.log(
                 'Song is already been processed',
                 songRequest.song.id

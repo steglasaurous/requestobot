@@ -2,16 +2,19 @@ import { SongRequestDto } from '@requestobot/util-dto';
 import { createReducer, on } from '@ngrx/store';
 import { LocalSongState } from '@requestobot/util-client-common';
 import { SongRequestsActions } from './song-requests.actions';
-import { moveItemInArray } from '@angular/cdk/drag-drop';
+
+export interface SongDownloadStates {
+  [key: number]: LocalSongState;
+}
 
 export interface SongRequestsState {
   songRequestQueue: SongRequestDto[];
-  songDownloadStates: Map<number, LocalSongState>;
+  songDownloadStates: SongDownloadStates;
 }
 
 export const initialState: SongRequestsState = {
   songRequestQueue: [],
-  songDownloadStates: new Map<number, LocalSongState>(),
+  songDownloadStates: {},
 };
 
 export const songRequestsReducer = createReducer(
@@ -22,34 +25,19 @@ export const songRequestsReducer = createReducer(
   }),
 
   on(SongRequestsActions.updateSongDownloadProgress, (state, { songState }) => {
-    const newState = state;
-
-    newState.songDownloadStates.set(songState.songId, songState);
-    console.log(newState.songDownloadStates);
-
-    return newState;
+    const songDownloadStates = { ...state.songDownloadStates };
+    songDownloadStates[songState.songId] = songState;
+    return { ...state, songDownloadStates: songDownloadStates };
   }),
   on(
     SongRequestsActions.swapRequestOrder,
     (state, { songRequestPreviousIndex, songRequestCurrentIndex }) => {
-      console.log('swap', songRequestPreviousIndex, songRequestCurrentIndex);
       const songRequestQueue = { ...state.songRequestQueue };
-      console.log('before', songRequestQueue);
 
       const previousSongRequest = songRequestQueue[songRequestPreviousIndex];
-      console.log(
-        'previous song is',
-        songRequestQueue[songRequestPreviousIndex].song.title
-      );
-      console.log(
-        'current song is',
-        songRequestQueue[songRequestCurrentIndex].song.title
-      );
       songRequestQueue[songRequestPreviousIndex] =
         songRequestQueue[songRequestCurrentIndex];
       songRequestQueue[songRequestCurrentIndex] = previousSongRequest;
-
-      console.log('after', songRequestQueue);
 
       return { ...state, songRequestQueue: songRequestQueue };
     }

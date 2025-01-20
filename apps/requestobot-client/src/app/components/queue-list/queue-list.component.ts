@@ -1,40 +1,26 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  Input,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
-import { QueuebotApiService } from '../../services/queuebot-api.service';
-import { HttpClientModule } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ChannelDto, SongRequestDto } from '@requestobot/util-dto';
+import { SongRequestDto } from '@requestobot/util-dto';
 import {
   CdkDragDrop,
   DragDropModule,
   moveItemInArray,
 } from '@angular/cdk/drag-drop';
-import { WebsocketService } from '../../services/websocket.service';
 import { MatIcon } from '@angular/material/icon';
-import { WindowWithElectron } from '../../models/window.global';
 import { LocalSongStatusComponent } from '../local-song-status/local-song-status.component';
-import { LocalSongState } from '../../models/local-song-state';
 import { PanelComponent } from '../panel/panel.component';
-import { Store, StoreModule } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import {
   selectSongDownloadStates,
   selectSongRequestQueue,
 } from '../../state/song-requests/song-requests.selectors';
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
-import { selectChannel } from '../../state/channel/channel.selectors';
-
-declare let window: WindowWithElectron;
+import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
 
 @Component({
   selector: 'app-queue-list',
   standalone: true,
   imports: [
-    HttpClientModule,
     CommonModule,
     DragDropModule,
     MatIcon,
@@ -47,19 +33,14 @@ declare let window: WindowWithElectron;
 export class QueueListComponent implements OnInit, OnDestroy {
   songRequests: SongRequestDto[] = [];
 
-  downloadedSongStatus: Map<number, LocalSongState> = new Map<
-    number,
-    LocalSongState
-  >();
+  downloadedSongStatus: SongDownloadStates = {};
 
   nextSongDisabled = false;
 
   songRequestQueue$ = this.store.select(selectSongRequestQueue);
   songDownloadStates$ = this.store.select(selectSongDownloadStates);
 
-  constructor(
-    private store: Store
-  ) {}
+  constructor(private store: Store) {}
 
   ngOnInit() {
     this.songRequestQueue$.subscribe((queue) => {

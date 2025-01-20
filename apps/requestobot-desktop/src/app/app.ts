@@ -219,9 +219,12 @@ export default class App {
       app.getPath('userData') + path.sep + 'settings.json'
     );
     // If we don't already have a setting for it, enable the auto downloader.
+
     if (
-      App.settingsStoreService.getValue(SettingName.autoDownloadEnabled) === ''
+      App.settingsStoreService.getValue(SettingName.autoDownloadEnabled) ===
+      undefined
     ) {
+      console.log('Setting autoDownloadEnabled to true');
       App.settingsStoreService.setValue(
         SettingName.autoDownloadEnabled,
         'true'

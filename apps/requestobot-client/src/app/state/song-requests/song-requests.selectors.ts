@@ -11,8 +11,5 @@ export const selectSongRequestQueue = createSelector(
 
 export const selectSongDownloadStates = createSelector(
   selectSongRequestsFeature,
-  (state) => {
-    console.log('selectSongDownloadStates', state);
-    return state.songDownloadStates;
-  }
+  (state) => state.songDownloadStates
 );
