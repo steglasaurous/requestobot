@@ -29,26 +29,13 @@ export function getDownloaderService() {
       appData.replace('Roaming', 'LocalLow') +
         '\\Super Spin Digital\\Spin Rhythm XD\\Custom'
     );
-
-    // FIXME: fill in dance dash, pistol whip
   } else if (process.platform == 'linux') {
     defaultDirs.set(
       SettingName.synthSongsDir,
       process.env['HOME'] +
         '/.steam/steam/steamapps/common/SynthRiders/SynthRidersUC/CustomSongs'
     );
-
-    // FIXME: Need to figure out what this resolves to in linux
-    // defaultDirs.set(
-    //   SettingName.spinRhythmSongsDir,
-    //   process.env['HOME'] +
-    //   '/.steam/steam/steamapps/common/SynthRiders/SynthRidersUC/CustomSongs'
-    // );
-    // defaultDirs.set(
-    //   SettingName.audioTripSongsDir,
-    //   process.env['HOME'] +
-    //     '/.steam/steam/steamapps/common/SynthRiders/SynthRidersUC/CustomSongs'
-    // );
+    // FIXME: Figure out locations for linux
   }
 
   const downloadHandlers: DownloadHandler[] = [];
@@ -59,27 +46,38 @@ export function getDownloaderService() {
   );
   if (!synthSongsDir) {
     // Set a sensible default
-    synthSongsDir = '';
+    console.log('setting default');
+    synthSongsDir = defaultDirs.get(SettingName.synthSongsDir);
     App.settingsStoreService.setValue(SettingName.synthSongsDir, synthSongsDir);
   }
 
-  downloadHandlers.push(
-    new SpinRhythmDownloadHandler(
-      App.settingsStoreService.getValue(SettingName.spinRhythmSongsDir) ??
-        defaultDirs.get(SettingName.spinRhythmSongsDir)
-    ),
-    new AudioTripDownloadHandler(
-      App.settingsStoreService.getValue(SettingName.audioTripSongsDir) ??
-        defaultDirs.get(SettingName.audioTripSongsDir)
-    ),
+  let spinRhythmSongsDir = App.settingsStoreService.getValue(
+    SettingName.spinRhythmSongsDir
+  );
+  if (!spinRhythmSongsDir) {
+    spinRhythmSongsDir = defaultDirs.get(SettingName.spinRhythmSongsDir);
+    App.settingsStoreService.setValue(
+      SettingName.spinRhythmSongsDir,
+      spinRhythmSongsDir
+    );
+  }
 
-    new SynthRidersDownloadHandler(
-      App.settingsStoreService.getValue(SettingName.synthSongsDir) ??
-        defaultDirs.get(SettingName.synthSongsDir)
-      //'C:\\Program Files (x86)\\Steam\\steamapps\\common\\SynthRiders\\SynthRidersUC\\CustomSongs'
-      // 'E:\\SteamLibrary\\steamapps\\common\\SynthRiders\\SynthRIdersUC\\CustomSongs'
-    )
+  let audioTripSongsDir = App.settingsStoreService.getValue(
+    SettingName.audioTripSongsDir
+  );
+  if (!audioTripSongsDir) {
+    audioTripSongsDir = defaultDirs.get(SettingName.audioTripSongsDir);
+    App.settingsStoreService.setValue(
+      SettingName.audioTripSongsDir,
+      audioTripSongsDir
+    );
+  }
+
+  downloadHandlers.push(
+    new SpinRhythmDownloadHandler(spinRhythmSongsDir),
+    new AudioTripDownloadHandler(audioTripSongsDir),
+    new SynthRidersDownloadHandler(synthSongsDir)
   );
 
-  return new SongDownloader(downloadHandlers);
+  return new SongDownloader(downloadHandlers, App.settingsStoreService);
 }

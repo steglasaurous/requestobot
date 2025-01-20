@@ -17,6 +17,7 @@ const IPC_SONG_DOWNLOADER_PROCESS_SONG_PROGRESS =
   'songDownloader.processSongProgress';
 
 const IPC_PROTOCOL_HANDLER = 'login.protocolHandler';
+const IPC_OPEN_DIRECTORY_DIALOG = 'settings.openDirectoryDialog';
 
 /*
  * END OF SHARED CONSTANTS
@@ -33,6 +34,8 @@ contextBridge.exposeInMainWorld('settings', {
   openTwitchLogin: () => ipcRenderer.invoke(IPC_OPEN_TWITCH_LOGIN),
   deleteValue: (key: string) =>
     ipcRenderer.invoke(IPC_SETTINGS_DELETE_VALUE, key),
+  openDirectoryDialog: (defaultPath?: string) =>
+    ipcRenderer.invoke(IPC_OPEN_DIRECTORY_DIALOG, defaultPath),
 });
 
 // For some reason, this errors out with "
@@ -52,6 +55,6 @@ contextBridge.exposeInMainWorld('songs', {
       IPC_SONG_DOWNLOADER_PROCESS_SONG_PROGRESS,
       (_event, songState) => {
         callback(songState);
-      },
+      }
     ),
 });

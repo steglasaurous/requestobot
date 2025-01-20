@@ -4,11 +4,12 @@ import { DownloadState, LocalSongState } from '../../models/local-song-state';
 import { MatIconModule } from '@angular/material/icon';
 import { PercentPipe } from '@angular/common';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-local-song-status',
   standalone: true,
-  imports: [MatIconModule, PercentPipe, MatProgressBar],
+  imports: [MatIconModule, PercentPipe, MatProgressBar, MatProgressSpinner],
   templateUrl: './local-song-status.component.html',
 })
 export class LocalSongStatusComponent {

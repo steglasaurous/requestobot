@@ -7,7 +7,7 @@
 </div>
 
 <div cdkDropList (cdkDropListDropped)="drop($event)" class="w-full flex flex-col gap-4">
-  @for (queueItem of songRequests; track queueItem) {
+  @for (queueItem of songRequests; track queueItem.id) {
     <div cdkDrag class="flex flex-row rounded border-transparent bg-white text-black"
     [ngClass]="{
     'bg-yellow-500': queueItem.isActive

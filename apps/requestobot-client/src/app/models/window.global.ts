@@ -4,6 +4,7 @@ export interface WindowWithElectron extends Window {
     getValue: any;
     deleteValue: any;
     openTwitchLogin: any;
+    openDirectoryDialog: any;
   };
   login?: {
     openTwitchLogin: any;

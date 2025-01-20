@@ -34,7 +34,7 @@
   </div>
   <div class="flex flex-row flex-grow">
     <!-- queue list -->
-    <app-queue-list *ngIf="channel.id > 0" [channel]="channel" class="w-full"></app-queue-list>
+    <app-queue-list *ngIf="channel.id > 0" class="w-full"></app-queue-list>
   </div>
   <div class="flex flex-col w-64">
     <!-- right col -->
@@ -43,6 +43,7 @@
       <div class="text-right">
         <img src="assets/TwitchGlitchBlackOps.svg" class="w-6 inline" /> {{ channelName }} <app-button-primary (click)="logout()">Logout</app-button-primary>
       </div>
+      <div class="pt-3"><button class="btn-primary w-full" (click)="showSettings()"><mat-icon>settings</mat-icon> Settings</button></div>
     </app-panel>
     <app-panel title="Queue Status" class="mt-5 text-center">
       <mat-slide-toggle [checked]="channel.queueOpen" (change)="toggleQueueOpen()"></mat-slide-toggle>

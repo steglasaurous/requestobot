@@ -19,7 +19,8 @@
   @if (songState && songState.downloadState === DownloadState.Waiting) {
     <mat-icon>pending</mat-icon>
   } @else if (songState && songState.downloadState === DownloadState.InProgress) {
-    {{ songState.downloadProgress | percent }}
+    <mat-progress-spinner [value]="songState.downloadProgress | percent"></mat-progress-spinner>
+<!--    {{ songState.downloadProgress | percent }}-->
   } @else if (songState && songState.downloadState === DownloadState.Failed) {
     <mat-icon>error</mat-icon>
   } @else if (songState && songState.downloadState === DownloadState.Complete) {
