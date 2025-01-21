@@ -56,5 +56,11 @@ export const channelReducer = createReducer(
   }),
   on(AuthActions.logout, () => {
     return initialState;
+  }),
+  on(ChannelActions.enableBot, (state) => {
+    return { ...state, enabled: true };
+  }),
+  on(ChannelActions.disableBot, (state) => {
+    return { ...state, enabled: false };
   })
 );

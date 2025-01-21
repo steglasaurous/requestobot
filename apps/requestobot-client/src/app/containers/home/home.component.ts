@@ -21,6 +21,7 @@ import { selectGamesState } from '../../state/games/games.selector';
 import { AuthActions } from '../../state/auth/auth.actions';
 import { MatIcon } from '@angular/material/icon';
 import { SettingsComponent } from '../../components/settings/settings.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-home',
@@ -35,6 +36,7 @@ import { SettingsComponent } from '../../components/settings/settings.component'
     NgClass,
     MatProgressSpinner,
     MatIcon,
+    MatTooltip,
   ],
   providers: [],
   templateUrl: './home.component.html',
@@ -180,5 +182,15 @@ export class HomeComponent {
     this.confirmDialog.open(SettingsComponent, {
       data: {},
     });
+  }
+
+  toggleBotEnabled() {
+    if (this.channel.enabled) {
+      console.log('Disabling bot');
+      this.store.dispatch(ChannelActions.disableBot());
+    } else {
+      console.log('Enabling bot');
+      this.store.dispatch(ChannelActions.enableBot());
+    }
   }
 }

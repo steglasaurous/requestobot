@@ -1,6 +1,6 @@
 {
-  "name": "@requestobot/source",
-  "version": "0.0.0",
+  "name": "@requestobot/requestobot",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "postinstall": "electron-builder install-app-deps && electron-builder install-app-deps",

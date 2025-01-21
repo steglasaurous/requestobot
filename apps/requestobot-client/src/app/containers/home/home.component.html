@@ -50,6 +50,11 @@
       <span class="font-bold text-green-400" *ngIf="channel.queueOpen">Open</span>
       <span class="font-bold text-red-400" *ngIf="!channel.queueOpen">Closed</span>
     </app-panel>
+    <app-panel title="Bot Status" class="mt-5 text-center">
+      <mat-slide-toggle [checked]="channel.enabled" (change)="toggleBotEnabled()" matTooltip="Whether the bot should respond to commands in your channel"></mat-slide-toggle>
+      <span class="font-bold text-green-400" *ngIf="channel.enabled">Enabled</span>
+      <span class="font-bold text-red-400" *ngIf="!channel.enabled">Disabled</span>
+    </app-panel>
     <app-panel title="Queue Strategy" class="mt-5">
       <!-- Queue strategy select -->
       <div class="flex flex-col">
