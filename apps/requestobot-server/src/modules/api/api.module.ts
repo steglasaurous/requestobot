@@ -7,6 +7,7 @@ import { AuthModule } from '../auth/auth.module';
 import { GameController } from './controllers/game.controller';
 import { ChannelManagerModule } from '../channel-manager/channel-manager.module';
 import { SettingController } from './controllers/setting.controller';
+import { BotCommandsModule } from '../bot-commands/bot-commands.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { SettingController } from './controllers/setting.controller';
     DataStoreModule,
     AuthModule,
     ChannelManagerModule,
+    BotCommandsModule,
   ],
   controllers: [
     SongRequestsController,

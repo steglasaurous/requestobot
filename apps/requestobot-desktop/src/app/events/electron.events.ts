@@ -3,7 +3,7 @@
  * between the frontend to the electron backend.
  */
 
-import { app, ipcMain, shell } from 'electron';
+import { app, dialog, ipcMain, shell } from 'electron';
 import { environment } from '../../environments/environment';
 import { SongDto } from '@requestobot/util-dto';
 import App from '../app';
@@ -16,6 +16,8 @@ const IPC_SETTINGS_DELETE_VALUE = 'settings.deleteValue';
 const IPC_SONG_DOWNLOADER_PROCESS_SONG = 'songDownloader.processSong';
 const IPC_SONG_DOWNLOADER_PROCESS_SONG_PROGRESS =
   'songDownloader.processSongProgress';
+
+const IPC_OPEN_DIRECTORY_DIALOG = 'settings.openDirectoryDialog';
 
 const LOGIN_URL = `${environment.queuebotApiBaseUrl}/auth/twitch`;
 
@@ -51,7 +53,11 @@ ipcMain.handle(IPC_SETTINGS_DELETE_VALUE, (event, key) => {
 
 ipcMain.handle(IPC_OPEN_TWITCH_LOGIN, (event, args) => {
   console.log('Opening external');
-  shell.openExternal(LOGIN_URL).then(() => {
+  let loginUrl = LOGIN_URL;
+  if (App.isDevelopmentMode()) {
+    loginUrl += '?mode=authcode';
+  }
+  shell.openExternal(loginUrl).then(() => {
     console.log('opened it');
   });
 });
@@ -67,3 +73,13 @@ ipcMain.handle(
     });
   }
 );
+
+ipcMain.handle(IPC_OPEN_DIRECTORY_DIALOG, (event, defaultPath?: string) => {
+  const selectedPath = dialog.showOpenDialogSync({
+    defaultPath: defaultPath,
+    properties: ['openDirectory'],
+  });
+  if (selectedPath) {
+    return selectedPath.pop();
+  }
+});

@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>Settings</h2>
+<mat-dialog-content>
+  <mat-tab-group>
+    <mat-tab label="Auto Downloaders">
+      <div class="border rounded bg-purple-800 text-white p-5">
+        <div>Enable auto-downloading missing songs</div>
+        <mat-slide-toggle [checked]="settings[SettingName.autoDownloadEnabled] !== '' && settings[SettingName.autoDownloadEnabled] !== 'false'" (change)="toggleAutoDownloadEnabled()"></mat-slide-toggle>
+      </div>
+      <div class="border rounded bg-purple-800 text-white p-5">
+        <h1 class="text-xl font-bold">Synth Riders</h1>
+        <div>Custom Songs Folder <br/><span class="italic text-gray-50">Should be the path to the SynthRidersUC/CustomSongs folder</span></div>
+        <div><input type="text" class="border rounded p-2 text-black w-[400px]" [value]="settings[SettingName.synthSongsDir]" /><br/><button class="btn-primary" (click)="chooseDirectory(SettingName.synthSongsDir, settings[SettingName.synthSongsDir])">Browse...</button></div>
+      </div>
+      <div class="border rounded bg-purple-800 text-white p-5">
+        <h1 class="text-xl font-bold">Spin Rhythm XD</h1>
+        <div>Custom Songs Folder</div>
+        <div><input type="text" class="border rounded p-2 text-black w-[400px]" [value]="settings[SettingName.spinRhythmSongsDir]" /><br/><button class="btn-primary" (click)="chooseDirectory(SettingName.spinRhythmSongsDir, settings[SettingName.spinRhythmSongsDir])">Browse...</button></div>
+      </div>
+      <div class="border rounded bg-purple-800 text-white p-5">
+        <h1 class="text-xl font-bold">Audio Trip</h1>
+        <div>Custom Songs Folder</div>
+        <div><input type="text" class="border rounded p-2 text-black w-[400px]" [value]="settings[SettingName.audioTripSongsDir]" /><br/><button class="btn-primary" (click)="chooseDirectory(SettingName.audioTripSongsDir, settings[SettingName.audioTripSongsDir])">Browse...</button></div>
+      </div>
+    </mat-tab>
+<!--    <mat-tab label="General"></mat-tab>-->
+  </mat-tab-group>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+<!--  <button mat-button mat-dialog-close [matDialogClose]="false">Cancel</button>-->
+  <button mat-button mat-dialog-close [matDialogClose]="true">Done</button>
+</mat-dialog-actions>

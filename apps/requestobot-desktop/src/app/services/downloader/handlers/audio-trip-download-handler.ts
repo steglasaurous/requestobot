@@ -9,7 +9,16 @@ import axios, { AxiosProgressEvent, AxiosResponse } from 'axios';
 import decompress from 'decompress';
 
 export class AudioTripDownloadHandler implements DownloadHandler {
-  constructor(private songsDir?: string) {}
+  constructor(private songsDir?: string) {
+    if (!this.songsDir) {
+      if (process.platform == 'win32') {
+        const appData = process.env['APPDATA'];
+        this.songsDir =
+          appData.replace('Roaming', 'LocalLow') +
+          '\\Kinemotik Studios\\Audio Trip\\Songs';
+      }
+    }
+  }
 
   setSongsDir(songsDir: string): void {
     this.songsDir = songsDir;

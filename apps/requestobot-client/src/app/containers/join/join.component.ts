@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SettingsService } from '../../services/settings.service';
 import { Store } from '@ngrx/store';
-import { ChannelActions } from '../../state/channel.actions';
-import { selectChannel } from '../../state/channel.selectors';
-import { AuthActions } from '../../state/auth.actions';
+import { ChannelActions } from '../../state/channel/channel.actions';
+import { selectChannel } from '../../state/channel/channel.selectors';
+import { AuthActions } from '../../state/auth/auth.actions';
 
 @Component({
   selector: 'app-join',

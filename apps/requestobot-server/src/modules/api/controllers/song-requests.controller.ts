@@ -32,6 +32,7 @@ import {
 import { SongRequestDto as SongRequestDtoClass } from '../dto/song-request.dto';
 import { I18nService } from 'nestjs-i18n';
 import { ChatManagerService } from '@steglasaurous/chat';
+import { MessageFormatterService } from '../../bot-commands/services/message-formatter.service';
 
 @Controller('api/channels/:channelId/song-requests')
 export class SongRequestsController {
@@ -40,7 +41,8 @@ export class SongRequestsController {
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     private dtoMappingService: DtoMappingService,
     private chatManager: ChatManagerService,
-    private i18n: I18nService
+    private i18n: I18nService,
+    private messageFormatterService: MessageFormatterService
   ) {}
 
   @ApiOperation({
@@ -152,15 +154,17 @@ export class SongRequestsController {
         .getChatClientForChatServiceName(channel.chatServiceName)
         .sendMessage(
           channel.channelName,
-          this.i18n.t('chat.NextRequest', {
-            lang: channel.lang,
-            args: {
-              title: nextRequest.song.title,
-              artist: nextRequest.song.artist,
-              mapper: nextRequest.song.mapper,
-              requesterName: nextRequest.requesterName,
-            },
-          })
+          this.messageFormatterService.formatMessage(
+            this.i18n.t('chat.NextRequest', {
+              lang: channel.lang,
+              args: {
+                title: nextRequest.song.title,
+                artist: nextRequest.song.artist,
+                mapper: nextRequest.song.mapper,
+                requesterName: nextRequest.requesterName,
+              },
+            })
+          )
         );
 
       return this.dtoMappingService.songRequestToDto(nextRequest);

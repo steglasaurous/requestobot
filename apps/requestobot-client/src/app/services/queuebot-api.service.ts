@@ -211,4 +211,28 @@ export class QueuebotApiService {
       withCredentials: true,
     });
   }
+
+  enableBot(channelId: number) {
+    return this.httpClient.put<ChannelDto>(
+      `${this.apiBaseUrl}/api/channels/${channelId}`,
+      {
+        enabled: true,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  disableBot(channelId: number) {
+    return this.httpClient.put<ChannelDto>(
+      `${this.apiBaseUrl}/api/channels/${channelId}`,
+      {
+        enabled: false,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }

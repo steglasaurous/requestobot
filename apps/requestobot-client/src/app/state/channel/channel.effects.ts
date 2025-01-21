@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
-import { QueuebotApiService } from '../services/queuebot-api.service';
+import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { ChannelActions } from './channel.actions';
 import { EMPTY, exhaustMap, map, of, switchMap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -9,8 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { selectChannel } from './channel.selectors';
 import { Store } from '@ngrx/store';
-import { SettingsService } from '../services/settings.service';
-import { SettingName } from '@requestobot/util-client-common';
+import { SettingsService } from '../../services/settings.service';
 
 @Injectable()
 export class ChannelEffects {
@@ -186,6 +185,30 @@ export class ChannelEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  enableBot$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChannelActions.enableBot),
+      concatLatestFrom((action) => this.store.select(selectChannel)),
+      exhaustMap(([action, channelDto]) =>
+        this.queuebotApiService
+          .enableBot(channelDto.id)
+          .pipe(map(() => ChannelActions.enableBotSuccess()))
+      )
+    )
+  );
+
+  disableBot$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChannelActions.disableBot),
+      concatLatestFrom((action) => this.store.select(selectChannel)),
+      exhaustMap(([action, channelDto]) =>
+        this.queuebotApiService
+          .disableBot(channelDto.id)
+          .pipe(map(() => ChannelActions.disableBotSuccess()))
+      )
+    )
   );
 
   constructor(

@@ -1,7 +1,7 @@
 import { ChannelDto, SettingDto } from '@requestobot/util-dto';
 import { createReducer, on } from '@ngrx/store';
 import { ChannelActions } from './channel.actions';
-import { AuthActions } from './auth.actions';
+import { AuthActions } from '../auth/auth.actions';
 
 export const initialState: ChannelDto = {
   id: 0,
@@ -56,5 +56,11 @@ export const channelReducer = createReducer(
   }),
   on(AuthActions.logout, () => {
     return initialState;
+  }),
+  on(ChannelActions.enableBot, (state) => {
+    return { ...state, enabled: true };
+  }),
+  on(ChannelActions.disableBot, (state) => {
+    return { ...state, enabled: false };
   })
 );

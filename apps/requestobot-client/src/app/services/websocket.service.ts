@@ -14,15 +14,15 @@ export class WebsocketService {
   public messages$ = this.messagesSubject$.pipe(
     catchError((e) => {
       throw e;
-    }),
+    })
   );
 
-  private connected: boolean = false;
+  private connected = false;
 
   /**
    * When set to false, further attempts to connect to the websocket will not be made.
    */
-  public isRetryEnabled: boolean = true;
+  public isRetryEnabled = true;
 
   private openObserver: Observer<any> = {
     next: () => {},
@@ -36,7 +36,7 @@ export class WebsocketService {
   }
 
   constructor(
-    @Inject(WEBSOCKET_URL) private websocketUrl = 'ws://localhost:9000',
+    @Inject(WEBSOCKET_URL) private websocketUrl = 'ws://localhost:9000'
   ) {}
 
   public connect(openObserver?: Observer<any>, onClose?: Function): void {
@@ -73,7 +73,7 @@ export class WebsocketService {
               return throwError(() => new Error(error));
             },
           }),
-          catchError((error) => of(error)),
+          catchError((error) => of(error))
         )
         .subscribe({
           next: (data) => {
@@ -112,7 +112,7 @@ export class WebsocketService {
         },
         complete: () => {
           console.log(
-            'Close observer on websocket: COMPLETE' + this.websocketUrl,
+            'Close observer on websocket: COMPLETE' + this.websocketUrl
           );
         },
       },

@@ -1,13 +1,13 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { QueuebotApiService } from '../services/queuebot-api.service';
+import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { Router } from '@angular/router';
-import { SettingsService } from '../services/settings.service';
+import { SettingsService } from '../../services/settings.service';
 import { EMPTY, exhaustMap, from, map, of, switchMap } from 'rxjs';
 import { SettingName } from '@requestobot/util-client-common';
 import { AuthActions } from './auth.actions';
-import { ConnectionStateActions } from './connection-state.actions';
+import { ConnectionStateActions } from '../connection-state/connection-state.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 

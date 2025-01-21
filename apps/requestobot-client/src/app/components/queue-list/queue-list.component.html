@@ -7,14 +7,14 @@
 </div>
 
 <div cdkDropList (cdkDropListDropped)="drop($event)" class="w-full flex flex-col gap-4">
-  @for (queueItem of songRequests; track queueItem) {
+  @for (queueItem of songRequests; track queueItem.id) {
     <div cdkDrag class="flex flex-row rounded border-transparent bg-white text-black"
     [ngClass]="{
     'bg-yellow-500': queueItem.isActive
     }"
     >
       <div class="pt-2 pb-2 pl-2 pr-2">
-        <app-local-song-status [song]="queueItem.song" [songState]="downloadedSongStatus.get(queueItem.song.id)"></app-local-song-status>
+        <app-local-song-status [song]="queueItem.song"></app-local-song-status>
       </div>
       <div class="flex-grow pt-2 pb-2">
         <div><span class="font-bold">{{ queueItem.song.title }}</span> - {{ queueItem.song.artist }} ({{ queueItem.song.mapper }})</div>

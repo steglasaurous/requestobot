@@ -1,5 +1,5 @@
-import { ConnectionState } from '../models/connection-state';
-import { AuthState } from '../models/auth-state.enum';
+import { ConnectionState } from '../../models/connection-state';
+import { AuthState } from '../../models/auth-state.enum';
 import { ConnectionStateActions } from './connection-state.actions';
 import { createReducer, on } from '@ngrx/store';
 

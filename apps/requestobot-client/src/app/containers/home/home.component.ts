@@ -10,15 +10,18 @@ import { PanelComponent } from '../../components/panel/panel.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { Store } from '@ngrx/store';
-import { ChannelActions } from '../../state/channel.actions';
-import { selectChannel } from '../../state/channel.selectors';
+import { ChannelActions } from '../../state/channel/channel.actions';
+import { selectChannel } from '../../state/channel/channel.selectors';
 import { AuthState } from '../../models/auth-state.enum';
-import { ConnectionStateActions } from '../../state/connection-state.actions';
-import { selectConnectionState } from '../../state/connection-state.selector';
+import { ConnectionStateActions } from '../../state/connection-state/connection-state.actions';
+import { selectConnectionState } from '../../state/connection-state/connection-state.selector';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
-import { GamesActions } from '../../state/games.actions';
-import { selectGamesState } from '../../state/games.selector';
-import { AuthActions } from '../../state/auth.actions';
+import { GamesActions } from '../../state/games/games.actions';
+import { selectGamesState } from '../../state/games/games.selector';
+import { AuthActions } from '../../state/auth/auth.actions';
+import { MatIcon } from '@angular/material/icon';
+import { SettingsComponent } from '../../components/settings/settings.component';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +35,8 @@ import { AuthActions } from '../../state/auth.actions';
     NgForOf,
     NgClass,
     MatProgressSpinner,
+    MatIcon,
+    MatTooltip,
   ],
   providers: [],
   templateUrl: './home.component.html',
@@ -55,7 +60,6 @@ export class HomeComponent {
       name: '',
     },
   };
-  nextSongDisabled = false;
 
   games: GameDto[] = [];
   games$ = this.store.select(selectGamesState);
@@ -172,5 +176,21 @@ export class HomeComponent {
         this.store.dispatch(ChannelActions.clearQueue());
       }
     });
+  }
+
+  showSettings() {
+    this.confirmDialog.open(SettingsComponent, {
+      data: {},
+    });
+  }
+
+  toggleBotEnabled() {
+    if (this.channel.enabled) {
+      console.log('Disabling bot');
+      this.store.dispatch(ChannelActions.disableBot());
+    } else {
+      console.log('Enabling bot');
+      this.store.dispatch(ChannelActions.enableBot());
+    }
   }
 }

@@ -151,5 +151,6 @@ import { ChannelManagerModule } from '../channel-manager/channel-manager.module'
       ],
     }),
   ],
+  exports: [MessageFormatterService],
 })
 export class BotCommandsModule {}

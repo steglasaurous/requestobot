@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { QueuebotApiService } from '../services/queuebot-api.service';
+import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ConnectionStateActions } from './connection-state.actions';
 import { EMPTY, exhaustMap, map, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AuthActions } from './auth.actions';
+import { AuthActions } from '../auth/auth.actions';
 
 @Injectable()
 export class ConnectionStateEffects {

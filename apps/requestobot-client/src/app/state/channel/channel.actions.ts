@@ -26,5 +26,9 @@ export const ChannelActions = createActionGroup({
     'Set Game Success': emptyProps(),
     'Set Setting': props<{ settingName: string; value: string }>(),
     'Set Setting Success': emptyProps(),
+    'Enable Bot': emptyProps(),
+    'Enable Bot Success': emptyProps(),
+    'Disable Bot': emptyProps(),
+    'Disable Bot Success': emptyProps(),
   },
 });

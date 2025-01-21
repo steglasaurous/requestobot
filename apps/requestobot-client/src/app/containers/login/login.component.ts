@@ -10,13 +10,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { AuthActions } from '../../state/auth.actions';
-import { selectAuth } from '../../state/auth.selectors';
+import { AuthActions } from '../../state/auth/auth.actions';
+import { selectAuth } from '../../state/auth/auth.selectors';
 import {
   AuthState,
   initialState,
   LoginProcessState,
-} from '../../state/auth.reducer';
+} from '../../state/auth/auth.reducer';
 import { NgIf } from '@angular/common';
 
 declare let window: WindowWithElectron;

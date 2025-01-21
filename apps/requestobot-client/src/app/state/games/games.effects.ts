@@ -1,7 +1,7 @@
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Injectable } from '@angular/core';
 import { GamesActions } from './games.actions';
-import { QueuebotApiService } from '../services/queuebot-api.service';
+import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { exhaustMap, map } from 'rxjs';
 
 @Injectable()
