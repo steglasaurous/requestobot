@@ -9,7 +9,16 @@ import { SongDto } from '@requestobot/util-dto';
 import { DownloadState, LocalSongState } from '@requestobot/util-client-common';
 
 export class SpinRhythmDownloadHandler implements DownloadHandler {
-  constructor(private songsDir?: string) {}
+  constructor(private songsDir?: string) {
+    if (!this.songsDir) {
+      if (process.platform == 'win32') {
+        const appData = process.env['APPDATA'];
+        this.songsDir =
+          appData.replace('Roaming', 'LocalLow') +
+          '\\Super Spin Digital\\Spin Rhythm XD\\Custom';
+      }
+    }
+  }
 
   setSongsDir(songsDir: string) {
     this.songsDir = songsDir;

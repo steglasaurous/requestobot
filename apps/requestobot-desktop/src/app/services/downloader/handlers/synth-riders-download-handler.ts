@@ -8,24 +8,36 @@ import * as path from 'path';
 import axios, { AxiosProgressEvent, AxiosResponse } from 'axios';
 
 export class SynthRidersDownloadHandler implements DownloadHandler {
+  private defaultSongsDirWin32 =
+    'C:\\Program Files (x86)\\Steam\\steamapps\\common\\SynthRiders\\SynthRidersUC\\CustomSongs';
   constructor(private songsDir?: string) {
     const songsDirExists = fs.existsSync(songsDir);
-    console.log('SynthRidersDownloadHandler', {
-      songsDir: songsDir,
-      songsDirExists: songsDirExists,
-    });
+    if (!songsDir || !songsDirExists) {
+      if (process.platform == 'win32') {
+        if (fs.existsSync(this.defaultSongsDirWin32)) {
+          this.songsDir = this.defaultSongsDirWin32;
+        } else {
+          this.songsDir = undefined;
+        }
+      }
+    }
   }
 
   setSongsDir(songsDir: string) {
     this.songsDir = songsDir;
   }
 
-  getSongsDir(): string | null {
+  getSongsDir(): string | undefined {
     return this.songsDir;
   }
 
   downloadSong(song: SongDto, songStateCallback: any): Promise<void> {
     return new Promise((resolve, reject) => {
+      if (!this.songsDir) {
+        resolve();
+        return;
+      }
+
       const songState: LocalSongState = {
         songId: song.id,
         downloadState: DownloadState.Waiting,
@@ -80,6 +92,10 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
   }
 
   songIsLocal(song: SongDto): boolean {
+    if (!this.songsDir) {
+      return false;
+    }
+
     const isLocal = fs.existsSync(this.getSongDir(song));
     console.log('SynthRidersDownloadHandler::songIsLocal', {
       isLocal: isLocal,
