@@ -1,8 +1,11 @@
 import * as fs from 'fs';
 import { SettingName } from '@requestobot/util-client-common';
+import * as NodeEvents from 'node:events';
 
-export class SettingsStoreService {
-  constructor(private filePath: string) {}
+export class SettingsStoreService extends NodeEvents.EventEmitter {
+  constructor(private filePath: string) {
+    super();
+  }
 
   setValue(key: SettingName, value: string) {
     const settings = this.loadSettings();
@@ -10,6 +13,7 @@ export class SettingsStoreService {
     settings[key] = value;
 
     this.saveSettings(settings);
+    this.emit('settingChange', key, value);
   }
 
   getValue(key: SettingName): string | undefined {
@@ -27,6 +31,7 @@ export class SettingsStoreService {
     }
 
     this.saveSettings(settings);
+    this.emit('settingChange', key, undefined);
   }
 
   private loadSettings(): any {

@@ -19,5 +19,6 @@ export const SongRequestsActions = createActionGroup({
     'Set Request Active': props<{ songRequestId: number }>(),
     'Next Song': emptyProps(),
     'Next Song Complete': emptyProps(),
+    'Reprocess Songs': emptyProps(),
   },
 });

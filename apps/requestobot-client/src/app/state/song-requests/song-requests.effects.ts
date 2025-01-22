@@ -225,6 +225,24 @@ export class SongRequestsEffects {
     { dispatch: false }
   );
 
+  reprocessSongs$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(SongRequestsActions.reprocessSongs),
+        concatLatestFrom((action) => this.store.select(selectSongRequestQueue)),
+        exhaustMap(([action, songRequestQueue]) => {
+          for (const songRequest of songRequestQueue) {
+            this.store.dispatch(
+              SongRequestsActions.processSong({ song: songRequest.song })
+            );
+          }
+
+          return EMPTY;
+        })
+      ),
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private queuebotApiService: QueuebotApiService,

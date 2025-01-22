@@ -9,7 +9,6 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { MatTabsModule } from '@angular/material/tabs';
-import { PanelComponent } from '../panel/panel.component';
 import { Store } from '@ngrx/store';
 import { selectSettings } from '../../state/settings/settings.selectors';
 import { SettingsActions } from '../../state/settings/settings.actions';
@@ -17,6 +16,7 @@ import { SettingName } from '@requestobot/util-client-common';
 import { SettingsState } from '../../state/settings/settings.reducer';
 import { WindowWithElectron } from '../../models/window.global';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
+import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
 
 declare let window: WindowWithElectron;
 
@@ -68,6 +68,7 @@ export class SettingsComponent {
         this.store.dispatch(
           SettingsActions.setValue({ key: settingName, value: result })
         );
+        this.store.dispatch(SongRequestsActions.reprocessSongs());
       }
     }
   }

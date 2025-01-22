@@ -56,8 +56,8 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
       }
 
       const workDir = fs.mkdtempSync(join(tmpdir(), 'queuebot-'));
-      const zipFilename = path.join(workDir, 'download' + song.id + '.synth');
-      const writer = fs.createWriteStream(zipFilename);
+      const synthFile = path.join(workDir, 'download' + song.id + '.synth');
+      const writer = fs.createWriteStream(synthFile);
       console.log('Downloading song', { songId: song.id, title: song.title });
       axios({
         method: 'get',
@@ -74,8 +74,11 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
           writer.on('finish', () => {
             // Simply move the file to the destination and that's that.
             const destination = this.getSongDir(song);
-            fs.copyFileSync(zipFilename, destination);
-            fs.unlinkSync(zipFilename);
+            fs.copyFileSync(synthFile, destination);
+            fs.unlinkSync(synthFile);
+            songState.downloadState = DownloadState.Complete;
+            songState.downloadProgress = 1;
+            songStateCallback(songState);
           });
         })
         .catch((e) => {

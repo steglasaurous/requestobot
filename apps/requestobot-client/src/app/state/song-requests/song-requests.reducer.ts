@@ -48,5 +48,8 @@ export const songRequestsReducer = createReducer(
     );
 
     return { ...state, songRequestQueue: songRequests };
+  }),
+  on(SongRequestsActions.reprocessSongs, (state) => {
+    return { ...state, songDownloadStates: {} };
   })
 );
