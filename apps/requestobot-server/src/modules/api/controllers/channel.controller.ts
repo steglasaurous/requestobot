@@ -32,6 +32,7 @@ import { I18nService } from 'nestjs-i18n';
 import { Game } from '../../data-store/entities/game.entity';
 import { ChatManagerService, ChatServiceName } from '@steglasaurous/chat';
 import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
+import { MessageFormatterService } from '../../bot-commands/services/message-formatter.service';
 
 @Controller('api/channels')
 export class ChannelController {
@@ -42,7 +43,8 @@ export class ChannelController {
     @InjectRepository(Game) private gameRepository: Repository<Game>,
     private i18n: I18nService,
     private chatManager: ChatManagerService,
-    private channelManager: ChannelManagerService
+    private channelManager: ChannelManagerService,
+    private messageFormatterService: MessageFormatterService
   ) {}
 
   @ApiOperation({
@@ -233,11 +235,17 @@ export class ChannelController {
       channel.enabled = channelDto.enabled;
       if (channel.enabled) {
         chatMessageToEmit.push(
-          this.i18n.t('chat.BotIsOn', { lang: channel.lang })
+          this.messageFormatterService.formatMessage(
+            this.i18n.t('chat.BotIsOn', {
+              lang: channel.lang,
+            })
+          )
         );
       } else {
         chatMessageToEmit.push(
-          this.i18n.t('chat.BotIsOff', { lang: channel.lang })
+          this.messageFormatterService.formatMessage(
+            this.i18n.t('chat.BotIsOff', { lang: channel.lang })
+          )
         );
       }
     }
@@ -249,11 +257,15 @@ export class ChannelController {
       channel.queueOpen = channelDto.queueOpen;
       if (channel.queueOpen) {
         chatMessageToEmit.push(
-          this.i18n.t('chat.QueueOpen', { lang: channel.lang })
+          this.messageFormatterService.formatMessage(
+            this.i18n.t('chat.QueueOpen', { lang: channel.lang })
+          )
         );
       } else {
         chatMessageToEmit.push(
-          this.i18n.t('chat.QueueClosed', { lang: channel.lang })
+          this.messageFormatterService.formatMessage(
+            this.i18n.t('chat.QueueClosed', { lang: channel.lang })
+          )
         );
       }
       // Emit the appropriate message to chat.
