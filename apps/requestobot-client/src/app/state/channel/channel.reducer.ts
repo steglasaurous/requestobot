@@ -24,6 +24,7 @@ export const channelReducer = createReducer(
   on(ChannelActions.openQueue, (state) => {
     return { ...state, queueOpen: true };
   }),
+  // FIXME: Add success and fail actions for each API action, so errors can be displayed in components
   on(ChannelActions.closeQueue, (state) => {
     return { ...state, queueOpen: false };
   }),

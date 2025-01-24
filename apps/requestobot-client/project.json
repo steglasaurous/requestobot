@@ -21,7 +21,7 @@
             "input": "apps/requestobot-client/public"
           }
         ],
-        "styles": ["apps/requestobot-client/src/styles.css", "@angular/material/prebuilt-themes/azure-blue.css"],
+        "styles": ["apps/requestobot-client/src/styles.css", "@angular/material/prebuilt-themes/azure-blue.css", "node_modules/ngx-toastr/toastr.css"],
         "scripts": []
       },
       "configurations": {

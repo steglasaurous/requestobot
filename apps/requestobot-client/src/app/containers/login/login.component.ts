@@ -1,4 +1,4 @@
-import { Component, Inject, NgZone, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { WindowWithElectron } from '../../models/window.global';
 import { QUEUEBOT_API_BASE_URL } from '../../app.config';
 import { ButtonPrimaryComponent } from '../../components/button-primary/button-primary.component';
@@ -18,18 +18,14 @@ import {
   LoginProcessState,
 } from '../../state/auth/auth.reducer';
 import { NgIf } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 declare let window: WindowWithElectron;
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    ButtonPrimaryComponent,
-    InputTextComponent,
-    ReactiveFormsModule,
-    NgIf,
-  ],
+  imports: [ButtonPrimaryComponent, InputTextComponent, ReactiveFormsModule],
   providers: [],
   templateUrl: './login.component.html',
 })
@@ -45,7 +41,8 @@ export class LoginComponent implements OnInit {
 
   constructor(
     @Inject(QUEUEBOT_API_BASE_URL) private apiBaseUrl: string,
-    private store: Store
+    private store: Store,
+    private toastr: ToastrService
   ) {}
   ngOnInit() {
     // If we're authenticated, go right to the good stuff.
@@ -63,6 +60,9 @@ export class LoginComponent implements OnInit {
 
     this.auth$.subscribe((auth) => {
       this.auth = auth;
+      if (auth.loginProcessState === LoginProcessState.Fail) {
+        this.toastr.error('Please try again.', 'Login Failed');
+      }
     });
   }
 

@@ -13,6 +13,5 @@
       <app-input-text formControlName="authCode"></app-input-text>
       <app-button-primary [disabled]="!formGroup.valid" [type]="'submit'">Submit</app-button-primary>
     </form>
-    <div *ngIf="auth.loginProcessState === LoginProcessState.Fail" class="text-red-400">Login failed.  Please check your code and try again.</div>
   </div>
 </div>
