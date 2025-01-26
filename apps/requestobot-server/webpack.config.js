@@ -14,6 +14,7 @@ module.exports = {
       assets: ['./src/assets', './src/i18n', './src/migrations'],
       optimization: false,
       outputHashing: 'none',
+      generatePackageJson: true,
     }),
   ],
 };

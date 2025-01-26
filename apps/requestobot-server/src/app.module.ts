@@ -30,7 +30,10 @@ import { ChannelManagerModule } from './modules/channel-manager/channel-manager.
       useFactory: (configService: ConfigService) => {
         // Detect environment.  If we're in test, setup the test chat interface.
         // Note: It seems in windows environments, the env var has some extra spaces in it.  This trims that out.
-        if (configService.get('NODE_ENV').toString().trim() == 'test') {
+        if (
+          configService.get('NODE_ENV', 'production').toString().trim() ==
+          'test'
+        ) {
           return {
             testClient: {
               url: 'ws://127.0.0.1:3030',
