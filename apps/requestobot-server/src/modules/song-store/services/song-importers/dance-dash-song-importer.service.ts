@@ -35,13 +35,13 @@ export class DanceDashSongImporterService implements SongImporter {
       return 0;
     }
 
+    const songHashes = await this.songService.getSongHashesAndDataSignatures(
+      game
+    );
+
     for (const dataPage of data) {
       for (const dataItem of dataPage.data) {
-        const existingSong = await this.songService.getSongBySongHash(
-          game,
-          dataItem.id
-        );
-        if (!existingSong) {
+        if (!songHashes.has(dataItem.id.toString())) {
           const importResult = await this.downloadAndImportSong(
             game,
             dataItem.id,
@@ -115,6 +115,16 @@ export class DanceDashSongImporterService implements SongImporter {
         artist = levelData.SongAuthorName;
         bpm = Math.floor(parseInt(levelData.Bpm));
         duration = Math.floor(parseInt(levelData.SongLength));
+
+        // Explicitly set these to null if they aren't present and/or are not numbers.
+        // This is to correct an issue where these fields are NaN and it fails during
+        // the database insert.
+        if (isNaN(bpm)) {
+          bpm = null;
+        }
+        if (isNaN(duration)) {
+          duration = null;
+        }
       }
     }
 

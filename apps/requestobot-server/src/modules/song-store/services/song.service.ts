@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { Song } from '../../data-store/entities/song.entity';
 import { Game } from '../../data-store/entities/game.entity';
@@ -11,7 +11,6 @@ import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class SongService {
-  private hashes: string[] = [];
   constructor(
     @InjectRepository(Song)
     private songRepository: Repository<Song>,
@@ -122,15 +121,23 @@ export class SongService {
     const song = new Song();
     song.game = game;
     song.songHash = hash;
-    song.artist = artist;
+    song.artist = artist ?? null;
     song.title = title;
     song.mapper = mapper;
-    song.downloadUrl = downloadUrl;
-    song.bpm = bpm;
-    song.duration = duration;
-    song.fileReference = fileReference;
-    song.coverArtUrl = coverArtUrl;
+    song.downloadUrl = downloadUrl ?? null;
+    song.bpm = bpm ?? null;
+    song.duration = duration ?? null;
+    song.fileReference = fileReference ?? null;
+    song.coverArtUrl = coverArtUrl ?? null;
     song.dataSignature = this.generateSongDataSignature(song);
+
+    if (isNaN(song.bpm)) {
+      song.bpm = null;
+    }
+
+    if (isNaN(song.duration)) {
+      song.duration = null;
+    }
 
     return song;
   }
@@ -152,15 +159,6 @@ export class SongService {
   }
 
   async saveSong(song: Song, updateExisting = true): Promise<Song> {
-    // Because this all happens asynchronously, we can have a shitload of inserts happening
-    // all at once.  This helps to deal with dupes within the dataset itself (of which do exist in sources like
-    // the audio trip spreadsheet.
-    if (this.hashes.includes(song.songHash)) {
-      return;
-    }
-
-    this.hashes.push(song.songHash);
-
     const existingSong = await this.songRepository.findOneBy({
       game: song.game,
       songHash: song.songHash,
@@ -175,6 +173,9 @@ export class SongService {
       existingSong.bpm = song.bpm;
       existingSong.duration = song.duration;
       existingSong.coverArtUrl = song.coverArtUrl;
+      existingSong.fileReference = song.fileReference;
+      existingSong.dataSignature = song.dataSignature;
+
       return await this.songRepository.save(existingSong);
     }
 

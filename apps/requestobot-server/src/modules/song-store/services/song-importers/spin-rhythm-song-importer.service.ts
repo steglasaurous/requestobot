@@ -59,6 +59,9 @@ export class SpinRhythmSongImporterService implements SongImporter {
             }
 
             await this.songService.saveSong(song, true);
+            this.logger.log(
+              `Added ${song.artist} - ${song.title} (${song.songHash})`
+            );
             songCount++;
           }
           resolve(songCount);

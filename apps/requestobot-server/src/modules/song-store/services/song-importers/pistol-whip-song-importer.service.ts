@@ -36,13 +36,13 @@ export class PistolWhipSongImporterService implements SongImporter {
       return 0;
     }
 
+    const songHashes = await this.songService.getSongHashesAndDataSignatures(
+      game
+    );
+
     for (const dataPage of data) {
       for (const dataItem of dataPage.data) {
-        const existingSong = await this.songService.getSongBySongHash(
-          game,
-          dataItem.id
-        );
-        if (!existingSong) {
+        if (!songHashes.has(dataItem.id.toString())) {
           const importResult = await this.downloadAndImportSong(
             game,
             dataItem.id,
@@ -120,6 +120,14 @@ export class PistolWhipSongImporterService implements SongImporter {
         bpm = Math.floor(parseInt(levelData.tempo));
         duration = Math.floor(parseInt(levelData.songLength));
         fileReference = levelData.maps[0];
+
+        if (isNaN(bpm)) {
+          bpm = null;
+        }
+
+        if (isNaN(duration)) {
+          duration = null;
+        }
       }
     }
 
