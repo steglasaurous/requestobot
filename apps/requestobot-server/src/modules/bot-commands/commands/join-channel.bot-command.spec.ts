@@ -11,6 +11,7 @@ import { Game } from '../../data-store/entities/game.entity';
 import { ChatMessage, MessageFormatterService } from '@steglasaurous/chat';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { I18nService } from 'nestjs-i18n';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 describe('Join channel bot command', () => {
   const channelRepositoryMock = {
@@ -19,9 +20,9 @@ describe('Join channel bot command', () => {
   };
   let service: JoinChannelBotCommand;
   let i18n;
-  let messageFormatterService;
   let channel;
   let chatMessage;
+  let channelManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,15 +36,6 @@ describe('Join channel bot command', () => {
             return {
               findOneBy: jest.fn().mockReturnValue(new Game()),
             };
-          case getToken(Metrics.ChannelsTotal):
-          case getToken(Metrics.ChannelJoinedCounterTotal):
-          case getToken(Metrics.ChannelLeftCounterTotal):
-          case getToken(Metrics.ChannelsJoinedTotal):
-          case getToken(Metrics.ChannelsBotEnabledTotal):
-            return {
-              inc: jest.fn(),
-              dec: jest.fn(),
-            };
           case 'BOT_CHANNEL_NAME':
             return token;
           default:
@@ -54,12 +46,12 @@ describe('Join channel bot command', () => {
 
     service = module.get(JoinChannelBotCommand);
     i18n = module.get(I18nService);
-    messageFormatterService = module.get(MessageFormatterService);
     channel = getMockChannel();
     channel.channelName = 'BOT_CHANNEL_NAME';
 
     chatMessage = getMockChatMessage();
     chatMessage.channelName = 'BOT_CHANNEL_NAME';
+    channelManager = module.get(ChannelManagerService);
   });
 
   afterEach(() => {
@@ -72,31 +64,21 @@ describe('Join channel bot command', () => {
 
   it('should join a new channel', async () => {
     channelRepositoryMock.findOneBy.mockReturnValue(undefined);
+    channelManager.createChannel.mockReturnValue({
+      channelName: channel.channelName,
+    });
+
     channel.lang = 'en';
 
-    messageFormatterService.formatMessage.mockReturnValueOnce(
-      'chat.HelloChannel'
-    );
-
     const response = await service.execute(channel, chatMessage);
-    const channelSaveActual = channelRepositoryMock.save.mock.calls[0][0];
-    expect(channelSaveActual.channelName).toEqual(chatMessage.username);
-    expect(channelSaveActual.inChannel).toBeTruthy();
-    expect(channelSaveActual.joinedOn).toBeInstanceOf(Date);
-    expect(channelSaveActual.queueOpen).toBeTruthy();
-    expect(channelSaveActual.game).toBeInstanceOf(Game);
-    expect(chatMessage.client.joinChannel).toHaveBeenCalledWith(
-      chatMessage.username
-    );
-    expect(chatMessage.client.sendMessage).toHaveBeenCalledWith(
-      chatMessage.username,
-      'chat.HelloChannel'
-    );
-
     expect(response).toEqual('chat.JoinedChannel');
-    expect(i18n.t.mock.calls[1][1]).toEqual({
+    expect(channelManager.createChannel).toHaveBeenCalledWith(
+      chatMessage.username,
+      chatMessage.client.chatServiceName
+    );
+    expect(i18n.t).toHaveBeenCalledWith('chat.JoinedChannel', {
       lang: 'en',
-      args: { channelName: chatMessage.username },
+      args: { channelName: channel.channelName },
     });
   });
 
@@ -105,9 +87,7 @@ describe('Join channel bot command', () => {
     userChannel.channelName = 'steglasaurous';
     userChannel.inChannel = true;
 
-    channelRepositoryMock.findOneBy.mockReturnValue(
-      Promise.resolve(userChannel)
-    );
+    channelManager.getChannel.mockReturnValue(userChannel);
 
     const response = await service.execute(channel, chatMessage);
     expect(i18n.t).toHaveBeenCalledWith('chat.AlreadyJoined', { lang: 'en' });
@@ -121,10 +101,6 @@ describe('Join channel bot command', () => {
 
     channelRepositoryMock.findOneBy.mockReturnValue(
       Promise.resolve(userChannel)
-    );
-
-    messageFormatterService.formatMessage.mockReturnValueOnce(
-      'chat.HelloChannel'
     );
 
     const response = await service.execute(channel, chatMessage);

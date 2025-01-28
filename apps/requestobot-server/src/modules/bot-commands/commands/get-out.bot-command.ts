@@ -9,12 +9,7 @@ import { ChannelManagerService } from '../../channel-manager/services/channel-ma
 
 @Injectable()
 export class GetOutBotCommand extends BaseBotCommand {
-  constructor(
-    private i18n: I18nService,
-    @InjectRepository(Channel) private channelRepository: Repository<Channel>,
-    private messageFormatterService: MessageFormatterService,
-    private channelManagerService: ChannelManagerService
-  ) {
+  constructor(private channelManagerService: ChannelManagerService) {
     super();
     this.triggers = ['!getout'];
   }

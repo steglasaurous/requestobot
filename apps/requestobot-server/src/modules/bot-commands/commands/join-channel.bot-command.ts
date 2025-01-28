@@ -12,7 +12,6 @@ export class JoinChannelBotCommand extends BaseBotCommand {
   constructor(
     @Inject('BOT_CHANNEL_NAME') private botChannelName: string,
     private readonly i18n: I18nService,
-    private messageFormatterService: MessageFormatterService,
     private channelManagerService: ChannelManagerService
   ) {
     super();
