@@ -1,5 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ChatManagerService, ChatServiceName } from '@steglasaurous/chat';
+import {
+  ChatManagerService,
+  ChatServiceName,
+  MessageFormatterService,
+} from '@steglasaurous/chat';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { Repository } from 'typeorm';
@@ -16,8 +20,10 @@ import { Counter, Gauge } from 'prom-client';
 @Injectable()
 export class ChannelManagerService {
   private logger: Logger = new Logger(this.constructor.name);
+
   constructor(
     private chatManagerService: ChatManagerService,
+    private messageFormatterService: MessageFormatterService,
     @InjectRepository(Game) private gameRepository: Repository<Game>,
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     private readonly i18n: I18nService,
@@ -98,7 +104,7 @@ export class ChannelManagerService {
     return channel;
   }
 
-  async joinChannel(channel: Channel): Promise<void> {
+  async joinChannel(channel: Channel, sendHelloMessage = true): Promise<void> {
     const chatClient = this.chatManagerService.getChatClientForChatServiceName(
       channel.chatServiceName
     );
@@ -123,10 +129,32 @@ export class ChannelManagerService {
     this.channelsJoinedTotal.inc();
     this.channelsJoinedCounterTotal.inc();
 
+    if (sendHelloMessage) {
+      await this.chatManagerService
+        .getChatClientForChatServiceName(channel.chatServiceName)
+        .sendMessage(
+          channel.channelName,
+          this.messageFormatterService.formatMessage(
+            this.i18n.t('chat.HelloChannel', {
+              lang: channel.lang,
+            })
+          )
+        );
+    }
+
     this.logger.log(`Joined channel ${channel.channelName}`);
   }
 
   async leaveChannel(channel: Channel): Promise<void> {
+    await this.chatManagerService
+      .getChatClientForChatServiceName(channel.chatServiceName)
+      .sendMessage(
+        channel.channelName,
+        this.messageFormatterService.formatMessage(
+          this.i18n.t('chat.ImOut', { lang: channel.lang })
+        )
+      );
+
     // Leave the channel
     await this.chatManagerService
       .getChatClientForChatServiceName(channel.chatServiceName)
@@ -138,5 +166,79 @@ export class ChannelManagerService {
 
     this.channelLeftCounterTotal.inc();
     this.channelsJoinedTotal.dec();
+  }
+
+  async enableBot(channel: Channel): Promise<void> {
+    channel.enabled = true;
+    await this.channelRepository.save(channel);
+    this.channelsBotEnabledTotal.inc();
+
+    await this.chatManagerService
+      .getChatClientForChatServiceName(channel.chatServiceName)
+      .sendMessage(
+        channel.channelName,
+        this.messageFormatterService.formatMessage(
+          this.i18n.t('chat.BotIsOn', { lang: channel.lang })
+        )
+      );
+  }
+
+  async disableBot(channel: Channel): Promise<void> {
+    channel.enabled = false;
+    await this.channelRepository.save(channel);
+    this.channelsBotEnabledTotal.dec();
+
+    await this.chatManagerService
+      .getChatClientForChatServiceName(channel.chatServiceName)
+      .sendMessage(
+        channel.channelName,
+        this.messageFormatterService.formatMessage(
+          this.i18n.t('chat.BotIsOff', { lang: channel.lang })
+        )
+      );
+  }
+
+  async openQueue(channel: Channel): Promise<void> {
+    channel.queueOpen = true;
+    await this.channelRepository.save(channel);
+
+    await this.chatManagerService
+      .getChatClientForChatServiceName(channel.chatServiceName)
+      .sendMessage(
+        channel.channelName,
+        this.messageFormatterService.formatMessage(
+          this.i18n.t('chat.QueueOpen', { lang: channel.lang })
+        )
+      );
+  }
+
+  async closeQueue(channel: Channel): Promise<void> {
+    channel.queueOpen = false;
+    await this.channelRepository.save(channel);
+
+    await this.chatManagerService
+      .getChatClientForChatServiceName(channel.chatServiceName)
+      .sendMessage(
+        channel.channelName,
+        this.messageFormatterService.formatMessage(
+          this.i18n.t('chat.QueueClosed', { lang: channel.lang })
+        )
+      );
+  }
+
+  async setGame(channel: Channel, game: Game): Promise<void> {
+    channel.game = game;
+    await this.channelRepository.save(channel);
+    await this.chatManagerService
+      .getChatClientForChatServiceName(channel.chatServiceName)
+      .sendMessage(
+        channel.channelName,
+        this.i18n.t('chat.GameChanged', {
+          lang: channel.lang,
+          args: { gameName: channel.game.displayName },
+        })
+      );
+
+    // FIXME: Clear queue.
   }
 }

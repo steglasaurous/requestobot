@@ -5,12 +5,14 @@ import { Repository } from 'typeorm';
 import { I18nService } from 'nestjs-i18n';
 import { Injectable } from '@nestjs/common';
 import { BaseBotCommand } from './base.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 @Injectable()
 export class OffBotCommand extends BaseBotCommand {
   constructor(
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
-    private i18n: I18nService
+    private i18n: I18nService,
+    private channelManager: ChannelManagerService
   ) {
     super();
     this.triggers = ['!requestobot off'];
@@ -26,9 +28,9 @@ export class OffBotCommand extends BaseBotCommand {
       return this.i18n.t('chat.AlreadyOff', { lang: channel.lang });
     }
 
-    channel.enabled = false;
-    await this.channelRepository.save(channel);
-    return this.i18n.t('chat.BotIsOff', { lang: channel.lang });
+    await this.channelManager.disableBot(channel);
+
+    return null;
   }
 
   getDescription(): string {

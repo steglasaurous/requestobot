@@ -1,8 +1,7 @@
-import { ChatMessage } from '@steglasaurous/chat';
+import { ChatMessage, MessageFormatterService } from '@steglasaurous/chat';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { I18nService } from 'nestjs-i18n';
-import { MessageFormatterService } from '../services/message-formatter.service';
 import { BaseBotCommand } from './base.bot-command';
 import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
@@ -39,15 +38,6 @@ export class JoinChannelBotCommand extends BaseBotCommand {
     } else {
       await this.channelManagerService.joinChannel(channelNameEntity);
     }
-
-    await chatMessage.client.sendMessage(
-      channelNameEntity.channelName,
-      this.messageFormatterService.formatMessage(
-        this.i18n.t('chat.HelloChannel', {
-          lang: channelNameEntity.lang,
-        })
-      )
-    );
 
     return this.i18n.t('chat.JoinedChannel', {
       lang: channel.lang,

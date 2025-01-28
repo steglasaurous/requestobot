@@ -8,10 +8,9 @@ import {
 } from '../../../../test/helpers';
 import { JoinChannelBotCommand } from './join-channel.bot-command';
 import { Game } from '../../data-store/entities/game.entity';
-import { ChatMessage } from '@steglasaurous/chat';
+import { ChatMessage, MessageFormatterService } from '@steglasaurous/chat';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { I18nService } from 'nestjs-i18n';
-import { MessageFormatterService } from '../services/message-formatter.service';
 
 describe('Join channel bot command', () => {
   const channelRepositoryMock = {

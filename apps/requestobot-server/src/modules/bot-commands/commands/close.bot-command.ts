@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { Repository } from 'typeorm';
 import { BaseBotCommand } from './base.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 @Injectable()
 export class CloseBotCommand extends BaseBotCommand {
   constructor(
     private i18n: I18nService,
-    @InjectRepository(Channel) private channelRepository: Repository<Channel>
+    @InjectRepository(Channel) private channelRepository: Repository<Channel>,
+    private channelManager: ChannelManagerService
   ) {
     super();
     this.triggers = ['!close'];
@@ -24,11 +26,9 @@ export class CloseBotCommand extends BaseBotCommand {
     if (channel.queueOpen == false) {
       return this.i18n.t('chat.QueueAlreadyClosed', { lang: channel.lang });
     }
+    await this.channelManager.closeQueue(channel);
 
-    channel.queueOpen = false;
-    await this.channelRepository.save(channel);
-
-    return this.i18n.t('chat.QueueClosed', { lang: channel.lang });
+    return null;
   }
 
   getDescription(): string {

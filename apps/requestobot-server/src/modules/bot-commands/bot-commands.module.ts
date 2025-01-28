@@ -14,7 +14,6 @@ import { NextSongBotCommand } from './commands/next-song.bot-command';
 import { QueueBotCommand } from './commands/queue.bot-command';
 import { OopsBotCommand } from './commands/oops.bot-command';
 import { GetOutBotCommand } from './commands/get-out.bot-command';
-import { MessageFormatterService } from './services/message-formatter.service';
 import { SetGameBotCommand } from './commands/set-game.bot-command';
 import { HttpModule } from '@nestjs/axios';
 import { OffBotCommand } from './commands/off.bot-command';
@@ -33,6 +32,7 @@ import { RemoveBotCommand } from './commands/remove.bot-command';
 import { BanSongBotCommand } from './commands/ban-song.bot-command';
 import { BanSongRemoveBotCommand } from './commands/ban-song-remove.bot-command';
 import { ChannelManagerModule } from '../channel-manager/channel-manager.module';
+import { MessageFormatterService } from '@steglasaurous/chat';
 
 @Module({
   imports: [
