@@ -21,7 +21,7 @@ export class JoinChannelsOnConnectListener {
     this.logger.log(`Joining ${channels.length} channels`);
     for (const channel of channels) {
       try {
-        await this.channelManagerService.joinChannel(channel);
+        await this.channelManagerService.joinChannel(channel, false);
       } catch (e) {
         this.logger.warn(
           `Join channel ${channel.channelName} failed: ${e.message}`

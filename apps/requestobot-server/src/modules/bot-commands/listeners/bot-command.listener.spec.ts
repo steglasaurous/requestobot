@@ -8,8 +8,10 @@ import {
 import { getToken } from '@willsoto/nestjs-prometheus';
 import { Metrics } from '../models/metrics.enum';
 import { Channel } from '../../data-store/entities/channel.entity';
-import { ChatMessageReceiveEvent } from '@steglasaurous/chat';
-import { MessageFormatterService } from '../services/message-formatter.service';
+import {
+  ChatMessageReceiveEvent,
+  MessageFormatterService,
+} from '@steglasaurous/chat';
 
 describe('Bot command listener', () => {
   const mockBotCommand = {

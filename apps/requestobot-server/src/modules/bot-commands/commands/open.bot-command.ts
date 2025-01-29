@@ -5,12 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { Repository } from 'typeorm';
 import { BaseBotCommand } from './base.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 @Injectable()
 export class OpenBotCommand extends BaseBotCommand {
   constructor(
     private i18n: I18nService,
-    @InjectRepository(Channel) private channelRepository: Repository<Channel>
+    private channelManager: ChannelManagerService
   ) {
     super();
     this.triggers = ['!open'];
@@ -24,11 +25,9 @@ export class OpenBotCommand extends BaseBotCommand {
     if (channel.queueOpen == true) {
       return this.i18n.t('chat.QueueAlreadyOpen', { lang: channel.lang });
     }
+    await this.channelManager.openQueue(channel);
 
-    channel.queueOpen = true;
-    await this.channelRepository.save(channel);
-
-    return this.i18n.t('chat.QueueOpen', { lang: channel.lang });
+    return null;
   }
 
   getDescription(): string {

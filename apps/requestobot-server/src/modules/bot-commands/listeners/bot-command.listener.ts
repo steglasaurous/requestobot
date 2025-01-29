@@ -1,11 +1,13 @@
-import { ChatMessageReceiveEvent } from '@steglasaurous/chat';
+import {
+  ChatMessageReceiveEvent,
+  MessageFormatterService,
+} from '@steglasaurous/chat';
 import { OnEvent } from '@nestjs/event-emitter';
 import { BotCommandInterface } from '../commands/bot-command.interface';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { Repository } from 'typeorm';
-import { MessageFormatterService } from '../services/message-formatter.service';
 import { InjectMetric } from '@willsoto/nestjs-prometheus';
 import { Metrics } from '../models/metrics.enum';
 import { Counter } from 'prom-client';

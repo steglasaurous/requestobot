@@ -9,11 +9,13 @@ import {
   MODULE_OPTIONS_TOKEN,
 } from './util-chat.module-definition';
 import { TestExternalChatClient } from './services/clients/test-external-chat-client.service';
+import { MessageFormatterService } from './services/message-formatter.service';
 
 @Module({
   imports: [EventEmitter2],
   providers: [
     ChatManagerService,
+    MessageFormatterService,
     {
       provide: 'ChatClients',
       inject: [EventEmitter2, MODULE_OPTIONS_TOKEN],
@@ -41,6 +43,6 @@ import { TestExternalChatClient } from './services/clients/test-external-chat-cl
       },
     },
   ],
-  exports: [ChatManagerService],
+  exports: [ChatManagerService, MessageFormatterService],
 })
 export class UtilChatModule extends ConfigurableModuleClass {}

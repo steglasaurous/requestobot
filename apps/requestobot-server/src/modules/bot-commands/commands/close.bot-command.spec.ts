@@ -6,12 +6,14 @@ import {
 } from '../../../../test/helpers';
 import { I18nService } from 'nestjs-i18n';
 import { CloseBotCommand } from './close.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 describe('Close queue bot command', () => {
   let service: CloseBotCommand;
   let i18nMock;
   let channel;
   let chatMessage;
+  let channelManager;
 
   const channelRepositoryMock = {
     save: jest.fn(),
@@ -35,6 +37,7 @@ describe('Close queue bot command', () => {
     i18nMock = module.get(I18nService);
     channel = getMockChannel();
     chatMessage = getMockChatMessage();
+    channelManager = module.get(ChannelManagerService);
   });
 
   afterEach(() => {
@@ -51,12 +54,8 @@ describe('Close queue bot command', () => {
     chatMessage.userIsBroadcaster = true;
 
     const response = await service.execute(channel, chatMessage);
-    expect(response).toEqual('chat.QueueClosed');
-    expect(i18nMock.t).toHaveBeenCalledWith('chat.QueueClosed', { lang: 'en' });
-    expect(channelRepositoryMock.save).toHaveBeenCalled();
-    expect(channelRepositoryMock.save.mock.calls[0][0].queueOpen).toEqual(
-      false
-    );
+    expect(response).toEqual(null);
+    expect(channelManager.closeQueue).toHaveBeenCalledWith(channel);
   });
 
   it('should close the queue if it is open, and the user is a moderator', async () => {
@@ -67,12 +66,8 @@ describe('Close queue bot command', () => {
     chatMessage.userIsMod = true;
 
     const response = await service.execute(channel, chatMessage);
-    expect(response).toEqual('chat.QueueClosed');
-    expect(i18nMock.t).toHaveBeenCalledWith('chat.QueueClosed', { lang: 'en' });
-    expect(channelRepositoryMock.save).toHaveBeenCalled();
-    expect(channelRepositoryMock.save.mock.calls[0][0].queueOpen).toEqual(
-      false
-    );
+    expect(response).toEqual(null);
+    expect(channelManager.closeQueue).toHaveBeenCalledWith(channel);
   });
 
   it('should respond that the queue is already closed', async () => {

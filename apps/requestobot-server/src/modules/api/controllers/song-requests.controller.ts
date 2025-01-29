@@ -31,8 +31,10 @@ import {
 } from '@nestjs/swagger';
 import { SongRequestDto as SongRequestDtoClass } from '../dto/song-request.dto';
 import { I18nService } from 'nestjs-i18n';
-import { ChatManagerService } from '@steglasaurous/chat';
-import { MessageFormatterService } from '../../bot-commands/services/message-formatter.service';
+import {
+  ChatManagerService,
+  MessageFormatterService,
+} from '@steglasaurous/chat';
 
 @Controller('api/channels/:channelId/song-requests')
 export class SongRequestsController {

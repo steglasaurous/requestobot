@@ -17,7 +17,6 @@ import {
   initialState,
   LoginProcessState,
 } from '../../state/auth/auth.reducer';
-import { NgIf } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 
 declare let window: WindowWithElectron;

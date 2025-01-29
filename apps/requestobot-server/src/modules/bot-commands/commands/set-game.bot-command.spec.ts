@@ -7,6 +7,7 @@ import {
 import { I18nService } from 'nestjs-i18n';
 import { SetGameBotCommand } from './set-game.bot-command';
 import { Game } from '../../data-store/entities/game.entity';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 describe('Set game bot command', () => {
   const channelRepositoryMock = {
@@ -22,6 +23,7 @@ describe('Set game bot command', () => {
 
   let channel;
   let chatMessage;
+  let channelManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,6 +43,7 @@ describe('Set game bot command', () => {
 
     service = module.get(SetGameBotCommand);
     i18n = module.get(I18nService);
+    channelManager = module.get(ChannelManagerService);
 
     channel = getMockChannel();
     channel.queueOpen = false;
@@ -69,11 +72,8 @@ describe('Set game bot command', () => {
     gameRepositoryMock.findOneBy.mockReturnValue(game);
 
     const response = await service.execute(channel, chatMessage);
-    expect(response).toEqual('chat.GameChanged');
-    expect(i18n.t).toHaveBeenCalledWith('chat.GameChanged', {
-      lang: 'en',
-      args: { gameName: 'Some Game' },
-    });
+    expect(channelManager.setGame).toHaveBeenCalledWith(channel, game);
+    expect(response).toEqual(null);
   });
 
   it('should show the currently set game', async () => {

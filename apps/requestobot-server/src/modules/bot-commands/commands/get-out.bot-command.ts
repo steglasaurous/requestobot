@@ -1,21 +1,15 @@
-import { ChatMessage } from '@steglasaurous/chat';
+import { ChatMessage, MessageFormatterService } from '@steglasaurous/chat';
 import { I18nService } from 'nestjs-i18n';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { Repository } from 'typeorm';
-import { MessageFormatterService } from '../services/message-formatter.service';
 import { BaseBotCommand } from './base.bot-command';
 import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 @Injectable()
 export class GetOutBotCommand extends BaseBotCommand {
-  constructor(
-    private i18n: I18nService,
-    @InjectRepository(Channel) private channelRepository: Repository<Channel>,
-    private messageFormatterService: MessageFormatterService,
-    private channelManagerService: ChannelManagerService
-  ) {
+  constructor(private channelManagerService: ChannelManagerService) {
     super();
     this.triggers = ['!getout'];
   }
@@ -24,14 +18,6 @@ export class GetOutBotCommand extends BaseBotCommand {
     if (!chatMessage.userIsBroadcaster && !chatMessage.userIsMod) {
       return;
     }
-
-    // Signal that we're gonna GTFO
-    await chatMessage.client.sendMessage(
-      chatMessage.channelName,
-      this.messageFormatterService.formatMessage(
-        this.i18n.t('chat.ImOut', { lang: channel.lang })
-      )
-    );
 
     await this.channelManagerService.leaveChannel(channel);
 
