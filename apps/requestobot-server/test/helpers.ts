@@ -77,6 +77,7 @@ export const getMockChannel = (): Channel => {
 export const getMockChatMessage = (): ChatMessage => {
   return {
     channelName: 'testchannel',
+    chatServiceName: 'twitch',
     client: {
       sendMessage: jest.fn(),
       leaveChannel: jest.fn(),

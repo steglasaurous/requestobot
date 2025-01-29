@@ -6,13 +6,15 @@ import { Game } from '../../data-store/entities/game.entity';
 import { I18nService } from 'nestjs-i18n';
 import { BaseBotCommand } from './base.bot-command';
 import { Injectable } from '@nestjs/common';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 @Injectable()
 export class SetGameBotCommand extends BaseBotCommand {
   constructor(
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     @InjectRepository(Game) private gameRepository: Repository<Game>,
-    private i18n: I18nService
+    private i18n: I18nService,
+    private channelManager: ChannelManagerService
   ) {
     super();
     this.triggers = ['!setgame'];
@@ -44,13 +46,9 @@ export class SetGameBotCommand extends BaseBotCommand {
     if (!game) {
       return this.i18n.t('chat.UnsupportedGame');
     }
+    await this.channelManager.setGame(channel, game);
 
-    channel.game = game;
-    await this.channelRepository.save(channel);
-    return this.i18n.t('chat.GameChanged', {
-      lang: channel.lang,
-      args: { gameName: channel.game.displayName },
-    });
+    return null;
   }
 
   getDescription(): string {

@@ -30,7 +30,11 @@ import { ChannelDto as ChannelDtoClass } from '../dto/channel.dto';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { I18nService } from 'nestjs-i18n';
 import { Game } from '../../data-store/entities/game.entity';
-import { ChatManagerService, ChatServiceName } from '@steglasaurous/chat';
+import {
+  ChatManagerService,
+  ChatServiceName,
+  MessageFormatterService,
+} from '@steglasaurous/chat';
 import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 @Controller('api/channels')
@@ -42,7 +46,8 @@ export class ChannelController {
     @InjectRepository(Game) private gameRepository: Repository<Game>,
     private i18n: I18nService,
     private chatManager: ChatManagerService,
-    private channelManager: ChannelManagerService
+    private channelManager: ChannelManagerService,
+    private messageFormatterService: MessageFormatterService
   ) {}
 
   @ApiOperation({
@@ -229,16 +234,11 @@ export class ChannelController {
       channelDto.enabled != undefined &&
       channelDto.enabled != channel.enabled
     ) {
-      // FIXME: Move to the channel-manager so it can deal with messaging.
       channel.enabled = channelDto.enabled;
       if (channel.enabled) {
-        chatMessageToEmit.push(
-          this.i18n.t('chat.BotIsOn', { lang: channel.lang })
-        );
+        await this.channelManager.enableBot(channel);
       } else {
-        chatMessageToEmit.push(
-          this.i18n.t('chat.BotIsOff', { lang: channel.lang })
-        );
+        await this.channelManager.disableBot(channel);
       }
     }
 
@@ -248,15 +248,10 @@ export class ChannelController {
     ) {
       channel.queueOpen = channelDto.queueOpen;
       if (channel.queueOpen) {
-        chatMessageToEmit.push(
-          this.i18n.t('chat.QueueOpen', { lang: channel.lang })
-        );
+        await this.channelManager.openQueue(channel);
       } else {
-        chatMessageToEmit.push(
-          this.i18n.t('chat.QueueClosed', { lang: channel.lang })
-        );
+        await this.channelManager.closeQueue(channel);
       }
-      // Emit the appropriate message to chat.
     }
     if (channelDto.game != undefined && channelDto.game.id != undefined) {
       // Validate the game setting
@@ -266,9 +261,9 @@ export class ChannelController {
       if (!game) {
         throw new BadRequestException('Game id provided is invalid');
       }
-
+      await this.channelManager.setGame(channel, game);
       // FIXME: Clear queue when changing games
-      // FIXME: Consider a service to deal with this stuff.
+
       channel.game = game;
     }
 
