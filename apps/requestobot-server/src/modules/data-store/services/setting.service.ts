@@ -54,6 +54,8 @@ export class SettingService {
           settingDefinition.choices.join(',')
       );
     }
+
+    return await this.settingRepository.save(settingValue);
   }
 
   async getValue(
