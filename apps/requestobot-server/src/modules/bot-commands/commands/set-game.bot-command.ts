@@ -47,6 +47,8 @@ export class SetGameBotCommand extends BaseBotCommand {
       return this.i18n.t('chat.UnsupportedGame');
     }
     await this.channelManager.setGame(channel, game);
+
+    return null;
   }
 
   getDescription(): string {

@@ -10,7 +10,6 @@ import { ChannelManagerService } from '../../channel-manager/services/channel-ma
 @Injectable()
 export class OffBotCommand extends BaseBotCommand {
   constructor(
-    @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     private i18n: I18nService,
     private channelManager: ChannelManagerService
   ) {
@@ -20,7 +19,7 @@ export class OffBotCommand extends BaseBotCommand {
   async execute(channel: Channel, chatMessage: ChatMessage): Promise<string> {
     // Only broadcaster and mods can use this.
     if (!chatMessage.userIsBroadcaster && !chatMessage.userIsMod) {
-      return;
+      return null;
     }
 
     if (!channel.enabled) {

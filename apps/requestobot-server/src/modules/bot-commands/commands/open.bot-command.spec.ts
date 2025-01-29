@@ -6,6 +6,7 @@ import {
 } from '../../../../test/helpers';
 import { I18nService } from 'nestjs-i18n';
 import { OpenBotCommand } from './open.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 describe('Open bot command', () => {
   const channelRepositoryMock = {
@@ -14,7 +15,7 @@ describe('Open bot command', () => {
   };
   let service: OpenBotCommand;
   let i18n;
-
+  let channelManager;
   let channel;
   let chatMessage;
 
@@ -34,7 +35,7 @@ describe('Open bot command', () => {
 
     service = module.get(OpenBotCommand);
     i18n = module.get(I18nService);
-
+    channelManager = module.get(ChannelManagerService);
     channel = getMockChannel();
     channel.queueOpen = false;
 
@@ -53,12 +54,8 @@ describe('Open bot command', () => {
   it('should open the queue if it is closed', async () => {
     const response = await service.execute(channel, chatMessage);
 
-    expect(response).toEqual('chat.QueueOpen');
-    expect(i18n.t).toHaveBeenCalledWith('chat.QueueOpen', {
-      lang: 'en',
-    });
-    expect(channelRepositoryMock.save).toHaveBeenCalled();
-    expect(channelRepositoryMock.save.mock.calls[0][0].queueOpen).toBeTruthy();
+    expect(response).toBeNull();
+    expect(channelManager.openQueue).toHaveBeenCalledWith(channel);
   });
 
   it('should return a message indicating the queue is already open', async () => {

@@ -99,29 +99,14 @@ describe('Join channel bot command', () => {
     userChannel.inChannel = false;
     userChannel.channelName = 'testuser';
 
-    channelRepositoryMock.findOneBy.mockReturnValue(
-      Promise.resolve(userChannel)
-    );
+    channelManager.getChannel.mockReturnValue(userChannel);
 
     const response = await service.execute(channel, chatMessage);
-    const channelSaveActual = channelRepositoryMock.save.mock.calls[0][0];
-    expect(channelSaveActual.channelName).toEqual(chatMessage.username);
-    expect(channelSaveActual.inChannel).toBeTruthy();
-    expect(channelSaveActual.joinedOn).toBeInstanceOf(Date);
-    expect(channelSaveActual.queueOpen).toBeTruthy();
-    expect(channelSaveActual.game).toBeInstanceOf(Game);
-    expect(chatMessage.client.joinChannel).toHaveBeenCalledWith(
-      chatMessage.username
-    );
-    expect(chatMessage.client.sendMessage).toHaveBeenCalledWith(
-      chatMessage.username,
-      'chat.HelloChannel'
-    );
-
     expect(response).toEqual('chat.JoinedChannel');
-    expect(i18n.t.mock.calls[1][1]).toEqual({
+    expect(channelManager.joinChannel).toHaveBeenCalledWith(userChannel);
+    expect(i18n.t).toHaveBeenCalledWith('chat.JoinedChannel', {
       lang: 'en',
-      args: { channelName: chatMessage.username },
+      args: { channelName: userChannel.channelName },
     });
   });
 

@@ -6,6 +6,7 @@ import {
 } from '../../../../test/helpers';
 import { I18nService } from 'nestjs-i18n';
 import { OffBotCommand } from './off.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 describe('Off bot command', () => {
   const channelRepositoryMock = {
@@ -14,7 +15,7 @@ describe('Off bot command', () => {
   };
   let service: OffBotCommand;
   let i18n;
-
+  let channelManager;
   let channel;
   let chatMessage;
 
@@ -34,7 +35,7 @@ describe('Off bot command', () => {
 
     service = module.get(OffBotCommand);
     i18n = module.get(I18nService);
-
+    channelManager = module.get(ChannelManagerService);
     channel = getMockChannel();
     chatMessage = getMockChatMessage();
     chatMessage.userIsBroadcaster = true;
@@ -51,9 +52,8 @@ describe('Off bot command', () => {
   it('should disable the bot', async () => {
     const response = await service.execute(channel, chatMessage);
 
-    expect(response).toEqual('chat.BotIsOff');
-    expect(channelRepositoryMock.save).toHaveBeenCalled();
-    expect(channelRepositoryMock.save.mock.calls[0][0].enabled).toBeFalsy();
+    expect(response).toEqual(null);
+    expect(channelManager.disableBot).toHaveBeenCalledWith(channel);
   });
 
   it('should not respond if the user is not a broadcaster or moderator', async () => {
@@ -61,8 +61,7 @@ describe('Off bot command', () => {
     chatMessage.userIsMod = false;
 
     const response = await service.execute(channel, chatMessage);
-    expect(response).toBeUndefined();
-    expect(channelRepositoryMock.save).not.toHaveBeenCalled();
+    expect(response).toBeNull();
   });
 
   it('should respond that the bot is already off', async () => {

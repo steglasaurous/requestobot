@@ -20,7 +20,7 @@ export class OnBotCommand extends BaseBotCommand {
   async execute(channel: Channel, chatMessage: ChatMessage): Promise<string> {
     // Only broadcaster and mods can use this.
     if (!chatMessage.userIsBroadcaster && !chatMessage.userIsMod) {
-      return;
+      return null;
     }
 
     if (channel.enabled) {

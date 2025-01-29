@@ -6,6 +6,7 @@ import {
 } from '../../../../test/helpers';
 import { OffBotCommand } from './off.bot-command';
 import { OnBotCommand } from './on.bot-command';
+import { ChannelManagerService } from '../../channel-manager/services/channel-manager.service';
 
 describe('On bot command', () => {
   const channelRepositoryMock = {
@@ -13,7 +14,7 @@ describe('On bot command', () => {
     findOneBy: jest.fn(),
   };
   let service: OffBotCommand;
-
+  let channelManager: ChannelManagerService;
   let channel;
   let chatMessage;
 
@@ -32,7 +33,7 @@ describe('On bot command', () => {
       .compile();
 
     service = module.get(OnBotCommand);
-
+    channelManager = module.get(ChannelManagerService);
     channel = getMockChannel();
     channel.enabled = false;
 
@@ -51,9 +52,8 @@ describe('On bot command', () => {
   it('should enable the bot', async () => {
     const response = await service.execute(channel, chatMessage);
 
-    expect(response).toEqual('chat.BotIsOn');
-    expect(channelRepositoryMock.save).toHaveBeenCalled();
-    expect(channelRepositoryMock.save.mock.calls[0][0].enabled).toBeTruthy();
+    expect(response).toEqual(null);
+    expect(channelManager.enableBot).toHaveBeenCalledWith(channel);
   });
 
   it('should not respond if the user is not a broadcaster or moderator', async () => {
@@ -61,8 +61,8 @@ describe('On bot command', () => {
     chatMessage.userIsMod = false;
 
     const response = await service.execute(channel, chatMessage);
-    expect(response).toBeUndefined();
-    expect(channelRepositoryMock.save).not.toHaveBeenCalled();
+    expect(response).toBeNull();
+    expect(channelManager.enableBot).not.toHaveBeenCalled();
   });
 
   it('should respond that the bot is already on', async () => {
@@ -70,7 +70,7 @@ describe('On bot command', () => {
 
     const response = await service.execute(channel, chatMessage);
     expect(response).toEqual('chat.AlreadyOn');
-    expect(channelRepositoryMock.save).not.toHaveBeenCalled();
+    expect(channelManager.enableBot).not.toHaveBeenCalled();
   });
 
   it('should always trigger regardless of whether the bot is enabled', () => {
