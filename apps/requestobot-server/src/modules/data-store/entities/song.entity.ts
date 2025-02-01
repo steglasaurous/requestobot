@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { Game } from './game.entity';
@@ -16,6 +17,7 @@ import { SongRequest } from './song-request.entity';
 // typeorm - have to manage it manually.
 // https://orkhan.gitbook.io/typeorm/docs/indices#disabling-synchronization
 @Index('songSearchIdx', { synchronize: false })
+@Unique(['songHash', 'game'])
 export class Song {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,7 +25,7 @@ export class Song {
   /**
    * A hash or any string that serves as a unique identifier for this song within a game.
    */
-  @Column({ unique: true })
+  @Column()
   songHash: string;
   @Column()
   title: string;
