@@ -61,6 +61,12 @@
       "options": {
         "jestConfig": "apps/requestobot-desktop/jest.config.ts"
       }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular"
+      }
     }
   }
 }

@@ -27,9 +27,13 @@
       "options": {
         "jestConfig": "apps/requestobot-server/jest.config.ts",
         "codeCoverage": true,
-        "coverageReporters": [
-          "html"
-        ]
+        "coverageReporters": ["html"]
+      }
+    },
+    "version": {
+      "executor": "@jscutlery/semver:version",
+      "options": {
+        "preset": "angular"
       }
     }
   }
