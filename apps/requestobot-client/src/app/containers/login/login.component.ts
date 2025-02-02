@@ -22,11 +22,10 @@ import { ToastrService } from 'ngx-toastr';
 declare let window: WindowWithElectron;
 
 @Component({
-  selector: 'app-login',
-  standalone: true,
-  imports: [ButtonPrimaryComponent, InputTextComponent, ReactiveFormsModule],
-  providers: [],
-  templateUrl: './login.component.html',
+    selector: 'app-login',
+    imports: [ButtonPrimaryComponent, InputTextComponent, ReactiveFormsModule],
+    providers: [],
+    templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
   formGroup = new FormGroup({
