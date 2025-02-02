@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, isDevMode, OnInit } from '@angular/core';
 import { WindowWithElectron } from '../../models/window.global';
 import { QUEUEBOT_API_BASE_URL } from '../../app.config';
 import { ButtonPrimaryComponent } from '../../components/button-primary/button-primary.component';
@@ -18,14 +18,20 @@ import {
   LoginProcessState,
 } from '../../state/auth/auth.reducer';
 import { ToastrService } from 'ngx-toastr';
+import { NgIf } from '@angular/common';
 
 declare let window: WindowWithElectron;
 
 @Component({
-    selector: 'app-login',
-    imports: [ButtonPrimaryComponent, InputTextComponent, ReactiveFormsModule],
-    providers: [],
-    templateUrl: './login.component.html'
+  selector: 'app-login',
+  imports: [
+    ButtonPrimaryComponent,
+    InputTextComponent,
+    ReactiveFormsModule,
+    NgIf,
+  ],
+  providers: [],
+  templateUrl: './login.component.html',
 })
 export class LoginComponent implements OnInit {
   formGroup = new FormGroup({
@@ -84,4 +90,5 @@ export class LoginComponent implements OnInit {
   }
 
   protected readonly LoginProcessState = LoginProcessState;
+  protected readonly isDevMode = isDevMode;
 }
