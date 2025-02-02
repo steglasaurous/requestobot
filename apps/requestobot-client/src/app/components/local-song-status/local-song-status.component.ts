@@ -7,10 +7,9 @@ import { Store } from '@ngrx/store';
 import { selectSongDownloadStates } from '../../state/song-requests/song-requests.selectors';
 
 @Component({
-  selector: 'app-local-song-status',
-  standalone: true,
-  imports: [MatIconModule, MatProgressSpinner],
-  templateUrl: './local-song-status.component.html',
+    selector: 'app-local-song-status',
+    imports: [MatIconModule, MatProgressSpinner],
+    templateUrl: './local-song-status.component.html'
 })
 export class LocalSongStatusComponent implements OnInit {
   @Input()

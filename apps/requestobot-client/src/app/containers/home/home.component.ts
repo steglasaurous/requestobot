@@ -24,22 +24,21 @@ import { SettingsComponent } from '../../components/settings/settings.component'
 import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [
-    QueueListComponent,
-    NgIf,
-    MatSlideToggleModule,
-    ButtonPrimaryComponent,
-    PanelComponent,
-    NgForOf,
-    NgClass,
-    MatProgressSpinner,
-    MatIcon,
-    MatTooltip,
-  ],
-  providers: [],
-  templateUrl: './home.component.html',
+    selector: 'app-home',
+    imports: [
+        QueueListComponent,
+        NgIf,
+        MatSlideToggleModule,
+        ButtonPrimaryComponent,
+        PanelComponent,
+        NgForOf,
+        NgClass,
+        MatProgressSpinner,
+        MatIcon,
+        MatTooltip,
+    ],
+    providers: [],
+    templateUrl: './home.component.html'
 })
 export class HomeComponent {
   channelName = '';

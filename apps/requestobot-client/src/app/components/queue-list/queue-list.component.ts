@@ -18,17 +18,16 @@ import { SongRequestsActions } from '../../state/song-requests/song-requests.act
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
 
 @Component({
-  selector: 'app-queue-list',
-  standalone: true,
-  imports: [
-    CommonModule,
-    DragDropModule,
-    MatIcon,
-    LocalSongStatusComponent,
-    PanelComponent,
-  ],
-  providers: [],
-  templateUrl: './queue-list.component.html',
+    selector: 'app-queue-list',
+    imports: [
+        CommonModule,
+        DragDropModule,
+        MatIcon,
+        LocalSongStatusComponent,
+        PanelComponent,
+    ],
+    providers: [],
+    templateUrl: './queue-list.component.html'
 })
 export class QueueListComponent implements OnInit, OnDestroy {
   songRequests: SongRequestDto[] = [];

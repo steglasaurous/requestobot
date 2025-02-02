@@ -1,10 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-button-primary',
-  standalone: true,
-  imports: [],
-  templateUrl: './button-primary.component.html',
+    selector: 'app-button-primary',
+    imports: [],
+    templateUrl: './button-primary.component.html'
 })
 export class ButtonPrimaryComponent {
   @Input()

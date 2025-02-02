@@ -6,18 +6,17 @@ import {
 } from '@angular/forms';
 
 @Component({
-  selector: 'app-input-text',
-  standalone: true,
-  imports: [FormsModule],
-  providers: [
-    // Not sure what exactly this does - would like to understand this better
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputTextComponent),
-      multi: true,
-    },
-  ],
-  templateUrl: './input-text.component.html',
+    selector: 'app-input-text',
+    imports: [FormsModule],
+    providers: [
+        // Not sure what exactly this does - would like to understand this better
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: forwardRef(() => InputTextComponent),
+            multi: true,
+        },
+    ],
+    templateUrl: './input-text.component.html'
 })
 export class InputTextComponent implements ControlValueAccessor {
   value: string = '';

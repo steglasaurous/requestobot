@@ -115,6 +115,10 @@ Everything below here is useful if you want to contribute towards developing the
 7. Start angular client with `nx serve requestobot-client`
 8. Start electron app with `nx serve requestobot-desktop`.  Note in this mode the electron app loads the client via the served requestobot-client.  When building the output electron app, it will be embedded in the electron app itself.
 
+> **NOTE**
+> Building on linux: If you run into an error during npm install that includes `ModuleNotFoundError: No module named 'distutils'`, make sure to install
+> Python's `setuptools` package on your distro.  For Ubuntu, use: `sudo apt install python3-setuptools`
+
 # Unit tests
 
 Unit tests are an ongoing saga, but the goal is to have most things covered with tests, if not all.  requestobot-server in particular is of particular

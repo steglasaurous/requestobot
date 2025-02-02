@@ -7,10 +7,9 @@ import { selectChannel } from '../../state/channel/channel.selectors';
 import { AuthActions } from '../../state/auth/auth.actions';
 
 @Component({
-  selector: 'app-join',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './join.component.html',
+    selector: 'app-join',
+    imports: [CommonModule],
+    templateUrl: './join.component.html'
 })
 export class JoinComponent {
   channel$ = this.store.select(selectChannel);
