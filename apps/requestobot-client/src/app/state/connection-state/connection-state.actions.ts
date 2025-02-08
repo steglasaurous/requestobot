@@ -7,5 +7,6 @@ export const ConnectionStateActions = createActionGroup({
     'Not Authenticated': emptyProps(),
     Authenticated: emptyProps(),
     'Refresh Auth': emptyProps(),
+    'Connection Failure': emptyProps(),
   },
 });

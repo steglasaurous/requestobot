@@ -59,13 +59,16 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.openQueue),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      switchMap(([action, channelDto]) =>
-        this.queuebotApiService.openQueue(channelDto.id).pipe(
+      switchMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService.openQueue(channelDto.id).pipe(
           map(() => {
             return ChannelActions.openQueueSuccess();
           })
-        )
-      )
+        );
+      })
     )
   );
 
@@ -73,13 +76,16 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.closeQueue),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      switchMap(([action, channelDto]) =>
-        this.queuebotApiService.closeQueue(channelDto.id).pipe(
+      switchMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService.closeQueue(channelDto.id).pipe(
           map(() => {
             return ChannelActions.closeQueueSuccess();
           })
-        )
-      )
+        );
+      })
     )
   );
 
@@ -87,13 +93,18 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.setGame),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      switchMap(([action, channelDto]) =>
-        this.queuebotApiService.setGame(channelDto.id, action.game.id).pipe(
-          map(() => {
-            return ChannelActions.setGameSuccess();
-          })
-        )
-      )
+      switchMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService
+          .setGame(channelDto.id, action.game.id)
+          .pipe(
+            map(() => {
+              return ChannelActions.setGameSuccess();
+            })
+          );
+      })
     )
   );
 
@@ -108,13 +119,16 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.clearQueue),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      switchMap(([action, channelDto]) =>
-        this.queuebotApiService.clearQueue(channelDto.id).pipe(
+      switchMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService.clearQueue(channelDto.id).pipe(
           map(() => {
             return ChannelActions.clearQueueSuccess();
           })
-        )
-      )
+        );
+      })
     )
   );
 
@@ -122,15 +136,18 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.setSetting),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      switchMap(([action, channelDto]) =>
-        this.queuebotApiService
+      switchMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService
           .setSetting(channelDto.id, action.settingName, action.value)
           .pipe(
             map(() => {
               return ChannelActions.setSettingSuccess();
             })
-          )
-      )
+          );
+      })
     )
   );
 
@@ -138,15 +155,18 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.joinChannel),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      switchMap(([action, channelDto]) =>
-        this.queuebotApiService
+      switchMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService
           .joinChannel('twitch', channelDto.channelName)
           .pipe(
             map(() => {
               return ChannelActions.joinChannelSuccess();
             })
-          )
-      )
+          );
+      })
     )
   );
 
@@ -191,11 +211,14 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.enableBot),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      exhaustMap(([action, channelDto]) =>
-        this.queuebotApiService
+      exhaustMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService
           .enableBot(channelDto.id)
-          .pipe(map(() => ChannelActions.enableBotSuccess()))
-      )
+          .pipe(map(() => ChannelActions.enableBotSuccess()));
+      })
     )
   );
 
@@ -203,11 +226,14 @@ export class ChannelEffects {
     this.actions$.pipe(
       ofType(ChannelActions.disableBot),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      exhaustMap(([action, channelDto]) =>
-        this.queuebotApiService
+      exhaustMap(([action, channelDto]) => {
+        if (!channelDto) {
+          return EMPTY;
+        }
+        return this.queuebotApiService
           .disableBot(channelDto.id)
-          .pipe(map(() => ChannelActions.disableBotSuccess()))
-      )
+          .pipe(map(() => ChannelActions.disableBotSuccess()));
+      })
     )
   );
 

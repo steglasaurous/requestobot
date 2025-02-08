@@ -1,4 +1,9 @@
-import { createFeatureSelector } from '@ngrx/store';
-import { ChannelDto } from '@requestobot/util-dto';
+import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { ChannelState } from './channel.reducer';
 
-export const selectChannel = createFeatureSelector<ChannelDto>('channel');
+export const selectChannelState =
+  createFeatureSelector<ChannelState>('channel');
+
+export const selectChannel = createSelector(selectChannelState, (state) => {
+  return state.channel;
+});

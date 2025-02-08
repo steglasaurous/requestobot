@@ -16,5 +16,9 @@ export const connectionStateReducer = createReducer(
   on(ConnectionStateActions.notAuthenticated, (state) => ({
     ...state,
     authState: AuthState.NotAuthenticated,
+  })),
+  on(ConnectionStateActions.connectionFailure, (state) => ({
+    ...state,
+    authState: AuthState.ConnectionFailure,
   }))
 );

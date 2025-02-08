@@ -7,9 +7,9 @@ import { selectChannel } from '../../state/channel/channel.selectors';
 import { AuthActions } from '../../state/auth/auth.actions';
 
 @Component({
-    selector: 'app-join',
-    imports: [CommonModule],
-    templateUrl: './join.component.html'
+  selector: 'app-join',
+  imports: [CommonModule],
+  templateUrl: './join.component.html',
 })
 export class JoinComponent {
   channel$ = this.store.select(selectChannel);
@@ -26,7 +26,7 @@ export class JoinComponent {
     }
 
     this.channel$.subscribe((channel) => {
-      if (channel.id > 0) {
+      if (channel) {
         this.store.dispatch(ChannelActions.joinChannel());
       } else {
         this.store.dispatch(

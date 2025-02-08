@@ -23,15 +23,18 @@ export class SongRequestsEffects {
     this.actions$.pipe(
       ofType(SongRequestsActions.getQueue),
       concatLatestFrom((action) => this.store.select(selectChannel)),
-      exhaustMap(([action, channel]) =>
-        this.queuebotApiService.getSongRequestQueue(channel.id).pipe(
+      exhaustMap(([action, channel]) => {
+        if (!channel) {
+          return EMPTY;
+        }
+        return this.queuebotApiService.getSongRequestQueue(channel.id).pipe(
           switchMap((songRequests) => {
             return of(
               SongRequestsActions.updateQueue({ songRequests: songRequests })
             );
           })
-        )
-      )
+        );
+      })
     )
   );
 
@@ -95,6 +98,9 @@ export class SongRequestsEffects {
             channel,
             songRequestQueue,
           ]) => {
+            if (!channel) {
+              return EMPTY;
+            }
             this.queuebotApiService
               .swapOrder(
                 channel.id,
@@ -118,6 +124,9 @@ export class SongRequestsEffects {
         ofType(SongRequestsActions.deleteRequest),
         concatLatestFrom(() => [this.store.select(selectChannel)]),
         exhaustMap(([{ songRequestId }, channel]) => {
+          if (!channel) {
+            return EMPTY;
+          }
           this.queuebotApiService
             .deleteSongRequest(channel.id, songRequestId)
             .subscribe({
@@ -141,6 +150,9 @@ export class SongRequestsEffects {
         ofType(SongRequestsActions.setRequestActive),
         concatLatestFrom(() => [this.store.select(selectChannel)]),
         exhaustMap(([{ songRequestId }, channel]) => {
+          if (!channel) {
+            return EMPTY;
+          }
           this.queuebotApiService
             .setSongRequestActive(channel.id, songRequestId)
             .subscribe({
@@ -167,6 +179,9 @@ export class SongRequestsEffects {
         ofType(SongRequestsActions.nextSong),
         concatLatestFrom(() => [this.store.select(selectChannel)]),
         exhaustMap(([action, channel]) => {
+          if (!channel) {
+            return EMPTY;
+          }
           this.queuebotApiService.nextSong(channel.id).subscribe({
             next: () => {
               // Dispatch a next song complete
@@ -189,6 +204,10 @@ export class SongRequestsEffects {
         ofType(SongRequestsActions.connectWebsocket),
         concatLatestFrom((action) => this.store.select(selectChannel)),
         exhaustMap(([action, channel]) => {
+          if (!channel) {
+            return EMPTY;
+          }
+
           this.websocketService.connect({
             next: () => {
               this.websocketService.sendMessage({

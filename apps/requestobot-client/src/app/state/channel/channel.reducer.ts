@@ -3,38 +3,79 @@ import { createReducer, on } from '@ngrx/store';
 import { ChannelActions } from './channel.actions';
 import { AuthActions } from '../auth/auth.actions';
 
-export const initialState: ChannelDto = {
-  id: 0,
-  channelName: '',
-  inChannel: false,
-  queueOpen: false,
-  enabled: false,
-  chatServiceName: 'twitch',
-  game: {
-    id: 0,
-    displayName: '',
-    setGameName: '',
-    twitchCategoryId: '0',
-    name: '',
-  },
+export enum ChannelLoadedState {
+  NotLoaded,
+  Loaded,
+  Fail,
+  NotFound,
+}
+
+export interface ChannelState {
+  channelLoadedState: ChannelLoadedState;
+  channel?: ChannelDto;
+}
+
+export const initialState: ChannelState = {
+  channelLoadedState: ChannelLoadedState.NotLoaded,
+  channel: undefined,
 };
+
+// export const initialState: ChannelDto = {
+//   id: 0,
+//   channelName: '',
+//   inChannel: false,
+//   queueOpen: false,
+//   enabled: false,
+//   chatServiceName: 'twitch',
+//   game: {
+//     id: 0,
+//     displayName: '',
+//     setGameName: '',
+//     twitchCategoryId: '0',
+//     name: '',
+//   },
+// };
 export const channelReducer = createReducer(
   initialState,
-  on(ChannelActions.loadChannelSuccess, (_state, { channel }) => channel),
-  on(ChannelActions.openQueue, (state) => {
-    return { ...state, queueOpen: true };
+  on(ChannelActions.loadChannelSuccess, (_state, { channel }) => {
+    return { channelLoadedState: ChannelLoadedState.Loaded, channel: channel };
   }),
-  // FIXME: Add success and fail actions for each API action, so errors can be displayed in components
+  on(
+    ChannelActions.loadChannelFail,
+    (state, { chatServiceName, channelName, error }) => {
+      let channelLoadedState = ChannelLoadedState.Fail;
+      if (error.status === 404) {
+        channelLoadedState = ChannelLoadedState.NotFound;
+      }
+      return { ...state, channelLoadedState: channelLoadedState };
+    }
+  ),
+  on(ChannelActions.openQueue, (state) => {
+    if (!state.channel) {
+      return state;
+    }
+
+    return { ...state, channel: { ...state.channel, queueOpen: true } };
+  }),
   on(ChannelActions.closeQueue, (state) => {
-    return { ...state, queueOpen: false };
+    if (!state.channel) {
+      return state;
+    }
+    return { ...state, channel: { ...state.channel, queueOpen: false } };
   }),
   on(ChannelActions.setGame, (state, { game }) => {
-    return { ...state, game: game };
+    if (!state.channel) {
+      return state;
+    }
+    return { ...state, channel: { ...state.channel, game: game } };
   }),
   on(ChannelActions.setSetting, (state, { settingName, value }) => {
+    if (!state.channel) {
+      return state;
+    }
     const settings: SettingDto[] = [];
-    if (state.settings) {
-      for (const setting of state.settings) {
+    if (state.channel && state.channel.settings) {
+      for (const setting of state.channel.settings) {
         settings.push({ ...setting });
       }
     }
@@ -43,25 +84,31 @@ export const channelReducer = createReducer(
       if (setting.settingName === settingName) {
         setting.value = value;
 
-        return { ...state, settings: settings };
+        return { ...state, channel: { ...state.channel, settings: settings } };
       }
     }
     // If it doesnt exist, we add it.
     settings.push({
       settingName: settingName,
       value: value,
-      channelId: state.id,
+      channelId: state.channel.id,
     });
 
-    return { ...state, settings: settings };
+    return { ...state, channel: { ...state.channel, settings: settings } };
   }),
   on(AuthActions.logout, () => {
     return initialState;
   }),
   on(ChannelActions.enableBot, (state) => {
-    return { ...state, enabled: true };
+    if (!state.channel) {
+      return state;
+    }
+    return { ...state, channel: { ...state.channel, enabled: true } };
   }),
   on(ChannelActions.disableBot, (state) => {
+    if (!state.channel) {
+      return state;
+    }
     return { ...state, enabled: false };
   })
 );

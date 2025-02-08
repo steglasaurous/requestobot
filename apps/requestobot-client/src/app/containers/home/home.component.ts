@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { Store } from '@ngrx/store';
 import { ChannelActions } from '../../state/channel/channel.actions';
-import { selectChannel } from '../../state/channel/channel.selectors';
+import { selectChannelState } from '../../state/channel/channel.selectors';
 import { AuthState } from '../../models/auth-state.enum';
 import { ConnectionStateActions } from '../../state/connection-state/connection-state.actions';
 import { selectConnectionState } from '../../state/connection-state/connection-state.selector';
@@ -22,27 +22,29 @@ import { AuthActions } from '../../state/auth/auth.actions';
 import { MatIcon } from '@angular/material/icon';
 import { SettingsComponent } from '../../components/settings/settings.component';
 import { MatTooltip } from '@angular/material/tooltip';
+import { ChannelLoadedState } from '../../state/channel/channel.reducer';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
-    selector: 'app-home',
-    imports: [
-        QueueListComponent,
-        NgIf,
-        MatSlideToggleModule,
-        ButtonPrimaryComponent,
-        PanelComponent,
-        NgForOf,
-        NgClass,
-        MatProgressSpinner,
-        MatIcon,
-        MatTooltip,
-    ],
-    providers: [],
-    templateUrl: './home.component.html'
+  selector: 'app-home',
+  imports: [
+    QueueListComponent,
+    NgIf,
+    MatSlideToggleModule,
+    ButtonPrimaryComponent,
+    PanelComponent,
+    NgForOf,
+    NgClass,
+    MatProgressSpinner,
+    MatIcon,
+    MatTooltip,
+  ],
+  providers: [],
+  templateUrl: './home.component.html',
 })
 export class HomeComponent {
   channelName = '';
-  channel$ = this.store.select(selectChannel);
+  channelState$ = this.store.select(selectChannelState);
   connectionState$ = this.store.select(selectConnectionState);
   channel: ChannelDto = {
     id: 0,
@@ -68,7 +70,8 @@ export class HomeComponent {
   constructor(
     private settingsService: SettingsService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private toastr: ToastrService
   ) {
     this.games$.subscribe((games) => {
       this.games = games;
@@ -85,17 +88,23 @@ export class HomeComponent {
 
           this.updateChannelInfo();
         });
+      } else if (connectionState.authState === AuthState.ConnectionFailure) {
+        this.toastr.error('Failed to connect to the server, retrying...');
       }
     });
 
     // This checks to make sure our JWT is valid.  If not, it'll attempt to refresh it with a refresh token.
     this.store.dispatch(ConnectionStateActions.checkAuth());
+    this.channelState$.subscribe((channelState) => {
+      if (channelState.channelLoadedState === ChannelLoadedState.Fail) {
+        // FIXME: do a retry of some sort here?  or in effects?
+        this.toastr.error('Failed to load channel details from API');
+      }
+      const channel = channelState.channel;
+      if (channel) {
+        this.channel = channel;
 
-    this.channel$.subscribe((channel) => {
-      this.channel = channel;
-
-      // Do checks
-      if (channel.id > 0) {
+        // Do checks
         if (!channel.inChannel) {
           // The bot is not present in the user's channel.  Goto join to ask to invite it back.
           this.router.navigate(['join']);

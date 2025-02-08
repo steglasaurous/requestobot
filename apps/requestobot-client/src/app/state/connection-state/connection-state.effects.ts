@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { ConnectionStateActions } from './connection-state.actions';
-import { EMPTY, exhaustMap, map, of } from 'rxjs';
+import { delay, exhaustMap, map, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthActions } from '../auth/auth.actions';
@@ -35,10 +35,18 @@ export class ConnectionStateEffects {
 
             // Any other error is either a server-side problem or connection issue.
             // FIXME: Do a retry on a regular interval of some sort.
-            return EMPTY;
+            return of(ConnectionStateActions.connectionFailure());
           })
         )
       )
+    )
+  );
+
+  retryAuth$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ConnectionStateActions.connectionFailure),
+      delay(5000),
+      exhaustMap(() => of(ConnectionStateActions.checkAuth()))
     )
   );
 
