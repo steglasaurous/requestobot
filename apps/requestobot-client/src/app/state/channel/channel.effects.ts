@@ -3,7 +3,7 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { concatLatestFrom } from '@ngrx/operators';
 import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { ChannelActions } from './channel.actions';
-import { EMPTY, exhaustMap, map, of, switchMap } from 'rxjs';
+import { delay, EMPTY, exhaustMap, map, of, switchMap } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -37,22 +37,23 @@ export class ChannelEffects {
     )
   );
 
-  loadChannelFail$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(ChannelActions.loadChannelFail),
-        exhaustMap(({ channelName, chatServiceName, error }) => {
-          console.log('loadChannelFail$');
-          // FIXME: Dispatch action to update status of connection.
-
-          if (error.status === 404) {
-            this.router.navigate(['join']);
-          }
-
+  loadChannelFail$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ChannelActions.loadChannelFail),
+      exhaustMap(({ channelName, chatServiceName, error }) => {
+        if (error.status === 404) {
+          this.router.navigate(['join']);
           return EMPTY;
-        })
-      ),
-    { dispatch: false }
+        }
+
+        return of(
+          ChannelActions.loadChannel({
+            chatServiceName: chatServiceName,
+            channelName: channelName,
+          })
+        ).pipe(delay(5000));
+      })
+    )
   );
 
   openQueue$ = createEffect(() =>

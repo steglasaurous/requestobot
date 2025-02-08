@@ -1,4 +1,4 @@
-export enum AuthState {
+export enum AuthorizedState {
   Unknown,
   Authenticated,
   NotAuthenticated,

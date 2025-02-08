@@ -12,9 +12,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
 import { Store } from '@ngrx/store';
 import { ChannelActions } from '../../state/channel/channel.actions';
 import { selectChannelState } from '../../state/channel/channel.selectors';
-import { AuthState } from '../../models/auth-state.enum';
-import { ConnectionStateActions } from '../../state/connection-state/connection-state.actions';
-import { selectConnectionState } from '../../state/connection-state/connection-state.selector';
+import { AuthorizedState } from '../../models/authorized-state.enum';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GamesActions } from '../../state/games/games.actions';
 import { selectGamesState } from '../../state/games/games.selector';
@@ -24,6 +22,7 @@ import { SettingsComponent } from '../../components/settings/settings.component'
 import { MatTooltip } from '@angular/material/tooltip';
 import { ChannelLoadedState } from '../../state/channel/channel.reducer';
 import { ToastrService } from 'ngx-toastr';
+import { selectAuth } from '../../state/auth/auth.selectors';
 
 @Component({
   selector: 'app-home',
@@ -45,7 +44,7 @@ import { ToastrService } from 'ngx-toastr';
 export class HomeComponent {
   channelName = '';
   channelState$ = this.store.select(selectChannelState);
-  connectionState$ = this.store.select(selectConnectionState);
+  authState$ = this.store.select(selectAuth);
   channel: ChannelDto = {
     id: 0,
     channelName: '',
@@ -77,8 +76,8 @@ export class HomeComponent {
       this.games = games;
     });
 
-    this.connectionState$.subscribe(async (connectionState) => {
-      if (connectionState.authState === AuthState.Authenticated) {
+    this.authState$.subscribe(async (authState) => {
+      if (authState.authState === AuthorizedState.Authenticated) {
         // We're clear to proceed.
         this.store.dispatch(GamesActions.getGames());
         this.settingsService.getValue('username').then((value) => {
@@ -88,13 +87,13 @@ export class HomeComponent {
 
           this.updateChannelInfo();
         });
-      } else if (connectionState.authState === AuthState.ConnectionFailure) {
+      } else if (authState.authState === AuthorizedState.ConnectionFailure) {
         this.toastr.error('Failed to connect to the server, retrying...');
       }
     });
 
     // This checks to make sure our JWT is valid.  If not, it'll attempt to refresh it with a refresh token.
-    this.store.dispatch(ConnectionStateActions.checkAuth());
+    this.store.dispatch(AuthActions.checkAuth());
     this.channelState$.subscribe((channelState) => {
       if (channelState.channelLoadedState === ChannelLoadedState.Fail) {
         // FIXME: do a retry of some sort here?  or in effects?

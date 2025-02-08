@@ -15,8 +15,6 @@ import { provideEffects } from '@ngrx/effects';
 import { channelReducer } from './state/channel/channel.reducer';
 import { ChannelEffects } from './state/channel/channel.effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-import { connectionStateReducer } from './state/connection-state/connection-state.reducer';
-import { ConnectionStateEffects } from './state/connection-state/connection-state.effects';
 import { GamesEffects } from './state/games/games.effects';
 import { gamesReducer } from './state/games/games.reducer';
 import { AuthEffects } from './state/auth/auth.effects';
@@ -35,7 +33,6 @@ export const appConfig: ApplicationConfig = {
     provideStoreDevtools({ logOnly: !isDevMode() }),
     provideEffects(
       ChannelEffects,
-      ConnectionStateEffects,
       GamesEffects,
       AuthEffects,
       SettingsEffects,
@@ -43,7 +40,6 @@ export const appConfig: ApplicationConfig = {
     ),
     provideStore({
       channel: channelReducer,
-      connectionState: connectionStateReducer,
       games: gamesReducer,
       auth: authReducer,
       settings: settingsReducer,
