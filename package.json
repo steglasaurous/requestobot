@@ -1,6 +1,7 @@
 {
   "name": "@requestobot/requestobot",
-  "version": "1.6.0",
+  "author": "steglasaurous",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "postinstall": "electron-builder install-app-deps && electron-builder install-app-deps",
