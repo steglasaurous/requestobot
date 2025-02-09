@@ -16,18 +16,19 @@ import {
 } from '../../state/song-requests/song-requests.selectors';
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
+import { WebsocketActions } from '../../state/websocket/websocket.actions';
 
 @Component({
-    selector: 'app-queue-list',
-    imports: [
-        CommonModule,
-        DragDropModule,
-        MatIcon,
-        LocalSongStatusComponent,
-        PanelComponent,
-    ],
-    providers: [],
-    templateUrl: './queue-list.component.html'
+  selector: 'app-queue-list',
+  imports: [
+    CommonModule,
+    DragDropModule,
+    MatIcon,
+    LocalSongStatusComponent,
+    PanelComponent,
+  ],
+  providers: [],
+  templateUrl: './queue-list.component.html',
 })
 export class QueueListComponent implements OnInit, OnDestroy {
   songRequests: SongRequestDto[] = [];
@@ -56,11 +57,11 @@ export class QueueListComponent implements OnInit, OnDestroy {
     });
 
     this.store.dispatch(SongRequestsActions.getQueue());
-    this.store.dispatch(SongRequestsActions.connectWebsocket());
+    this.store.dispatch(WebsocketActions.enable());
   }
 
   ngOnDestroy() {
-    this.store.dispatch(SongRequestsActions.disconnectWebsocket());
+    this.store.dispatch(WebsocketActions.disable());
   }
 
   drop($event: CdkDragDrop<any, any>) {

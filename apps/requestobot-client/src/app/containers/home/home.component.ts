@@ -11,7 +11,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { Store } from '@ngrx/store';
 import { ChannelActions } from '../../state/channel/channel.actions';
-import { selectChannelState } from '../../state/channel/channel.selectors';
+import {
+  selectChannelLoadedState,
+  selectChannelState,
+} from '../../state/channel/channel.selectors';
 import { AuthorizedState } from '../../models/authorized-state.enum';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GamesActions } from '../../state/games/games.actions';
@@ -23,6 +26,8 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { ChannelLoadedState } from '../../state/channel/channel.reducer';
 import { ToastrService } from 'ngx-toastr';
 import { selectAuth } from '../../state/auth/auth.selectors';
+import { WebsocketActions } from '../../state/websocket/websocket.actions';
+import { selectWebsocket } from '../../state/websocket/websocket.selectors';
 
 @Component({
   selector: 'app-home',
@@ -45,6 +50,8 @@ export class HomeComponent {
   channelName = '';
   channelState$ = this.store.select(selectChannelState);
   authState$ = this.store.select(selectAuth);
+  websocketState$ = this.store.select(selectWebsocket);
+  channelLoadedState$ = this.store.select(selectChannelLoadedState);
   channel: ChannelDto = {
     id: 0,
     channelName: '',
@@ -91,14 +98,21 @@ export class HomeComponent {
         this.toastr.error('Failed to connect to the server, retrying...');
       }
     });
+    this.websocketState$.subscribe((websocketState) => {
+      if (
+        websocketState.enabled &&
+        !websocketState.isConnected &&
+        websocketState.lastConnectionErrorMessage
+      ) {
+        this.toastr.error('Websocket disconnected, retrying...');
+      } else if (websocketState.enabled && websocketState.isConnected) {
+        this.toastr.info('Websocket connected');
+      }
+    });
 
     // This checks to make sure our JWT is valid.  If not, it'll attempt to refresh it with a refresh token.
     this.store.dispatch(AuthActions.checkAuth());
     this.channelState$.subscribe((channelState) => {
-      if (channelState.channelLoadedState === ChannelLoadedState.Fail) {
-        // FIXME: do a retry of some sort here?  or in effects?
-        this.toastr.error('Failed to load channel details from API');
-      }
       const channel = channelState.channel;
       if (channel) {
         this.channel = channel;
@@ -110,6 +124,15 @@ export class HomeComponent {
 
           return;
         }
+      }
+    });
+
+    this.channelLoadedState$.subscribe((channelLoadedState) => {
+      if (channelLoadedState === ChannelLoadedState.Loaded) {
+        this.store.dispatch(WebsocketActions.enable());
+      }
+      if (channelLoadedState === ChannelLoadedState.Fail) {
+        this.toastr.error('Failed to load channel details from API');
       }
     });
   }

@@ -7,3 +7,10 @@ export const selectChannelState =
 export const selectChannel = createSelector(selectChannelState, (state) => {
   return state.channel;
 });
+
+export const selectChannelLoadedState = createSelector(
+  selectChannelState,
+  (state) => {
+    return state.channelLoadedState;
+  }
+);

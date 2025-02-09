@@ -25,6 +25,8 @@ import { songRequestsReducer } from './state/song-requests/song-requests.reducer
 import { SongRequestsEffects } from './state/song-requests/song-requests.effects';
 import { WebsocketService } from './services/websocket.service';
 import { provideToastr } from 'ngx-toastr';
+import { WebsocketEffects } from './state/websocket/websocket.effects';
+import { websocketReducer } from './state/websocket/websocket.reducer';
 export const QUEUEBOT_API_BASE_URL = 'queuebot_api_base_url';
 export const WEBSOCKET_URL = 'websocket_url';
 
@@ -36,7 +38,8 @@ export const appConfig: ApplicationConfig = {
       GamesEffects,
       AuthEffects,
       SettingsEffects,
-      SongRequestsEffects
+      SongRequestsEffects,
+      WebsocketEffects
     ),
     provideStore({
       channel: channelReducer,
@@ -44,6 +47,7 @@ export const appConfig: ApplicationConfig = {
       auth: authReducer,
       settings: settingsReducer,
       songRequests: songRequestsReducer,
+      websocket: websocketReducer,
     }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),

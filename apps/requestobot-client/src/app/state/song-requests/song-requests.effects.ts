@@ -7,7 +7,6 @@ import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { concatLatestFrom } from '@ngrx/operators';
 import { selectChannel } from '../channel/channel.selectors';
 import { WebsocketService } from '../../services/websocket.service';
-import { SongRequestDto } from '@requestobot/util-dto';
 import {
   selectSongDownloadStates,
   selectSongRequestQueue,
@@ -190,52 +189,6 @@ export class SongRequestsEffects {
             error: (err) => {
               console.log('nextSong failed', err);
             },
-          });
-
-          return EMPTY;
-        })
-      ),
-    { dispatch: false }
-  );
-
-  connectWebsocket$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(SongRequestsActions.connectWebsocket),
-        concatLatestFrom((action) => this.store.select(selectChannel)),
-        exhaustMap(([action, channel]) => {
-          if (!channel) {
-            return EMPTY;
-          }
-
-          this.websocketService.connect({
-            next: () => {
-              this.websocketService.sendMessage({
-                event: 'subscribe',
-                data: {
-                  chatServiceName: channel.chatServiceName,
-                  channelName: channel.channelName,
-                },
-              });
-            },
-            error: (err) => {
-              console.log('Websocket connection error', err);
-            },
-            complete: () => {
-              console.log('Websocket connection complete called');
-            },
-          });
-          this.websocketService.messages$.subscribe(async (message) => {
-            console.log(message);
-
-            if (message.event == 'songRequestQueueChanged') {
-              console.log('websocket', message.data);
-              this.store.dispatch(
-                SongRequestsActions.updateQueue({
-                  songRequests: message.data as SongRequestDto[],
-                })
-              );
-            }
           });
 
           return EMPTY;
