@@ -36,7 +36,7 @@ export const ChannelActions = createActionGroup({
     'Set Game Fail': props<{ error: HttpErrorResponse }>(),
     'Set Setting': props<{ settingName: string; value: string }>(),
     'Set Setting Success': emptyProps(),
-    'Set Setting Fail': props<{ error: string }>(),
+    'Set Setting Fail': props<{ error: HttpErrorResponse }>(),
     'Enable Bot': emptyProps(),
     'Enable Bot Success': emptyProps(),
     'Enable Bot Fail': props<{ error: HttpErrorResponse }>(),

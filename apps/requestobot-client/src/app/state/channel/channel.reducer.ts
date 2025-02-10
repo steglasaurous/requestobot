@@ -20,21 +20,6 @@ export const initialState: ChannelState = {
   channel: undefined,
 };
 
-// export const initialState: ChannelDto = {
-//   id: 0,
-//   channelName: '',
-//   inChannel: false,
-//   queueOpen: false,
-//   enabled: false,
-//   chatServiceName: 'twitch',
-//   game: {
-//     id: 0,
-//     displayName: '',
-//     setGameName: '',
-//     twitchCategoryId: '0',
-//     name: '',
-//   },
-// };
 export const channelReducer = createReducer(
   initialState,
   on(ChannelActions.loadChannelSuccess, (_state, { channel }) => {

@@ -30,7 +30,7 @@ import { WebsocketActions } from '../../state/websocket/websocket.actions';
   providers: [],
   templateUrl: './queue-list.component.html',
 })
-export class QueueListComponent implements OnInit, OnDestroy {
+export class QueueListComponent implements OnInit {
   songRequests: SongRequestDto[] = [];
 
   downloadedSongStatus: SongDownloadStates = {};
@@ -57,11 +57,6 @@ export class QueueListComponent implements OnInit, OnDestroy {
     });
 
     this.store.dispatch(SongRequestsActions.getQueue());
-    this.store.dispatch(WebsocketActions.enable());
-  }
-
-  ngOnDestroy() {
-    this.store.dispatch(WebsocketActions.disable());
   }
 
   drop($event: CdkDragDrop<any, any>) {

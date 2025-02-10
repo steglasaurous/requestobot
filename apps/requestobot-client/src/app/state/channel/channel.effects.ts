@@ -67,7 +67,14 @@ export class ChannelEffects {
         return this.queuebotApiService.openQueue(channelDto.id).pipe(
           map(() => {
             return ChannelActions.openQueueSuccess();
-          })
+          }),
+          catchError((err: HttpErrorResponse) =>
+            of(
+              ChannelActions.openQueueFail({
+                error: err,
+              })
+            )
+          )
         );
       })
     )
@@ -84,7 +91,14 @@ export class ChannelEffects {
         return this.queuebotApiService.closeQueue(channelDto.id).pipe(
           map(() => {
             return ChannelActions.closeQueueSuccess();
-          })
+          }),
+          catchError((err: HttpErrorResponse) =>
+            of(
+              ChannelActions.closeQueueFail({
+                error: err,
+              })
+            )
+          )
         );
       })
     )
@@ -103,7 +117,14 @@ export class ChannelEffects {
           .pipe(
             map(() => {
               return ChannelActions.setGameSuccess();
-            })
+            }),
+            catchError((err: HttpErrorResponse) =>
+              of(
+                ChannelActions.setGameFail({
+                  error: err,
+                })
+              )
+            )
           );
       })
     )
@@ -127,7 +148,14 @@ export class ChannelEffects {
         return this.queuebotApiService.clearQueue(channelDto.id).pipe(
           map(() => {
             return ChannelActions.clearQueueSuccess();
-          })
+          }),
+          catchError((err: HttpErrorResponse) =>
+            of(
+              ChannelActions.clearQueueFail({
+                error: err,
+              })
+            )
+          )
         );
       })
     )
@@ -146,7 +174,14 @@ export class ChannelEffects {
           .pipe(
             map(() => {
               return ChannelActions.setSettingSuccess();
-            })
+            }),
+            catchError((err: HttpErrorResponse) =>
+              of(
+                ChannelActions.setSettingFail({
+                  error: err,
+                })
+              )
+            )
           );
       })
     )
@@ -165,7 +200,14 @@ export class ChannelEffects {
           .pipe(
             map(() => {
               return ChannelActions.joinChannelSuccess();
-            })
+            }),
+            catchError((err: HttpErrorResponse) =>
+              of(
+                ChannelActions.joinChannelFail({
+                  error: err,
+                })
+              )
+            )
           );
       })
     )
@@ -190,7 +232,18 @@ export class ChannelEffects {
       exhaustMap(({ chatServiceName, channelName }) =>
         this.queuebotApiService
           .createChannel(chatServiceName, channelName)
-          .pipe(map(() => ChannelActions.createChannelSuccess()))
+          .pipe(
+            map(() => ChannelActions.createChannelSuccess()),
+            catchError((err: HttpErrorResponse) =>
+              of(
+                ChannelActions.createChannelFail({
+                  chatServiceName: chatServiceName,
+                  channelName: channelName,
+                  error: err,
+                })
+              )
+            )
+          )
       )
     )
   );
@@ -216,9 +269,16 @@ export class ChannelEffects {
         if (!channelDto) {
           return EMPTY;
         }
-        return this.queuebotApiService
-          .enableBot(channelDto.id)
-          .pipe(map(() => ChannelActions.enableBotSuccess()));
+        return this.queuebotApiService.enableBot(channelDto.id).pipe(
+          map(() => ChannelActions.enableBotSuccess()),
+          catchError((err: HttpErrorResponse) =>
+            of(
+              ChannelActions.enableBotFail({
+                error: err,
+              })
+            )
+          )
+        );
       })
     )
   );
@@ -231,9 +291,16 @@ export class ChannelEffects {
         if (!channelDto) {
           return EMPTY;
         }
-        return this.queuebotApiService
-          .disableBot(channelDto.id)
-          .pipe(map(() => ChannelActions.disableBotSuccess()));
+        return this.queuebotApiService.disableBot(channelDto.id).pipe(
+          map(() => ChannelActions.disableBotSuccess()),
+          catchError((err: HttpErrorResponse) =>
+            of(
+              ChannelActions.disableBotFail({
+                error: err,
+              })
+            )
+          )
+        );
       })
     )
   );
@@ -242,7 +309,6 @@ export class ChannelEffects {
     private actions$: Actions,
     private queuebotApiService: QueuebotApiService,
     private router: Router,
-    private settingsService: SettingsService,
     private store: Store
   ) {}
 }
