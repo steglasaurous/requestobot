@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { SongRequestsActions } from '../song-requests/song-requests.actions';
 import { SongRequestDto } from '@requestobot/util-dto';
 import { Injectable } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class WebsocketEffects {
@@ -35,6 +36,8 @@ export class WebsocketEffects {
                   channelName: channel.channelName,
                 },
               });
+
+              this.toastr.info('Websocket connected');
             },
             error: (err) => {
               console.log('Websocket connection error', err);
@@ -56,6 +59,7 @@ export class WebsocketEffects {
 
           this.websocketService.connectionStatus$.subscribe((status) => {
             if (!status.isConnected) {
+              this.toastr.error('Websocket disconnected, retrying...');
               this.store.dispatch(
                 WebsocketActions.connectionError({
                   message: status.errorMessage ?? '',
@@ -85,6 +89,7 @@ export class WebsocketEffects {
   constructor(
     private actions$: Actions,
     private websocketService: WebsocketService,
-    private store: Store
+    private store: Store,
+    private toastr: ToastrService
   ) {}
 }

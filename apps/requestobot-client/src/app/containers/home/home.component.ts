@@ -50,7 +50,6 @@ export class HomeComponent {
   channelName = '';
   channelState$ = this.store.select(selectChannelState);
   authState$ = this.store.select(selectAuth);
-  websocketState$ = this.store.select(selectWebsocket);
   channelLoadedState$ = this.store.select(selectChannelLoadedState);
   channel: ChannelDto = {
     id: 0,
@@ -96,17 +95,6 @@ export class HomeComponent {
         });
       } else if (authState.authState === AuthorizedState.ConnectionFailure) {
         this.toastr.error('Failed to connect to the server, retrying...');
-      }
-    });
-    this.websocketState$.subscribe((websocketState) => {
-      if (
-        websocketState.enabled &&
-        !websocketState.isConnected &&
-        websocketState.lastConnectionErrorMessage
-      ) {
-        this.toastr.error('Websocket disconnected, retrying...');
-      } else if (websocketState.enabled && websocketState.isConnected) {
-        this.toastr.info('Websocket connected');
       }
     });
 

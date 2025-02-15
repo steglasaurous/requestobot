@@ -9,7 +9,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { selectChannel } from './channel.selectors';
 import { Store } from '@ngrx/store';
-import { SettingsService } from '../../services/settings.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable()
 export class ChannelEffects {
@@ -309,6 +309,7 @@ export class ChannelEffects {
     private actions$: Actions,
     private queuebotApiService: QueuebotApiService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private toastr: ToastrService
   ) {}
 }

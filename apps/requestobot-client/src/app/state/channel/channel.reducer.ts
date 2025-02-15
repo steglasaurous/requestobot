@@ -42,11 +42,25 @@ export const channelReducer = createReducer(
 
     return { ...state, channel: { ...state.channel, queueOpen: true } };
   }),
+  on(ChannelActions.openQueueFail, (state) => {
+    if (!state.channel) {
+      return state;
+    }
+
+    return { ...state, channel: { ...state.channel, queueOpen: false } };
+  }),
   on(ChannelActions.closeQueue, (state) => {
     if (!state.channel) {
       return state;
     }
     return { ...state, channel: { ...state.channel, queueOpen: false } };
+  }),
+  on(ChannelActions.closeQueueFail, (state) => {
+    if (!state.channel) {
+      return state;
+    }
+
+    return { ...state, channel: { ...state.channel, queueOpen: true } };
   }),
   on(ChannelActions.setGame, (state, { game }) => {
     if (!state.channel) {
