@@ -19,6 +19,7 @@ import {
 } from '../../state/auth/auth.reducer';
 import { ToastrService } from 'ngx-toastr';
 import { NgIf } from '@angular/common';
+import log from 'electron-log/renderer';
 
 declare let window: WindowWithElectron;
 
@@ -57,7 +58,7 @@ export class LoginComponent implements OnInit {
         if (authCode) {
           this.submitAuthCode(authCode);
         } else {
-          console.log('Unable to get auth code from URL');
+          log.error('Unable to get auth code from URL');
         }
       });
     }
@@ -84,7 +85,6 @@ export class LoginComponent implements OnInit {
     if (window['settings']) {
       window['settings'].openTwitchLogin();
     } else {
-      console.log('DEV: Open twitch auth in a new tab');
       window.open(`${this.apiBaseUrl}/auth/twitch?mode=authcode`, '_blank');
     }
   }

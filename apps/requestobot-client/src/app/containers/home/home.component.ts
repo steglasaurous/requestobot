@@ -175,7 +175,6 @@ export class HomeComponent {
   }
 
   setChannelSetting(settingName: string, value: string) {
-    console.log('setChannelSetting', settingName, value);
     this.store.dispatch(
       ChannelActions.setSetting({ settingName: settingName, value: value })
     );
@@ -204,10 +203,8 @@ export class HomeComponent {
 
   toggleBotEnabled() {
     if (this.channel.enabled) {
-      console.log('Disabling bot');
       this.store.dispatch(ChannelActions.disableBot());
     } else {
-      console.log('Enabling bot');
       this.store.dispatch(ChannelActions.enableBot());
     }
   }

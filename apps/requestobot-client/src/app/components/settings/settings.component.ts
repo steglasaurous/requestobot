@@ -21,19 +21,19 @@ import { SongRequestsActions } from '../../state/song-requests/song-requests.act
 declare let window: WindowWithElectron;
 
 @Component({
-    selector: 'app-settings',
-    imports: [
-        CommonModule,
-        MatButton,
-        MatDialogActions,
-        MatDialogClose,
-        MatDialogContent,
-        MatDialogTitle,
-        MatTabsModule,
-        MatSlideToggle,
-    ],
-    templateUrl: './settings.component.html',
-    styleUrl: './settings.component.css'
+  selector: 'app-settings',
+  imports: [
+    CommonModule,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    MatDialogTitle,
+    MatTabsModule,
+    MatSlideToggle,
+  ],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.css',
 })
 export class SettingsComponent {
   settings$ = this.store.select(selectSettings);
@@ -44,7 +44,6 @@ export class SettingsComponent {
     private store: Store
   ) {
     this.settings$.subscribe((settings) => {
-      console.log('settings', settings);
       this.settings = settings;
     });
 

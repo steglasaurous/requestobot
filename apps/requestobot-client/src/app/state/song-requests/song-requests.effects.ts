@@ -13,6 +13,7 @@ import {
 } from './song-requests.selectors';
 import { WindowWithElectron } from '../../models/window.global';
 import { LocalSongState } from '@requestobot/util-client-common';
+import log from 'electron-log/renderer';
 
 declare let window: WindowWithElectron;
 
@@ -47,15 +48,16 @@ export class SongRequestsEffects {
           for (const songRequest of songRequests) {
             let processSong = true;
             if (songDownloadStates[songRequest.song.id]) {
-              console.log(
-                'Song is already been processed',
-                songRequest.song.id
-              );
+              log.debug('Song is already been processed', {
+                songId: songRequest.song.id,
+              });
               processSong = false;
             }
 
             if (processSong && window.songs) {
-              console.log('dispatching processSong');
+              log.debug('dispatching processSong', {
+                songId: songRequest.song.id,
+              });
               this.store.dispatch(
                 SongRequestsActions.processSong({ song: songRequest.song })
               );
@@ -106,9 +108,7 @@ export class SongRequestsEffects {
                 songRequestQueue[songRequestPreviousIndex].id,
                 songRequestQueue[songRequestCurrentIndex].id
               )
-              .subscribe(() => {
-                console.log('swapped');
-              });
+              .subscribe();
 
             return EMPTY;
           }
@@ -130,10 +130,10 @@ export class SongRequestsEffects {
             .deleteSongRequest(channel.id, songRequestId)
             .subscribe({
               next: (result) => {
-                console.log('Deleted song request', { result: result });
+                log.debug('Deleted song request', { result: result });
               },
               error: (err) => {
-                console.log('deleteSongRequest error', { err: err });
+                log.warn('deleteSongRequest error', { err: err });
               },
             });
 
@@ -156,13 +156,13 @@ export class SongRequestsEffects {
             .setSongRequestActive(channel.id, songRequestId)
             .subscribe({
               next: (result) => {
-                console.log('setRequestActive done');
+                log.debug('setRequestActive done');
               },
               error: (err) => {
-                console.log('setRequestActive failed', err);
+                log.debug('setRequestActive failed', err);
               },
               complete: () => {
-                console.log('setRequestActive complete');
+                log.debug('setRequestActive complete');
               },
             });
 
@@ -187,7 +187,7 @@ export class SongRequestsEffects {
               this.store.dispatch(SongRequestsActions.nextSongComplete());
             },
             error: (err) => {
-              console.log('nextSong failed', err);
+              log.warn('nextSong failed', err);
             },
           });
 
@@ -223,7 +223,6 @@ export class SongRequestsEffects {
   ) {
     if (window.songs) {
       window.songs.onProcessSongProgress((songState: LocalSongState) => {
-        console.log('Got progress update', songState);
         this.store.dispatch(
           SongRequestsActions.updateSongDownloadProgress({ songState })
         );

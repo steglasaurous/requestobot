@@ -9,6 +9,7 @@ import { SongRequestsActions } from '../song-requests/song-requests.actions';
 import { SongRequestDto } from '@requestobot/util-dto';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
+import log from 'electron-log/renderer';
 
 @Injectable()
 export class WebsocketEffects {
@@ -40,10 +41,10 @@ export class WebsocketEffects {
               this.toastr.info('Websocket connected');
             },
             error: (err) => {
-              console.log('Websocket connection error', err);
+              log.warn('Websocket connection error', err);
             },
             complete: () => {
-              console.log('Websocket connection complete called');
+              log.debug('Websocket connection complete called');
             },
           });
 

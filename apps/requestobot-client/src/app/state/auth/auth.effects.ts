@@ -9,6 +9,7 @@ import { SettingName } from '@requestobot/util-client-common';
 import { AuthActions } from './auth.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
+import log from 'electron-log/renderer';
 
 @Injectable()
 export class AuthEffects {
@@ -34,10 +35,7 @@ export class AuthEffects {
             return of(AuthActions.loginFail());
           }),
           catchError((err: HttpErrorResponse) => {
-            console.log(
-              'API Error while logging in via auth code:',
-              err.message
-            );
+            log.warn('API Error while logging in via auth code:', err.message);
             return of(AuthActions.loginFail());
           })
         )
@@ -69,7 +67,7 @@ export class AuthEffects {
           await this.settingsService.deleteValue(SettingName.JWT);
           await this.settingsService.deleteValue(SettingName.JWTRefresh);
           this.queuebotApiService.logout().subscribe(async () => {
-            console.log('API logged out');
+            log.debug('API logged out');
             this.store.dispatch(AuthActions.notAuthenticated());
             await this.router.navigate(['login']);
           });
@@ -97,12 +95,15 @@ export class AuthEffects {
           }),
           catchError((err: HttpErrorResponse) => {
             if (err.status === 401 || err.status === 403) {
-              console.log('got a 401/403');
+              log.debug('got a 401/403 while checking auth');
               // Attempt a refresh.  If that fails, then we're 100% not authenticated.
               return of(AuthActions.refreshAuth());
             }
 
-            console.log('got a generic error');
+            log.debug('Got a generic error while checking auth', {
+              message: err.message,
+              status: err.status,
+            });
 
             // Any other error is either a server-side problem or connection issue.
             return of(AuthActions.connectionFailure());
@@ -126,14 +127,17 @@ export class AuthEffects {
       exhaustMap(() =>
         this.queuebotApiService.refreshJwt().pipe(
           map((status) => {
-            console.log('refresh ok');
+            log.debug('Refresh token processed successfully');
             if (status.status == 'OK') {
               return AuthActions.authenticated();
             }
             return AuthActions.notAuthenticated();
           }),
           catchError((err: HttpErrorResponse) => {
-            console.log(`refresh error: ${err.message}`);
+            log.debug(`Refresh token failed to process`, {
+              message: err.message,
+              status: err.status,
+            });
             return of(AuthActions.logout());
           })
         )

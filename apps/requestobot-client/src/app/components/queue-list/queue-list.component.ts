@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SongRequestDto } from '@requestobot/util-dto';
 import {
@@ -16,7 +16,6 @@ import {
 } from '../../state/song-requests/song-requests.selectors';
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
-import { WebsocketActions } from '../../state/websocket/websocket.actions';
 
 @Component({
   selector: 'app-queue-list',
@@ -52,7 +51,6 @@ export class QueueListComponent implements OnInit {
     });
 
     this.songDownloadStates$.subscribe((downloadedSongStatus) => {
-      console.log('downloadedSongStatus', downloadedSongStatus);
       this.downloadedSongStatus = downloadedSongStatus;
     });
 

@@ -4,6 +4,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
 import { Inject, Injectable } from '@angular/core';
 import { WEBSOCKET_URL } from '../app.config';
 import { WsEvent } from '../models/ws-event';
+import log from 'electron-log/renderer';
 
 // NOTES:
 //   I wonder if this could be simplified a bit to be easier to read.  Is it useful
@@ -112,8 +113,7 @@ export class WebsocketService {
                   errorMessage: error.reason ?? 'Connection failed',
                 });
 
-                console.log(error);
-                console.log('Retrying connection...');
+                log.debug('Websocket failed, retrying', error);
                 return timer(5000);
               }
               this.active = false;
@@ -128,8 +128,7 @@ export class WebsocketService {
           },
           error: (err) => {
             // Dispatch an error event?
-            console.log('Got an error');
-            console.log(err);
+            log.debug('Websocket failed', err);
             this.connected = false;
             this.connectionStatus$.next({
               isConnected: false,
@@ -137,7 +136,7 @@ export class WebsocketService {
             });
           },
           complete: () => {
-            console.log('Connection closed for ' + this.websocketUrl);
+            log.debug('Websocket closed', { websocketUrl: this.websocketUrl });
           },
         });
     }
@@ -153,12 +152,15 @@ export class WebsocketService {
           this.closeFunction();
         },
         error: (err) => {
-          console.log('Close observer on websocket: ERROR' + this.websocketUrl);
+          log.debug('Close observer on websocket called', {
+            err: err,
+            websocketUrl: this.websocketUrl,
+          });
         },
         complete: () => {
-          console.log(
-            'Close observer on websocket: COMPLETE' + this.websocketUrl
-          );
+          log.debug('Close observer on websocket: COMPLETE', {
+            websocketUrl: this.websocketUrl,
+          });
         },
       },
     });

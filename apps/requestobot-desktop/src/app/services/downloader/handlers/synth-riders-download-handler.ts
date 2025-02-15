@@ -6,6 +6,7 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 import * as path from 'path';
 import axios, { AxiosProgressEvent, AxiosResponse } from 'axios';
+import log from 'electron-log/main';
 
 export class SynthRidersDownloadHandler implements DownloadHandler {
   private defaultSongsDirWin32 =
@@ -44,7 +45,7 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
         downloadProgress: 0,
       };
       if (!song.downloadUrl) {
-        console.log('Song does not have a downloadUrl', {
+        log.warn('Song does not have a downloadUrl', {
           songId: song.id,
           title: song.title,
         });
@@ -58,7 +59,7 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
       const workDir = fs.mkdtempSync(join(tmpdir(), 'queuebot-'));
       const synthFile = path.join(workDir, 'download' + song.id + '.synth');
       const writer = fs.createWriteStream(synthFile);
-      console.log('Downloading song', { songId: song.id, title: song.title });
+      log.debug('Downloading song', { songId: song.id, title: song.title });
       axios({
         method: 'get',
         url: song.downloadUrl,
@@ -82,7 +83,7 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
           });
         })
         .catch((e) => {
-          console.log(`Failed to download ${song.downloadUrl}`, {
+          log.warn(`Failed to download ${song.downloadUrl}`, {
             error: e,
             songId: song.id,
             title: song.title,
@@ -100,7 +101,7 @@ export class SynthRidersDownloadHandler implements DownloadHandler {
     }
 
     const isLocal = fs.existsSync(this.getSongDir(song));
-    console.log('SynthRidersDownloadHandler::songIsLocal', {
+    log.debug('SynthRidersDownloadHandler::songIsLocal', {
       isLocal: isLocal,
       filePath: this.getSongDir(song),
     });
