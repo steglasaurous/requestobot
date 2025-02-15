@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { selectChannel } from './channel.selectors';
 import { Store } from '@ngrx/store';
 import { ToastrService } from 'ngx-toastr';
+import log from 'electron-log/renderer';
 
 @Injectable()
 export class ChannelEffects {
@@ -18,20 +19,21 @@ export class ChannelEffects {
       ofType(ChannelActions.loadChannel),
       exhaustMap(({ chatServiceName, channelName }) =>
         this.queuebotApiService.getChannel(chatServiceName, channelName).pipe(
-          map((channelDto) =>
-            ChannelActions.loadChannelSuccess({
+          map((channelDto) => {
+            log.debug('Channel loaded', { channelName: channelName });
+            return ChannelActions.loadChannelSuccess({
               channel: channelDto,
-            })
-          ),
-          catchError((err: HttpErrorResponse) =>
-            of(
+            });
+          }),
+          catchError((err: HttpErrorResponse) => {
+            return of(
               ChannelActions.loadChannelFail({
                 chatServiceName: chatServiceName,
                 channelName: channelName,
                 error: err,
               })
-            )
-          )
+            );
+          })
         )
       )
     )
@@ -42,9 +44,14 @@ export class ChannelEffects {
       ofType(ChannelActions.loadChannelFail),
       exhaustMap(({ channelName, chatServiceName, error }) => {
         if (error.status === 404) {
+          log.debug('Load channel returned 404');
           this.router.navigate(['join']);
           return EMPTY;
         }
+        log.warn('Load channel returned error, retrying', {
+          message: error.message,
+          status: error.status,
+        });
 
         return of(
           ChannelActions.loadChannel({
@@ -69,6 +76,11 @@ export class ChannelEffects {
             return ChannelActions.openQueueSuccess();
           }),
           catchError((err: HttpErrorResponse) => {
+            log.error('Open queue failed', {
+              message: err.message,
+              status: err.status,
+            });
+
             this.toastr.error('Open queue failed');
             return of(
               ChannelActions.openQueueFail({
@@ -94,6 +106,10 @@ export class ChannelEffects {
             return ChannelActions.closeQueueSuccess();
           }),
           catchError((err: HttpErrorResponse) => {
+            log.error('Close queue failed', {
+              message: err.message,
+              status: err.status,
+            });
             this.toastr.error('Close queue failed');
             return of(
               ChannelActions.closeQueueFail({
@@ -118,9 +134,15 @@ export class ChannelEffects {
           .setGame(channelDto.id, action.game.id)
           .pipe(
             map(() => {
+              log.debug('Set game successfully', { gameId: action.game.id });
+
               return ChannelActions.setGameSuccess();
             }),
             catchError((err: HttpErrorResponse) => {
+              log.error('Set game failed', {
+                message: err.message,
+                status: err.status,
+              });
               this.toastr.error('Set game failed');
               return of(
                 ChannelActions.setGameFail({
@@ -150,9 +172,14 @@ export class ChannelEffects {
         }
         return this.queuebotApiService.clearQueue(channelDto.id).pipe(
           map(() => {
+            log.debug('Cleared queue successfully');
             return ChannelActions.clearQueueSuccess();
           }),
           catchError((err: HttpErrorResponse) => {
+            log.debug('Clear queue failed', {
+              message: err.message,
+              status: err.status,
+            });
             this.toastr.error('Clear queue failed');
 
             return of(
@@ -178,9 +205,17 @@ export class ChannelEffects {
           .setSetting(channelDto.id, action.settingName, action.value)
           .pipe(
             map(() => {
+              log.debug('Set setting succeeded', {
+                settingName: action.settingName,
+                value: action.value,
+              });
               return ChannelActions.setSettingSuccess();
             }),
             catchError((err: HttpErrorResponse) => {
+              log.debug('Set setting failed', {
+                message: err.message,
+                status: err.status,
+              });
               this.toastr.error('Setting changed failed');
               return of(
                 ChannelActions.setSettingFail({
@@ -205,9 +240,16 @@ export class ChannelEffects {
           .joinChannel('twitch', channelDto.channelName)
           .pipe(
             map(() => {
+              log.debug('Join channel succeeded', {
+                channelName: channelDto.channelName,
+              });
               return ChannelActions.joinChannelSuccess();
             }),
             catchError((err: HttpErrorResponse) => {
+              log.warn('Join channel failed', {
+                message: err.message,
+                status: err.status,
+              });
               this.toastr.error('Joining channel failed');
               return of(
                 ChannelActions.joinChannelFail({
@@ -242,6 +284,11 @@ export class ChannelEffects {
           .pipe(
             map(() => ChannelActions.createChannelSuccess()),
             catchError((err: HttpErrorResponse) => {
+              log.error('Create channel failed', {
+                message: err.message,
+                status: err.status,
+              });
+
               this.toastr.error('Create channel failed');
               return of(
                 ChannelActions.createChannelFail({
@@ -278,8 +325,15 @@ export class ChannelEffects {
           return EMPTY;
         }
         return this.queuebotApiService.enableBot(channelDto.id).pipe(
-          map(() => ChannelActions.enableBotSuccess()),
+          map(() => {
+            log.debug('Enable bot succeeded');
+            return ChannelActions.enableBotSuccess();
+          }),
           catchError((err: HttpErrorResponse) => {
+            log.debug('Enable bot failed', {
+              message: err.message,
+              status: err.status,
+            });
             this.toastr.error('Enable bot failed');
             return of(
               ChannelActions.enableBotFail({
@@ -301,8 +355,15 @@ export class ChannelEffects {
           return EMPTY;
         }
         return this.queuebotApiService.disableBot(channelDto.id).pipe(
-          map(() => ChannelActions.disableBotSuccess()),
+          map(() => {
+            log.debug('Disable bot succeeded');
+            return ChannelActions.disableBotSuccess();
+          }),
           catchError((err: HttpErrorResponse) => {
+            log.debug('Disable bot failed', {
+              message: err.message,
+              status: err.status,
+            });
             this.toastr.error('Disable bot failed');
             return of(
               ChannelActions.disableBotFail({
