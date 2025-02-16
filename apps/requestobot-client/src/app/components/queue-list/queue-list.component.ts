@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SongRequestDto } from '@requestobot/util-dto';
 import {
@@ -18,18 +18,18 @@ import { SongRequestsActions } from '../../state/song-requests/song-requests.act
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
 
 @Component({
-    selector: 'app-queue-list',
-    imports: [
-        CommonModule,
-        DragDropModule,
-        MatIcon,
-        LocalSongStatusComponent,
-        PanelComponent,
-    ],
-    providers: [],
-    templateUrl: './queue-list.component.html'
+  selector: 'app-queue-list',
+  imports: [
+    CommonModule,
+    DragDropModule,
+    MatIcon,
+    LocalSongStatusComponent,
+    PanelComponent,
+  ],
+  providers: [],
+  templateUrl: './queue-list.component.html',
 })
-export class QueueListComponent implements OnInit, OnDestroy {
+export class QueueListComponent implements OnInit {
   songRequests: SongRequestDto[] = [];
 
   downloadedSongStatus: SongDownloadStates = {};
@@ -51,16 +51,10 @@ export class QueueListComponent implements OnInit, OnDestroy {
     });
 
     this.songDownloadStates$.subscribe((downloadedSongStatus) => {
-      console.log('downloadedSongStatus', downloadedSongStatus);
       this.downloadedSongStatus = downloadedSongStatus;
     });
 
     this.store.dispatch(SongRequestsActions.getQueue());
-    this.store.dispatch(SongRequestsActions.connectWebsocket());
-  }
-
-  ngOnDestroy() {
-    this.store.dispatch(SongRequestsActions.disconnectWebsocket());
   }
 
   drop($event: CdkDragDrop<any, any>) {

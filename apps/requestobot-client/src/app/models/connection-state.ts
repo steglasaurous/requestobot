@@ -1,5 +1,5 @@
-import { AuthState } from './auth-state.enum';
+import { AuthorizedState } from './authorized-state.enum';
 
 export interface ConnectionState {
-  authState: AuthState;
+  authState: AuthorizedState;
 }

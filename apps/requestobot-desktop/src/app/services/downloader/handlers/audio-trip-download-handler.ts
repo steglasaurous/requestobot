@@ -7,6 +7,7 @@ import { tmpdir } from 'os';
 import * as path from 'path';
 import axios, { AxiosProgressEvent, AxiosResponse } from 'axios';
 import decompress from 'decompress';
+import log from 'electron-log/main';
 
 export class AudioTripDownloadHandler implements DownloadHandler {
   constructor(private songsDir?: string) {
@@ -35,7 +36,7 @@ export class AudioTripDownloadHandler implements DownloadHandler {
         downloadProgress: 0,
       };
       if (!song.downloadUrl) {
-        console.log('Song does not have a downloadUrl', {
+        log.warn('Song does not have a downloadUrl', {
           songId: song.id,
           title: song.title,
         });
@@ -49,7 +50,7 @@ export class AudioTripDownloadHandler implements DownloadHandler {
       const workDir = fs.mkdtempSync(join(tmpdir(), 'queuebot-'));
       const zipFilename = path.join(workDir, 'download' + song.id + '.zip');
       const writer = fs.createWriteStream(zipFilename);
-      console.log('Downloading song', { songId: song.id, title: song.title });
+      log.debug('Downloading song', { songId: song.id, title: song.title });
       axios({
         method: 'get',
         url: song.downloadUrl,
@@ -69,7 +70,7 @@ export class AudioTripDownloadHandler implements DownloadHandler {
             fs.mkdirSync(destination);
 
             decompress(zipFilename, destination).then(() => {
-              console.log('Decompressing done');
+              log.debug('Decompressing done');
               songState.downloadState = DownloadState.Complete;
               songStateCallback(songState);
               resolve();
@@ -77,7 +78,7 @@ export class AudioTripDownloadHandler implements DownloadHandler {
           });
         })
         .catch((e) => {
-          console.log(`Failed to download ${song.downloadUrl}`, {
+          log.warn(`Failed to download ${song.downloadUrl}`, {
             error: e,
             songId: song.id,
             title: song.title,

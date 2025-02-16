@@ -4,12 +4,12 @@ import { Store } from '@ngrx/store';
 import { QueuebotApiService } from '../../services/queuebot-api.service';
 import { Router } from '@angular/router';
 import { SettingsService } from '../../services/settings.service';
-import { EMPTY, exhaustMap, from, map, of, switchMap } from 'rxjs';
+import { delay, EMPTY, exhaustMap, from, map, of, switchMap } from 'rxjs';
 import { SettingName } from '@requestobot/util-client-common';
 import { AuthActions } from './auth.actions';
-import { ConnectionStateActions } from '../connection-state/connection-state.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
+import log from 'electron-log/renderer';
 
 @Injectable()
 export class AuthEffects {
@@ -35,10 +35,7 @@ export class AuthEffects {
             return of(AuthActions.loginFail());
           }),
           catchError((err: HttpErrorResponse) => {
-            console.log(
-              'API Error while logging in via auth code:',
-              err.message
-            );
+            log.warn('API Error while logging in via auth code:', err.message);
             return of(AuthActions.loginFail());
           })
         )
@@ -70,8 +67,8 @@ export class AuthEffects {
           await this.settingsService.deleteValue(SettingName.JWT);
           await this.settingsService.deleteValue(SettingName.JWTRefresh);
           this.queuebotApiService.logout().subscribe(async () => {
-            console.log('API logged out');
-            this.store.dispatch(ConnectionStateActions.notAuthenticated());
+            log.debug('API logged out');
+            this.store.dispatch(AuthActions.notAuthenticated());
             await this.router.navigate(['login']);
           });
 
@@ -79,6 +76,73 @@ export class AuthEffects {
         })
       ),
     { dispatch: false }
+  );
+
+  // FIXME: There's a case in a regular browser where logout does NOT destroy cookies,
+  //   so this check can erroniously indicate the user is authenticated when they're not.
+  //   Should add a server call to logout the user and clear cookies it set.
+  checkAuth$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.checkAuth),
+      exhaustMap(() =>
+        this.queuebotApiService.checkAuth().pipe(
+          map((status) => {
+            if (status.status == 'OK') {
+              return AuthActions.authenticated();
+            }
+
+            return AuthActions.refreshAuth();
+          }),
+          catchError((err: HttpErrorResponse) => {
+            if (err.status === 401 || err.status === 403) {
+              log.debug('got a 401/403 while checking auth');
+              // Attempt a refresh.  If that fails, then we're 100% not authenticated.
+              return of(AuthActions.refreshAuth());
+            }
+
+            log.debug('Got a generic error while checking auth', {
+              message: err.message,
+              status: err.status,
+            });
+
+            // Any other error is either a server-side problem or connection issue.
+            return of(AuthActions.connectionFailure());
+          })
+        )
+      )
+    )
+  );
+
+  retryAuth$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.connectionFailure),
+      delay(5000),
+      exhaustMap(() => of(AuthActions.checkAuth()))
+    )
+  );
+
+  refreshAuth$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.refreshAuth),
+      exhaustMap(() =>
+        this.queuebotApiService.refreshJwt().pipe(
+          map((status) => {
+            log.debug('Refresh token processed successfully');
+            if (status.status == 'OK') {
+              return AuthActions.authenticated();
+            }
+            return AuthActions.notAuthenticated();
+          }),
+          catchError((err: HttpErrorResponse) => {
+            log.debug(`Refresh token failed to process`, {
+              message: err.message,
+              status: err.status,
+            });
+            return of(AuthActions.logout());
+          })
+        )
+      )
+    )
   );
 
   constructor(

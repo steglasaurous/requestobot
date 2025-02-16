@@ -7,6 +7,7 @@ import { app, dialog, ipcMain, shell } from 'electron';
 import { environment } from '../../environments/environment';
 import { SongDto } from '@requestobot/util-dto';
 import App from '../app';
+import log from 'electron-log/main';
 
 const IPC_OPEN_TWITCH_LOGIN = 'login.openTwitchLogin';
 const IPC_SETTINGS_GET_VALUE = 'settings.getValue';
@@ -29,7 +30,7 @@ export default class ElectronEvents {
 
 // Retrieve app version
 ipcMain.handle('get-app-version', (event) => {
-  console.log(`Fetching application version... [v${environment.version}]`);
+  log.debug(`Fetching application version... [v${environment.version}]`);
 
   return environment.version;
 });
@@ -52,13 +53,12 @@ ipcMain.handle(IPC_SETTINGS_DELETE_VALUE, (event, key) => {
 });
 
 ipcMain.handle(IPC_OPEN_TWITCH_LOGIN, (event, args) => {
-  console.log('Opening external');
   let loginUrl = LOGIN_URL;
   if (App.isDevelopmentMode()) {
     loginUrl += '?mode=authcode';
   }
   shell.openExternal(loginUrl).then(() => {
-    console.log('opened it');
+    log.debug('Opened external browser at login url');
   });
 });
 

@@ -7,6 +7,7 @@ import { tmpdir } from 'os';
 import decompress from 'decompress';
 import { SongDto } from '@requestobot/util-dto';
 import { DownloadState, LocalSongState } from '@requestobot/util-client-common';
+import log from 'electron-log/main';
 
 export class SpinRhythmDownloadHandler implements DownloadHandler {
   constructor(private songsDir?: string) {
@@ -38,7 +39,7 @@ export class SpinRhythmDownloadHandler implements DownloadHandler {
   }
   downloadSong(song: SongDto, songStateCallback: any): Promise<void> {
     if (!this.songsDir) {
-      console.log(
+      log.warn(
         'songsDir for spinRhythmDownloadHandler is not set, unable to download song.'
       );
 
@@ -52,7 +53,7 @@ export class SpinRhythmDownloadHandler implements DownloadHandler {
         downloadProgress: 0,
       };
       if (!song.downloadUrl) {
-        console.log('Song does not have a downloadUrl', {
+        log.debug('Song does not have a downloadUrl', {
           songId: song.id,
           title: song.title,
         });
@@ -66,7 +67,7 @@ export class SpinRhythmDownloadHandler implements DownloadHandler {
       const workDir = fs.mkdtempSync(join(tmpdir(), 'queuebot-'));
       const zipFilename = path.join(workDir, 'download.zip');
       const writer = fs.createWriteStream(zipFilename);
-      console.log('Downloading song', { songId: song.id, title: song.title });
+      log.debug('Downloading song', { songId: song.id, title: song.title });
       axios({
         method: 'get',
         url: song.downloadUrl,
@@ -83,7 +84,7 @@ export class SpinRhythmDownloadHandler implements DownloadHandler {
             // NOTE: The IDE says this is an error, but the compiler does not.  Ignore the IDE in this case.
             // @ts-ignore
             decompress(zipFilename, this.songsDir).then(() => {
-              console.log('Decompressing done');
+              log.debug('Decompressing done');
               songState.downloadState = DownloadState.Complete;
               songStateCallback(songState);
               resolve();
@@ -91,7 +92,7 @@ export class SpinRhythmDownloadHandler implements DownloadHandler {
           });
         })
         .catch((e) => {
-          console.log(`Failed to download ${song.downloadUrl}`, {
+          log.warn(`Failed to download ${song.downloadUrl}`, {
             error: e,
             songId: song.id,
             title: song.title,
