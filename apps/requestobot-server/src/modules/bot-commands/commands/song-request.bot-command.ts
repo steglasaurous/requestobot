@@ -22,7 +22,7 @@ export class SongRequestBotCommand extends BaseBotCommand {
   ) {
     super();
 
-    this.triggers = ['!req', '!srr', '!bsr', '!ssr', '!request', '!atr'];
+    this.triggers = ['!req', '!srr', '!ssr', '!request', '!atr'];
   }
   async execute(channel: Channel, chatMessage: ChatMessage): Promise<string> {
     // New request.
