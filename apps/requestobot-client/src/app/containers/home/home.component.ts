@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { QueueListComponent } from '../../components/queue-list/queue-list.component';
 import { SettingsService } from '../../services/settings.service';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
@@ -27,7 +27,7 @@ import { ChannelLoadedState } from '../../state/channel/channel.reducer';
 import { ToastrService } from 'ngx-toastr';
 import { selectAuth } from '../../state/auth/auth.selectors';
 import { WebsocketActions } from '../../state/websocket/websocket.actions';
-import { selectWebsocket } from '../../state/websocket/websocket.selectors';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -46,7 +46,7 @@ import { selectWebsocket } from '../../state/websocket/websocket.selectors';
   providers: [],
   templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   channelName = '';
   channelState$ = this.store.select(selectChannelState);
   authState$ = this.store.select(selectAuth);
@@ -71,58 +71,77 @@ export class HomeComponent {
   games$ = this.store.select(selectGamesState);
 
   confirmDialog = inject(MatDialog);
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private settingsService: SettingsService,
     private router: Router,
     private store: Store,
     private toastr: ToastrService
-  ) {
-    this.games$.subscribe((games) => {
-      this.games = games;
-    });
+  ) {}
 
-    this.authState$.subscribe(async (authState) => {
-      if (authState.authState === AuthorizedState.Authenticated) {
-        // We're clear to proceed.
-        this.store.dispatch(GamesActions.getGames());
-        this.settingsService.getValue('username').then((value) => {
-          if (value != undefined) {
-            this.channelName = value;
+  ngOnInit(): void {
+    this.subscriptions.push(
+      this.games$.subscribe((games) => {
+        this.games = games;
+      })
+    );
+
+    this.subscriptions.push(
+      this.authState$.subscribe(async (authState) => {
+        if (authState.authState === AuthorizedState.Authenticated) {
+          // We're clear to proceed.
+          this.store.dispatch(GamesActions.getGames());
+          this.settingsService.getValue('username').then((value) => {
+            if (value != undefined) {
+              this.channelName = value;
+            }
+
+            this.updateChannelInfo();
+          });
+        } else if (authState.authState === AuthorizedState.ConnectionFailure) {
+          this.toastr.error('Failed to connect to the server, retrying...');
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.channelState$.subscribe((channelState) => {
+        const channel = channelState.channel;
+        if (channel) {
+          this.channel = channel;
+
+          // Do checks
+          if (!channel.inChannel) {
+            // The bot is not present in the user's channel.  Goto join to ask to invite it back.
+            this.router.navigate(['join']);
+
+            return;
           }
+        }
+      })
+    );
 
-          this.updateChannelInfo();
-        });
-      } else if (authState.authState === AuthorizedState.ConnectionFailure) {
-        this.toastr.error('Failed to connect to the server, retrying...');
-      }
-    });
+    this.subscriptions.push(
+      this.channelLoadedState$.subscribe((channelLoadedState) => {
+        if (channelLoadedState === ChannelLoadedState.Loaded) {
+          this.store.dispatch(WebsocketActions.enable());
+        }
+        if (channelLoadedState === ChannelLoadedState.Fail) {
+          this.toastr.error('Failed to load channel details from API');
+        }
+      })
+    );
 
     // This checks to make sure our JWT is valid.  If not, it'll attempt to refresh it with a refresh token.
     this.store.dispatch(AuthActions.checkAuth());
-    this.channelState$.subscribe((channelState) => {
-      const channel = channelState.channel;
-      if (channel) {
-        this.channel = channel;
+  }
 
-        // Do checks
-        if (!channel.inChannel) {
-          // The bot is not present in the user's channel.  Goto join to ask to invite it back.
-          this.router.navigate(['join']);
-
-          return;
-        }
-      }
-    });
-
-    this.channelLoadedState$.subscribe((channelLoadedState) => {
-      if (channelLoadedState === ChannelLoadedState.Loaded) {
-        this.store.dispatch(WebsocketActions.enable());
-      }
-      if (channelLoadedState === ChannelLoadedState.Fail) {
-        this.toastr.error('Failed to load channel details from API');
-      }
-    });
+  ngOnDestroy(): void {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+    this.subscriptions = [];
   }
 
   updateChannelInfo() {

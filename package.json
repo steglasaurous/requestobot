@@ -120,6 +120,7 @@
     "@typescript-eslint/utils": "7.18.0",
     "autoprefixer": "^10.4.0",
     "electron": "^28.2.3",
+    "electron-devtools-installer": "^4.0.0",
     "eslint": "~8.57.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-playwright": "^0.15.3",

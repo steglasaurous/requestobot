@@ -2,7 +2,7 @@ import { WebsocketService } from '../../services/websocket.service';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { WebsocketActions } from './websocket.actions';
 import { selectChannel } from '../channel/channel.selectors';
-import { EMPTY, exhaustMap } from 'rxjs';
+import { EMPTY, exhaustMap, Subscription } from 'rxjs';
 import { concatLatestFrom } from '@ngrx/operators';
 import { Store } from '@ngrx/store';
 import { SongRequestsActions } from '../song-requests/song-requests.actions';
@@ -13,6 +13,8 @@ import log from 'electron-log/renderer';
 
 @Injectable()
 export class WebsocketEffects {
+  private subscriptions: Subscription[] = [];
+
   enable$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -51,26 +53,34 @@ export class WebsocketEffects {
             },
           });
 
-          this.websocketService.messages$.subscribe(async (message) => {
-            if (message.event == 'songRequestQueueChanged') {
-              this.store.dispatch(
-                SongRequestsActions.updateQueue({
-                  songRequests: message.data as SongRequestDto[],
-                })
-              );
-            }
-          });
+          this.subscriptions.push(
+            this.websocketService.messages$.subscribe(async (message) => {
+              log.debug('Websocket Message', { event: message.event });
+              if (message.event == 'songRequestQueueChanged') {
+                this.store.dispatch(
+                  SongRequestsActions.updateQueue({
+                    songRequests: message.data as SongRequestDto[],
+                  })
+                );
+              }
+            })
+          );
 
-          this.websocketService.connectionStatus$.subscribe((status) => {
-            if (!status.isConnected) {
-              this.toastr.error('Websocket disconnected, retrying...');
-              this.store.dispatch(
-                WebsocketActions.connectionError({
-                  message: status.errorMessage ?? '',
-                })
-              );
-            }
-          });
+          this.subscriptions.push(
+            this.websocketService.connectionStatus$.subscribe((status) => {
+              if (!status.isConnected) {
+                log.warn('Websocket disconnected, retrying', {
+                  message: status.errorMessage,
+                });
+                this.toastr.error('Websocket disconnected, retrying...');
+                this.store.dispatch(
+                  WebsocketActions.connectionError({
+                    message: status.errorMessage ?? '',
+                  })
+                );
+              }
+            })
+          );
 
           return EMPTY;
         })
@@ -84,6 +94,11 @@ export class WebsocketEffects {
         ofType(WebsocketActions.disable),
         exhaustMap(() => {
           log.debug('Closing and disabling the websocket');
+          for (const subscription of this.subscriptions) {
+            subscription.unsubscribe();
+          }
+          this.subscriptions = [];
+
           this.websocketService.close();
           return EMPTY;
         })

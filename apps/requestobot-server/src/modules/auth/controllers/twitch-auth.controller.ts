@@ -142,6 +142,12 @@ export class TwitchAuthController {
       path: '/auth/refresh',
     });
 
+    this.logger.log('User logged in successfully', {
+      username: user.displayName,
+      displayName: user.displayName,
+      userId: user.id,
+    });
+
     if (stateKeyValues.has('mode')) {
       switch (stateKeyValues.get('mode')) {
         case 'authcode':

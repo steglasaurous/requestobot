@@ -39,6 +39,13 @@ export const channelReducer = createReducer(
       return { ...state, channelLoadedState: channelLoadedState };
     }
   ),
+  on(ChannelActions.joinChannelSuccess, (state) => {
+    if (!state.channel) {
+      return state;
+    }
+
+    return { ...state, channel: { ...state.channel, inChannel: true } };
+  }),
   on(ChannelActions.openQueue, (state) => {
     if (!state.channel) {
       return state;

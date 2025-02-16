@@ -32,7 +32,6 @@ export const WEBSOCKET_URL = 'websocket_url';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideStoreDevtools({ logOnly: !isDevMode() }),
     provideEffects(
       ChannelEffects,
       GamesEffects,
@@ -49,6 +48,7 @@ export const appConfig: ApplicationConfig = {
       songRequests: songRequestsReducer,
       websocket: websocketReducer,
     }),
+    provideStoreDevtools({ logOnly: !isDevMode() }),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes, withHashLocation()),
     {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SongRequestDto } from '@requestobot/util-dto';
 import {
@@ -16,6 +16,7 @@ import {
 } from '../../state/song-requests/song-requests.selectors';
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-queue-list',
@@ -29,7 +30,7 @@ import { SongDownloadStates } from '../../state/song-requests/song-requests.redu
   providers: [],
   templateUrl: './queue-list.component.html',
 })
-export class QueueListComponent implements OnInit {
+export class QueueListComponent implements OnInit, OnDestroy {
   songRequests: SongRequestDto[] = [];
 
   downloadedSongStatus: SongDownloadStates = {};
@@ -39,22 +40,34 @@ export class QueueListComponent implements OnInit {
   songRequestQueue$ = this.store.select(selectSongRequestQueue);
   songDownloadStates$ = this.store.select(selectSongDownloadStates);
 
+  private subscriptions: Subscription[] = [];
   constructor(private store: Store) {}
 
   ngOnInit() {
-    this.songRequestQueue$.subscribe((queue) => {
-      // FYI: Apparently material drag and drop don't like working with observables directly.
-      // (I get "newCollection[Symbol.iterator] is not a function" errors)
-      // But they work fine with plain arrays.  This makes a copy of the array when it
-      // changes so it can be rendered properly, and DnD works as expected.
-      this.songRequests = Object.assign([], queue);
-    });
+    this.subscriptions.push(
+      this.songRequestQueue$.subscribe((queue) => {
+        // FYI: Apparently material drag and drop don't like working with observables directly.
+        // (I get "newCollection[Symbol.iterator] is not a function" errors)
+        // But they work fine with plain arrays.  This makes a copy of the array when it
+        // changes so it can be rendered properly, and DnD works as expected.
+        this.songRequests = Object.assign([], queue);
+      })
+    );
 
-    this.songDownloadStates$.subscribe((downloadedSongStatus) => {
-      this.downloadedSongStatus = downloadedSongStatus;
-    });
+    this.subscriptions.push(
+      this.songDownloadStates$.subscribe((downloadedSongStatus) => {
+        this.downloadedSongStatus = downloadedSongStatus;
+      })
+    );
 
     this.store.dispatch(SongRequestsActions.getQueue());
+  }
+
+  public ngOnDestroy() {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+    this.subscriptions = [];
   }
 
   drop($event: CdkDragDrop<any, any>) {

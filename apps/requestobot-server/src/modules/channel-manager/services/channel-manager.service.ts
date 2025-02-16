@@ -101,6 +101,10 @@ export class ChannelManagerService {
     this.channelsJoinedCounterTotal.inc();
     this.channelsBotEnabledTotal.inc();
 
+    this.logger.log('Created channel', {
+      channelName: channelName,
+      chatServiceName: chatServiceName,
+    });
     return channel;
   }
 
