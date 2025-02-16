@@ -1,6 +1,7 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
 import { SongDto, SongRequestDto } from '@requestobot/util-dto';
 import { LocalSongState } from '../../models/local-song-state';
+import { HttpErrorResponse } from '@angular/common/http';
 
 export const SongRequestsActions = createActionGroup({
   source: 'SongRequests',
@@ -15,10 +16,28 @@ export const SongRequestsActions = createActionGroup({
       songRequestPreviousIndex: number;
       songRequestCurrentIndex: number;
     }>(),
+    'Swap Request Order Success': emptyProps(),
+    'Swap Request Order Fail': props<{
+      songRequestPreviousIndex: number;
+      songRequestCurrentIndex: number;
+      error: HttpErrorResponse;
+    }>(),
     'Delete Request': props<{ songRequestId: number }>(),
+    'Delete Request Success': emptyProps(),
+    'Delete Request Fail': props<{
+      songRequestId: number;
+      error: HttpErrorResponse;
+    }>(),
     'Set Request Active': props<{ songRequestId: number }>(),
+    'Set Request Active Success': props<{ songRequestId: number }>(),
+    'Set Request Active Fail': props<{
+      songRequestId: number;
+      error: HttpErrorResponse;
+    }>(),
     'Next Song': emptyProps(),
-    'Next Song Complete': emptyProps(),
+    'Next Song Fail': props<{ error: HttpErrorResponse }>(),
+    'Next Song Success': emptyProps(),
     'Reprocess Songs': emptyProps(),
+    Logout: emptyProps(),
   },
 });

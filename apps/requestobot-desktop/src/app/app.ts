@@ -9,6 +9,8 @@ import * as cookie from 'cookie';
 import { SettingName } from '@requestobot/util-client-common';
 import { getDownloaderService } from './services/downloader/get-song-downloader';
 import { SongDownloader } from './services/downloader/song-downloader';
+import log from 'electron-log/main';
+import { installExtension, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 
 const IPC_PROTOCOL_HANDLER = 'login.protocolHandler';
 const FILTERED_URLS = [`${environment.queuebotApiBaseUrl}/*`];
@@ -55,7 +57,14 @@ export default class App {
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
-    console.log(FILTERED_URLS);
+    if (App.isDevelopmentMode()) {
+      installExtension(REDUX_DEVTOOLS, {
+        loadExtensionOptions: { allowFileAccess: true },
+      })
+        .then((ext) => console.log(`Added Extension:  ${ext.name}`))
+        .catch((err) => console.log('An error occurred: ', err));
+    }
+
     // This attaches the JWT cookie to the outgoing request if available,
     // so authenticated endpoints work correctly.
     session.defaultSession.webRequest.onBeforeSendHeaders(
@@ -88,11 +97,9 @@ export default class App {
           !details.url.includes('/auth-code') &&
           !details.url.includes('/auth/refresh')
         ) {
-          console.log(details.url);
-          console.log('Not auth-code');
           return;
         }
-        console.log('dealing with response headers');
+
         if (details.responseHeaders) {
           for (const key in details.responseHeaders) {
             // 'Set-Cookie' vs 'set-cookie'.  This normalizes it.
@@ -161,6 +168,7 @@ export default class App {
       },
       title: 'Requestobot',
     });
+
     App.mainWindow.setMenu(null);
     App.mainWindow.center();
 
@@ -207,9 +215,9 @@ export default class App {
     // Electron.BrowserWindow into this function
     // so this class has no dependencies. This
     // makes the code easier to write tests for
-
     App.BrowserWindow = browserWindow;
     App.application = app;
+    log.initialize();
 
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
     App.application.on('ready', App.onReady); // App is ready to load data
@@ -224,7 +232,6 @@ export default class App {
       App.settingsStoreService.getValue(SettingName.autoDownloadEnabled) ===
       undefined
     ) {
-      console.log('Setting autoDownloadEnabled to true');
       App.settingsStoreService.setValue(
         SettingName.autoDownloadEnabled,
         'true'

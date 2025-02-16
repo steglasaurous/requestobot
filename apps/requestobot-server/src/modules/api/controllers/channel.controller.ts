@@ -267,7 +267,16 @@ export class ChannelController {
       channel.game = game;
     }
 
-    await this.channelRepository.save(channel);
+    if (
+      channelDto.inChannel !== undefined &&
+      channelDto.inChannel !== channel.inChannel
+    ) {
+      if (channelDto.inChannel === true) {
+        await this.channelManager.joinChannel(channel, false);
+      } else {
+        await this.channelManager.leaveChannel(channel);
+      }
+    }
 
     if (chatMessageToEmit.length > 0) {
       for (const chatMessageToEmitElement of chatMessageToEmit) {

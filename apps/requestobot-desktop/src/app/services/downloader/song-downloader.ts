@@ -5,6 +5,7 @@ import { SettingsStoreService } from '../settings-store.service';
 import { SynthRidersDownloadHandler } from './handlers/synth-riders-download-handler';
 import { AudioTripDownloadHandler } from './handlers/audio-trip-download-handler';
 import { SpinRhythmDownloadHandler } from './handlers/spin-rhythm-download-handler';
+import log from 'electron-log/main';
 
 export class SongDownloader {
   constructor(
@@ -34,7 +35,7 @@ export class SongDownloader {
         if (downloadHandler.songSupported(song)) {
           if (downloadHandler.songIsLocal(song)) {
             // Song is already present, no need to download it.
-            console.log('Song present', { songId: song.id, title: song.title });
+            log.debug('Song present', { songId: song.id, title: song.title });
             songStateCallback({
               songId: song.id,
               downloadState: DownloadState.Complete,

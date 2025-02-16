@@ -16,18 +16,19 @@ import {
 } from '../../state/song-requests/song-requests.selectors';
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-queue-list',
-    imports: [
-        CommonModule,
-        DragDropModule,
-        MatIcon,
-        LocalSongStatusComponent,
-        PanelComponent,
-    ],
-    providers: [],
-    templateUrl: './queue-list.component.html'
+  selector: 'app-queue-list',
+  imports: [
+    CommonModule,
+    DragDropModule,
+    MatIcon,
+    LocalSongStatusComponent,
+    PanelComponent,
+  ],
+  providers: [],
+  templateUrl: './queue-list.component.html',
 })
 export class QueueListComponent implements OnInit, OnDestroy {
   songRequests: SongRequestDto[] = [];
@@ -39,28 +40,34 @@ export class QueueListComponent implements OnInit, OnDestroy {
   songRequestQueue$ = this.store.select(selectSongRequestQueue);
   songDownloadStates$ = this.store.select(selectSongDownloadStates);
 
+  private subscriptions: Subscription[] = [];
   constructor(private store: Store) {}
 
   ngOnInit() {
-    this.songRequestQueue$.subscribe((queue) => {
-      // FYI: Apparently material drag and drop don't like working with observables directly.
-      // (I get "newCollection[Symbol.iterator] is not a function" errors)
-      // But they work fine with plain arrays.  This makes a copy of the array when it
-      // changes so it can be rendered properly, and DnD works as expected.
-      this.songRequests = Object.assign([], queue);
-    });
+    this.subscriptions.push(
+      this.songRequestQueue$.subscribe((queue) => {
+        // FYI: Apparently material drag and drop don't like working with observables directly.
+        // (I get "newCollection[Symbol.iterator] is not a function" errors)
+        // But they work fine with plain arrays.  This makes a copy of the array when it
+        // changes so it can be rendered properly, and DnD works as expected.
+        this.songRequests = Object.assign([], queue);
+      })
+    );
 
-    this.songDownloadStates$.subscribe((downloadedSongStatus) => {
-      console.log('downloadedSongStatus', downloadedSongStatus);
-      this.downloadedSongStatus = downloadedSongStatus;
-    });
+    this.subscriptions.push(
+      this.songDownloadStates$.subscribe((downloadedSongStatus) => {
+        this.downloadedSongStatus = downloadedSongStatus;
+      })
+    );
 
     this.store.dispatch(SongRequestsActions.getQueue());
-    this.store.dispatch(SongRequestsActions.connectWebsocket());
   }
 
-  ngOnDestroy() {
-    this.store.dispatch(SongRequestsActions.disconnectWebsocket());
+  public ngOnDestroy() {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+    this.subscriptions = [];
   }
 
   drop($event: CdkDragDrop<any, any>) {

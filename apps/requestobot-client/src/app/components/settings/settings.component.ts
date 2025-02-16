@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatButton } from '@angular/material/button';
 import {
@@ -17,36 +17,40 @@ import { SettingsState } from '../../state/settings/settings.reducer';
 import { WindowWithElectron } from '../../models/window.global';
 import { MatSlideToggle } from '@angular/material/slide-toggle';
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
+import { Subscription } from 'rxjs';
 
 declare let window: WindowWithElectron;
 
 @Component({
-    selector: 'app-settings',
-    imports: [
-        CommonModule,
-        MatButton,
-        MatDialogActions,
-        MatDialogClose,
-        MatDialogContent,
-        MatDialogTitle,
-        MatTabsModule,
-        MatSlideToggle,
-    ],
-    templateUrl: './settings.component.html',
-    styleUrl: './settings.component.css'
+  selector: 'app-settings',
+  imports: [
+    CommonModule,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    MatDialogContent,
+    MatDialogTitle,
+    MatTabsModule,
+    MatSlideToggle,
+  ],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.css',
 })
-export class SettingsComponent {
+export class SettingsComponent implements OnInit, OnDestroy {
   settings$ = this.store.select(selectSettings);
   settings: SettingsState = {};
-
+  private subscriptions: Subscription[] = [];
   constructor(
     public dialogRef: MatDialogRef<SettingsComponent>,
     private store: Store
-  ) {
-    this.settings$.subscribe((settings) => {
-      console.log('settings', settings);
-      this.settings = settings;
-    });
+  ) {}
+
+  ngOnInit() {
+    this.subscriptions.push(
+      this.settings$.subscribe((settings) => {
+        this.settings = settings;
+      })
+    );
 
     this.store.dispatch(
       SettingsActions.getValues({
@@ -58,6 +62,13 @@ export class SettingsComponent {
         ],
       })
     );
+  }
+
+  ngOnDestroy() {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+    this.subscriptions = [];
   }
 
   async chooseDirectory(settingName: string, defaultPath?: string) {

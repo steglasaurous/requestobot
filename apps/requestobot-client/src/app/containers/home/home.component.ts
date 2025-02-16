@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { QueueListComponent } from '../../components/queue-list/queue-list.component';
 import { SettingsService } from '../../services/settings.service';
 import { NgClass, NgForOf, NgIf } from '@angular/common';
@@ -11,10 +11,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
 import { Store } from '@ngrx/store';
 import { ChannelActions } from '../../state/channel/channel.actions';
-import { selectChannel } from '../../state/channel/channel.selectors';
-import { AuthState } from '../../models/auth-state.enum';
-import { ConnectionStateActions } from '../../state/connection-state/connection-state.actions';
-import { selectConnectionState } from '../../state/connection-state/connection-state.selector';
+import {
+  selectChannelLoadedState,
+  selectChannelState,
+} from '../../state/channel/channel.selectors';
+import { AuthorizedState } from '../../models/authorized-state.enum';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { GamesActions } from '../../state/games/games.actions';
 import { selectGamesState } from '../../state/games/games.selector';
@@ -22,28 +23,34 @@ import { AuthActions } from '../../state/auth/auth.actions';
 import { MatIcon } from '@angular/material/icon';
 import { SettingsComponent } from '../../components/settings/settings.component';
 import { MatTooltip } from '@angular/material/tooltip';
+import { ChannelLoadedState } from '../../state/channel/channel.reducer';
+import { ToastrService } from 'ngx-toastr';
+import { selectAuth } from '../../state/auth/auth.selectors';
+import { WebsocketActions } from '../../state/websocket/websocket.actions';
+import { Subscription } from 'rxjs';
 
 @Component({
-    selector: 'app-home',
-    imports: [
-        QueueListComponent,
-        NgIf,
-        MatSlideToggleModule,
-        ButtonPrimaryComponent,
-        PanelComponent,
-        NgForOf,
-        NgClass,
-        MatProgressSpinner,
-        MatIcon,
-        MatTooltip,
-    ],
-    providers: [],
-    templateUrl: './home.component.html'
+  selector: 'app-home',
+  imports: [
+    QueueListComponent,
+    NgIf,
+    MatSlideToggleModule,
+    ButtonPrimaryComponent,
+    PanelComponent,
+    NgForOf,
+    NgClass,
+    MatProgressSpinner,
+    MatIcon,
+    MatTooltip,
+  ],
+  providers: [],
+  templateUrl: './home.component.html',
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit, OnDestroy {
   channelName = '';
-  channel$ = this.store.select(selectChannel);
-  connectionState$ = this.store.select(selectConnectionState);
+  channelState$ = this.store.select(selectChannelState);
+  authState$ = this.store.select(selectAuth);
+  channelLoadedState$ = this.store.select(selectChannelLoadedState);
   channel: ChannelDto = {
     id: 0,
     channelName: '',
@@ -64,46 +71,77 @@ export class HomeComponent {
   games$ = this.store.select(selectGamesState);
 
   confirmDialog = inject(MatDialog);
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private settingsService: SettingsService,
     private router: Router,
-    private store: Store
-  ) {
-    this.games$.subscribe((games) => {
-      this.games = games;
-    });
+    private store: Store,
+    private toastr: ToastrService
+  ) {}
 
-    this.connectionState$.subscribe(async (connectionState) => {
-      if (connectionState.authState === AuthState.Authenticated) {
-        // We're clear to proceed.
-        this.store.dispatch(GamesActions.getGames());
-        this.settingsService.getValue('username').then((value) => {
-          if (value != undefined) {
-            this.channelName = value;
+  ngOnInit(): void {
+    this.subscriptions.push(
+      this.games$.subscribe((games) => {
+        this.games = games;
+      })
+    );
+
+    this.subscriptions.push(
+      this.authState$.subscribe(async (authState) => {
+        if (authState.authState === AuthorizedState.Authenticated) {
+          // We're clear to proceed.
+          this.store.dispatch(GamesActions.getGames());
+          this.settingsService.getValue('username').then((value) => {
+            if (value != undefined) {
+              this.channelName = value;
+            }
+
+            this.updateChannelInfo();
+          });
+        } else if (authState.authState === AuthorizedState.ConnectionFailure) {
+          this.toastr.error('Failed to connect to the server, retrying...');
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.channelState$.subscribe((channelState) => {
+        const channel = channelState.channel;
+        if (channel) {
+          this.channel = channel;
+
+          // Do checks
+          if (!channel.inChannel) {
+            // The bot is not present in the user's channel.  Goto join to ask to invite it back.
+            this.router.navigate(['join']);
+
+            return;
           }
+        }
+      })
+    );
 
-          this.updateChannelInfo();
-        });
-      }
-    });
+    this.subscriptions.push(
+      this.channelLoadedState$.subscribe((channelLoadedState) => {
+        if (channelLoadedState === ChannelLoadedState.Loaded) {
+          this.store.dispatch(WebsocketActions.enable());
+        }
+        if (channelLoadedState === ChannelLoadedState.Fail) {
+          this.toastr.error('Failed to load channel details from API');
+        }
+      })
+    );
 
     // This checks to make sure our JWT is valid.  If not, it'll attempt to refresh it with a refresh token.
-    this.store.dispatch(ConnectionStateActions.checkAuth());
+    this.store.dispatch(AuthActions.checkAuth());
+  }
 
-    this.channel$.subscribe((channel) => {
-      this.channel = channel;
-
-      // Do checks
-      if (channel.id > 0) {
-        if (!channel.inChannel) {
-          // The bot is not present in the user's channel.  Goto join to ask to invite it back.
-          this.router.navigate(['join']);
-
-          return;
-        }
-      }
-    });
+  ngOnDestroy(): void {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+    this.subscriptions = [];
   }
 
   updateChannelInfo() {
@@ -156,7 +194,6 @@ export class HomeComponent {
   }
 
   setChannelSetting(settingName: string, value: string) {
-    console.log('setChannelSetting', settingName, value);
     this.store.dispatch(
       ChannelActions.setSetting({ settingName: settingName, value: value })
     );
@@ -185,10 +222,8 @@ export class HomeComponent {
 
   toggleBotEnabled() {
     if (this.channel.enabled) {
-      console.log('Disabling bot');
       this.store.dispatch(ChannelActions.disableBot());
     } else {
-      console.log('Enabling bot');
       this.store.dispatch(ChannelActions.enableBot());
     }
   }

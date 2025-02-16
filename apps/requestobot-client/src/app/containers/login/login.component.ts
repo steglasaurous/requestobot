@@ -1,4 +1,4 @@
-import { Component, Inject, isDevMode, OnInit } from '@angular/core';
+import { Component, Inject, isDevMode, OnDestroy, OnInit } from '@angular/core';
 import { WindowWithElectron } from '../../models/window.global';
 import { QUEUEBOT_API_BASE_URL } from '../../app.config';
 import { ButtonPrimaryComponent } from '../../components/button-primary/button-primary.component';
@@ -19,6 +19,8 @@ import {
 } from '../../state/auth/auth.reducer';
 import { ToastrService } from 'ngx-toastr';
 import { NgIf } from '@angular/common';
+import log from 'electron-log/renderer';
+import { Subscription } from 'rxjs';
 
 declare let window: WindowWithElectron;
 
@@ -33,7 +35,7 @@ declare let window: WindowWithElectron;
   providers: [],
   templateUrl: './login.component.html',
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   formGroup = new FormGroup({
     authCode: new FormControl('', {
       validators: [Validators.required],
@@ -42,7 +44,7 @@ export class LoginComponent implements OnInit {
 
   auth$ = this.store.select(selectAuth);
   auth: AuthState = initialState;
-
+  private subscriptions: Subscription[] = [];
   constructor(
     @Inject(QUEUEBOT_API_BASE_URL) private apiBaseUrl: string,
     private store: Store,
@@ -57,17 +59,26 @@ export class LoginComponent implements OnInit {
         if (authCode) {
           this.submitAuthCode(authCode);
         } else {
-          console.log('Unable to get auth code from URL');
+          log.error('Unable to get auth code from URL');
         }
       });
     }
 
-    this.auth$.subscribe((auth) => {
-      this.auth = auth;
-      if (auth.loginProcessState === LoginProcessState.Fail) {
-        this.toastr.error('Please try again.', 'Login Failed');
-      }
-    });
+    this.subscriptions.push(
+      this.auth$.subscribe((auth) => {
+        this.auth = auth;
+        if (auth.loginProcessState === LoginProcessState.Fail) {
+          this.toastr.error('Please try again.', 'Login Failed');
+        }
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+    this.subscriptions = [];
   }
 
   submitAuthCode(value: string) {
@@ -84,7 +95,6 @@ export class LoginComponent implements OnInit {
     if (window['settings']) {
       window['settings'].openTwitchLogin();
     } else {
-      console.log('DEV: Open twitch auth in a new tab');
       window.open(`${this.apiBaseUrl}/auth/twitch?mode=authcode`, '_blank');
     }
   }

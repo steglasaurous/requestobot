@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { WindowWithElectron } from '../models/window.global';
+import log from 'electron-log/renderer';
 
 declare let window: WindowWithElectron;
 
@@ -7,19 +8,15 @@ declare let window: WindowWithElectron;
   providedIn: 'root',
 })
 export class SettingsService {
-  constructor() {
-    console.log('Creating settingsService');
-  }
-
   async getValue(key: string): Promise<string | undefined> {
     // This is to avoid typescript complaining that settings is not part of the window type.
     // There's some workarounds: https://stackoverflow.com/questions/12709074/how-do-you-explicitly-set-a-new-property-on-window-in-typescript
     if (window['settings']) {
       return await window['settings'].getValue(key);
     } else {
-      console.log('Getting setting from memory', { key: key });
+      log.debug('Getting setting from memory', { key: key });
       return Promise.resolve(
-        window.localStorage.getItem(`setting:${key}`) ?? undefined,
+        window.localStorage.getItem(`setting:${key}`) ?? undefined
       );
     }
   }
@@ -28,7 +25,7 @@ export class SettingsService {
     if (window['settings']) {
       return await window['settings'].setValue(key, value);
     } else {
-      console.log('Set setting in memory', { key: key, value: value });
+      log.debug('Set setting in memory', { key: key, value: value });
       window.localStorage.setItem(`setting:${key}`, value);
       return Promise.resolve();
     }
@@ -38,7 +35,7 @@ export class SettingsService {
     if (window['settings']) {
       return await window['settings'].deleteValue(key);
     } else {
-      console.log('Deleting setting in memory', { key: key });
+      log.debug('Deleting setting in memory', { key: key });
       window.localStorage.removeItem(`setting:${key}`);
     }
   }
