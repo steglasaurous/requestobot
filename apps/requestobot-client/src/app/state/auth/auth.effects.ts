@@ -10,6 +10,9 @@ import { AuthActions } from './auth.actions';
 import { HttpErrorResponse } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import log from 'electron-log/renderer';
+import { ChannelActions } from '../channel/channel.actions';
+import { SongRequestsActions } from '../song-requests/song-requests.actions';
+import { WebsocketActions } from '../websocket/websocket.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -68,7 +71,12 @@ export class AuthEffects {
           await this.settingsService.deleteValue(SettingName.JWTRefresh);
           this.queuebotApiService.logout().subscribe(async () => {
             log.debug('API logged out');
+            // This clears all the various stores, resetting back to initial state.
             this.store.dispatch(AuthActions.notAuthenticated());
+            this.store.dispatch(ChannelActions.logout());
+            this.store.dispatch(SongRequestsActions.logout());
+            this.store.dispatch(WebsocketActions.disable());
+
             await this.router.navigate(['login']);
           });
 

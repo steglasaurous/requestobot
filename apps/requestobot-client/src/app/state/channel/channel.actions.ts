@@ -43,5 +43,6 @@ export const ChannelActions = createActionGroup({
     'Disable Bot': emptyProps(),
     'Disable Bot Success': emptyProps(),
     'Disable Bot Fail': props<{ error: HttpErrorResponse }>(),
+    Logout: emptyProps(),
   },
 });

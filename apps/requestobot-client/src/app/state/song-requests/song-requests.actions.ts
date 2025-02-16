@@ -38,5 +38,6 @@ export const SongRequestsActions = createActionGroup({
     'Next Song Fail': props<{ error: HttpErrorResponse }>(),
     'Next Song Success': emptyProps(),
     'Reprocess Songs': emptyProps(),
+    Logout: emptyProps(),
   },
 });

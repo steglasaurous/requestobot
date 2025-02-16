@@ -114,5 +114,6 @@ export const songRequestsReducer = createReducer(
   }),
   on(SongRequestsActions.reprocessSongs, (state) => {
     return { ...state, songDownloadStates: {} };
-  })
+  }),
+  on(SongRequestsActions.logout, () => initialState)
 );

@@ -218,5 +218,6 @@ export const channelReducer = createReducer(
       return state;
     }
     return { ...state, channel: { ...state.channel, enabled: true } };
-  })
+  }),
+  on(ChannelActions.logout, () => initialState)
 );

@@ -20,15 +20,18 @@ export class WebsocketEffects {
         concatLatestFrom(() => this.store.select(selectChannel)),
         exhaustMap(([action, channel]) => {
           if (!channel) {
+            log.debug('Channel is not active, not enabling the websocket');
             return EMPTY;
           }
 
           if (this.websocketService.isActive) {
+            log.debug('Websocket is already active');
             return EMPTY;
           }
 
           this.websocketService.connect({
             next: () => {
+              log.debug('Websocket connected');
               this.store.dispatch(WebsocketActions.connected());
               this.websocketService.sendMessage({
                 event: 'subscribe',
@@ -80,6 +83,7 @@ export class WebsocketEffects {
       this.actions$.pipe(
         ofType(WebsocketActions.disable),
         exhaustMap(() => {
+          log.debug('Closing and disabling the websocket');
           this.websocketService.close();
           return EMPTY;
         })

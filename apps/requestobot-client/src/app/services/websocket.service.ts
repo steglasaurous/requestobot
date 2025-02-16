@@ -89,7 +89,11 @@ export class WebsocketService {
   }
 
   public close() {
-    this.socket$.complete();
+    if (this.socket$) {
+      this.socket$.complete();
+    }
+
+    this.active = false;
   }
   private doConnect() {
     this.active = true;
