@@ -58,7 +58,7 @@ export class SongRequestsEffects {
           for (const songRequest of songRequests) {
             let processSong = true;
             if (songDownloadStates[songRequest.song.id]) {
-              log.debug('Song is already been processed', {
+              log.debug('Song has already been processed', {
                 songId: songRequest.song.id,
               });
               processSong = false;
