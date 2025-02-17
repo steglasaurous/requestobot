@@ -10,7 +10,6 @@ import { SettingName } from '@requestobot/util-client-common';
 import { getDownloaderService } from './services/downloader/get-song-downloader';
 import { SongDownloader } from './services/downloader/song-downloader';
 import log from 'electron-log/main';
-import { installExtension, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 
 const IPC_PROTOCOL_HANDLER = 'login.protocolHandler';
 const FILTERED_URLS = [`${environment.queuebotApiBaseUrl}/*`];
@@ -57,12 +56,17 @@ export default class App {
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
+
     if (App.isDevelopmentMode()) {
-      installExtension(REDUX_DEVTOOLS, {
-        loadExtensionOptions: { allowFileAccess: true },
-      })
-        .then((ext) => console.log(`Added Extension:  ${ext.name}`))
-        .catch((err) => console.log('An error occurred: ', err));
+      // This is a dynamic import so that the production build doesn't explode
+      // (since electron-devtools-installer is a dev dependency, not included in production builds)
+      import('electron-devtools-installer').then((devtoolsInstaller) => {
+          devtoolsInstaller.installExtension(devtoolsInstaller.REDUX_DEVTOOLS, {
+            loadExtensionOptions: { allowFileAccess: true },
+          })
+            .then((ext) => console.log(`Added Extension:  ${ext.name}`))
+            .catch((err) => console.log('An error occurred: ', err));
+      });
     }
 
     // This attaches the JWT cookie to the outgoing request if available,
