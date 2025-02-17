@@ -80,7 +80,7 @@ Happy streaming!
 
 ### Desktop App Feature: Auto-download songs!
 
-For the games Synth Riders, Spin Rhythm XD and Audio Trip, the desktop can auto-download songs that were requested automatically
+For the games Synth Riders, Spin Rhythm XD and Audio Trip, the desktop app can auto-download songs that were requested automatically
 to your machine!  You can set the exact custom song paths in the settings page in case you keep custom songs in a different location.
 (ex: installing Synth Riders on a different drive would require changing the auto-download location).
 
