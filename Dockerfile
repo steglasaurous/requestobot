@@ -15,6 +15,6 @@ FROM node:20
 WORKDIR /usr/src/app
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base dos2unix make python3 g++
 COPY --from=builder /usr/src/app/dist/apps/requestobot-server .
-RUN npm ci --omit=dev
+RUN npm i
 EXPOSE 3000
 ENTRYPOINT ["node", "main.js", "--serve"]
