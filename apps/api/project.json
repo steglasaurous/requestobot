@@ -1,0 +1,28 @@
+{
+  "name": "api",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/api/src",
+  "targets": {
+    "build": {
+      "executor": "@nxt-php/php-symfony:build",
+      "options": {
+        "outputPath": "dist/apps/api",
+        "cleanDestinationDir": true
+      },
+      "configurations": {
+        "production": {}
+      }
+    },
+    "e2e": {
+      "executor": "@nxt-php/php-symfony:e2e"
+    },
+    "lint": {
+      "executor": "@nxt-php/php-symfony:lint"
+    },
+    "test": {
+      "executor": "@nxt-php/php-symfony:test"
+    }
+  },
+  "tags": []
+}
