@@ -104,6 +104,7 @@
     "@nx/web": "20.4.4",
     "@nx/webpack": "20.4.4",
     "@nx/workspace": "20.4.4",
+    "@nxt-php/php-symfony": "^5.2.0",
     "@playwright/test": "^1.36.0",
     "@schematics/angular": "19.1.5",
     "@swc-node/register": "~1.9.1",
