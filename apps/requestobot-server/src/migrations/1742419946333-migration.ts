@@ -33,7 +33,7 @@ export class Migration1742419946333 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DELETE
                              FROM song
-                             WHERE songHash IN
+                             WHERE "songHash" IN
                                    ('SR_OST_149', 'SR_OST_150', 'SR_OST_151', 'SR_OST_152', 'SR_OST_153', 'SR_OST_154',
                                     'SR_OST_155', 'SR_OST_156', 'SR_OST_157', 'SR_OST_158')`);
   }
