@@ -35,6 +35,7 @@ import { Migration1734838703767 } from './migrations/1734838703767-migration';
 import { Migration1736277542330 } from './migrations/1736277542330-migration';
 import { Migration1738416054868 } from './migrations/1738416054868-migration';
 import { Migration1742419946333 } from './migrations/1742419946333-migration';
+import { Migration1746966895500 } from './migrations/1746966895500-migration';
 
 export const typeORMAppConfig: DataSourceOptions = {
   type: 'postgres',
@@ -77,6 +78,7 @@ export const typeORMAppConfig: DataSourceOptions = {
     Migration1736277542330,
     Migration1738416054868,
     Migration1742419946333,
+    Migration1746966895500,
   ],
   migrationsRun: true,
 };
