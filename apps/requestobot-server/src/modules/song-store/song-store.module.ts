@@ -22,6 +22,8 @@ import { DanceDashSongImporterService } from './services/song-importers/dance-da
 import { SynthRiderzSongImporterService } from './services/song-importers/synth-riderz-song-importer.service';
 import { ZipFileExtractorService } from './services/zip-file-extractor.service';
 import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
+import { YoutubeUrlValidator } from './utils/youtube-url.validator';
+import { YoutubeStrategy } from './services/song-search-strategies/youtube.strategy';
 
 @Module({
   imports: [
@@ -81,12 +83,17 @@ import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
     },
     LocalStrategy,
     SpinRhythmSearchStrategy,
+    YoutubeUrlValidator,
+    YoutubeStrategy,
     {
       provide: SONG_SEARCH_STRATEGIES,
-      inject: [LocalStrategy, SpinRhythmSearchStrategy],
-      useFactory: (localStrategy: LocalStrategy) => {
+      inject: [LocalStrategy, YoutubeStrategy],
+      useFactory: (
+        localStrategy: LocalStrategy,
+        youtubeStrategy: YoutubeStrategy
+      ) => {
         // Add back spinRhythmStrategy to this array to query the spinsha.re API directly.
-        return [localStrategy];
+        return [localStrategy, youtubeStrategy];
       },
     },
     SongImporterManagerService,
