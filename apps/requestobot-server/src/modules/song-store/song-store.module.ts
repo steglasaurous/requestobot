@@ -8,10 +8,12 @@ import { SongImporterManagerService } from './services/song-importer-manager.ser
 import { LocalStrategy } from './services/song-search-strategies/local.strategy';
 import { SpinRhythmSearchStrategy } from './services/song-search-strategies/spin-rhythm-search.strategy';
 import {
+  DOWNLOADED_SONGS_PATH,
   MOD_IO_API_KEY,
   MOD_IO_BASE_URL,
   SONG_IMPORTERS,
   SONG_SEARCH_STRATEGIES,
+  STATIC_SITE_BASE_URL,
   TRIPPY_TUNES_BASE_URL,
   YTDLP_PATH,
 } from './injection-tokens';
@@ -26,6 +28,7 @@ import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
 import { YoutubeUrlValidator } from './utils/youtube-url.validator';
 import { YoutubeStrategy } from './services/song-search-strategies/youtube.strategy';
 import { SongSearchService } from './services/song-search.service';
+import { YoutubeDownloaderService } from './services/youtube-downloader.service';
 
 @Module({
   imports: [
@@ -90,6 +93,14 @@ import { SongSearchService } from './services/song-search.service';
       provide: YTDLP_PATH,
       useValue: process.env.YTDLP_PATH,
     },
+    {
+      provide: DOWNLOADED_SONGS_PATH,
+      useValue: process.env.DOWNLOADED_SONGS_PATH,
+    },
+    {
+      provide: STATIC_SITE_BASE_URL,
+      useValue: process.env.STATIC_SITE_BASE_URL,
+    },
     YoutubeStrategy,
     SongSearchService,
     {
@@ -103,6 +114,7 @@ import { SongSearchService } from './services/song-search.service';
         return [localStrategy, youtubeStrategy];
       },
     },
+    YoutubeDownloaderService,
     SongImporterManagerService,
     ModIoApiService,
   ],
