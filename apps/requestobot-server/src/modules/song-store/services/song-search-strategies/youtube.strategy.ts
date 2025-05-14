@@ -2,28 +2,33 @@ import { Game } from '../../../data-store/entities/game.entity';
 import { Song } from '../../../data-store/entities/song.entity';
 import { SongSearchStrategyInterface } from './song-search-strategy.interface';
 import { YoutubeUrlValidator } from '../../utils/youtube-url.validator';
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { SongService } from '../song.service';
 import child_process from 'node:child_process';
 import { promisify } from 'node:util';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CreateSongEvent } from '../../events/create-song.event';
+import { YTDLP_PATH } from '../../injection-tokens';
+
 const exec = promisify(child_process.exec);
 
 @Injectable()
 export class YoutubeStrategy implements SongSearchStrategyInterface {
   private logger: Logger = new Logger(this.constructor.name);
-  // FIXME: COntinue here - add appropriate logs, then continue on yt-dlp stuff
 
   constructor(
     private youtubeUrlValidator: YoutubeUrlValidator,
-    private songService: SongService,
-    private eventEmitter: EventEmitter2
+    @Inject(SongService) private songService: SongService,
+    private eventEmitter: EventEmitter2,
+    @Inject(YTDLP_PATH) private ytdlpPath: string
   ) {}
+
   supportsGame(game: Game): boolean {
     return game.name === 'youtube';
   }
+
   async search(game: Game, query: string): Promise<Song[]> {
+    this.logger.log('Searching youtube', { query: query });
     // We expect searches to contain youtube links.  If we can't
     // resolve the link, reject the search.
     if (!this.youtubeUrlValidator.isValidYoutubeUrl(query)) {
@@ -57,7 +62,7 @@ export class YoutubeStrategy implements SongSearchStrategyInterface {
     // "duration" -> in seconds
     // const { stderr, stdout } = await exec('yt-dlp --skip-download --print title "' + query + '"');
     const { stderr, stdout } = await exec(
-      'yt-dlp --skip-download --dump-json "' + query + '"'
+      `${this.ytdlpPath} --skip-download --dump-json "${query}"`
     );
     const videoMetadata = JSON.parse(stdout);
     if (!videoMetadata) {
