@@ -6,9 +6,10 @@ import { SONG_SEARCH_STRATEGIES } from '../injection-tokens';
 import { getGenericNestMock, getSampleSong } from '../../../../test/helpers';
 import { Game } from '../../data-store/entities/game.entity';
 import { BotStateService } from '../../data-store/services/bot-state.service';
+import { SongSearchService } from './song-search.service';
 
-describe('SongServiceService', () => {
-  let service: SongService;
+describe('SongSearchService', () => {
+  let service: SongSearchService;
   const songSearchStrategyMock = {
     supportsGame: jest.fn(),
     search: jest.fn(),
@@ -48,7 +49,7 @@ describe('SongServiceService', () => {
       })
       .compile();
 
-    service = module.get<SongService>(SongService);
+    service = module.get<SongSearchService>(SongSearchService);
   });
 
   // afterEach(() => {
@@ -73,7 +74,7 @@ describe('SongServiceService', () => {
       query,
       game,
       username,
-      channelName,
+      channelName
     );
     expect(result).toEqual([song]);
     expect(userBotStateMock.setState).not.toHaveBeenCalled();
@@ -93,7 +94,7 @@ describe('SongServiceService', () => {
       query,
       game,
       username,
-      channelName,
+      channelName
     );
     expect(result).toEqual([song, song2]);
     expect(userBotStateMock.setState).toHaveBeenCalledWith(
@@ -101,7 +102,7 @@ describe('SongServiceService', () => {
       channelName,
       {
         lastQueryResults: [song, song2],
-      },
+      }
     );
   });
 
