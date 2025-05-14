@@ -13,6 +13,7 @@ import {
   SONG_IMPORTERS,
   SONG_SEARCH_STRATEGIES,
   TRIPPY_TUNES_BASE_URL,
+  YTDLP_PATH,
 } from './injection-tokens';
 import { SpinRhythmSongImporterService } from './services/song-importers/spin-rhythm-song-importer.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -24,6 +25,7 @@ import { ZipFileExtractorService } from './services/zip-file-extractor.service';
 import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
 import { YoutubeUrlValidator } from './utils/youtube-url.validator';
 import { YoutubeStrategy } from './services/song-search-strategies/youtube.strategy';
+import { SongSearchService } from './services/song-search.service';
 
 @Module({
   imports: [
@@ -84,7 +86,12 @@ import { YoutubeStrategy } from './services/song-search-strategies/youtube.strat
     LocalStrategy,
     SpinRhythmSearchStrategy,
     YoutubeUrlValidator,
+    {
+      provide: YTDLP_PATH,
+      useValue: process.env.YTDLP_PATH,
+    },
     YoutubeStrategy,
+    SongSearchService,
     {
       provide: SONG_SEARCH_STRATEGIES,
       inject: [LocalStrategy, YoutubeStrategy],
@@ -99,6 +106,6 @@ import { YoutubeStrategy } from './services/song-search-strategies/youtube.strat
     SongImporterManagerService,
     ModIoApiService,
   ],
-  exports: [SongService],
+  exports: [SongService, SongSearchService],
 })
 export class SongStoreModule {}
