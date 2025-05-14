@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common';
 export class LocalStrategy implements SongSearchStrategyInterface {
   constructor(
     @InjectRepository(Song)
-    private songRepository: Repository<Song>,
+    private songRepository: Repository<Song>
   ) {}
   async search(game: Game, query: string): Promise<Song[]> {
     // We handle spin differently as it can take requests in different forms.
@@ -63,6 +63,6 @@ export class LocalStrategy implements SongSearchStrategyInterface {
     // Put exceptions here. Local should be the
     // fallback mechanism if no other
     // strategies are in use.
-    return true;
+    return game.name != 'youtube';
   }
 }
