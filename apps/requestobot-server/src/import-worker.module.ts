@@ -6,10 +6,12 @@ import { typeORMAppConfig } from './typeorm.config';
 import { ConfigModule } from '@nestjs/config';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import path from 'path';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    EventEmitterModule.forRoot(),
     DataStoreModule,
     SongStoreModule,
     TypeOrmModule.forRoot(typeORMAppConfig),
