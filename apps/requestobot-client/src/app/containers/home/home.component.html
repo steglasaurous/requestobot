@@ -4,8 +4,8 @@
     <mat-spinner [diameter]="50"></mat-spinner>
   </div>
 </div>
-<div class="flex flex-row m-5 gap-4 justify-center" *ngIf="channel.id > 0">
-  <div class="flex flex-col w-64">
+<div class="flex lg:flex-row flex-col m-5 gap-4 justify-center" *ngIf="channel.id > 0">
+  <div class="hidden lg:flex lg:flex-col lg:w-64">
     <app-panel title="Current Game">
       <img src="{{ channel.game.coverArtUrl }}" />
     </app-panel>
@@ -25,18 +25,12 @@
         </ul>
       </div>
     </app-panel>
-<!--    <app-panel title="Server Status" class="mt-5">-->
-<!--      &lt;!&ndash; FIXME: Implement this &ndash;&gt;-->
-<!--      <p>Server: <span class="font-bold text-green-400">Online</span></p>-->
-<!--      <p>API: <span class="font-bold text-green-400">Online</span></p>-->
-<!--      <p>Websocket: <span class="font-bold text-green-400">Connected</span></p>-->
-<!--    </app-panel>-->
   </div>
   <div class="flex flex-row flex-grow">
     <!-- queue list -->
     <app-queue-list *ngIf="channel.id > 0" class="w-full"></app-queue-list>
   </div>
-  <div class="flex flex-col w-64">
+  <div class="hidden lg:flex flex-col lg:w-64 w-full">
     <!-- right col -->
     <app-panel title="">
       <!-- Login/logout -->

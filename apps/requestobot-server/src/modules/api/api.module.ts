@@ -8,6 +8,7 @@ import { GameController } from './controllers/game.controller';
 import { ChannelManagerModule } from '../channel-manager/channel-manager.module';
 import { SettingController } from './controllers/setting.controller';
 import { BotCommandsModule } from '../bot-commands/bot-commands.module';
+import { PlayerController } from './controllers/player.controller';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { BotCommandsModule } from '../bot-commands/bot-commands.module';
     ChannelController,
     GameController,
     SettingController,
+    PlayerController,
   ],
 })
 export class ApiModule {}
