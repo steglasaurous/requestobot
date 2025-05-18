@@ -11,6 +11,8 @@ import {
 import { Game } from '../entities/game.entity';
 import { Song } from '../entities/song.entity';
 import { Setting } from '../entities/setting.entity';
+import { Player } from '../entities/player.entity';
+import { PlayerDto } from '../../api/dto/player.dto';
 
 @Injectable()
 export class DtoMappingService {
@@ -82,6 +84,17 @@ export class DtoMappingService {
       channelId: setting.channel.id,
       settingName: setting.settingName.name,
       value: setting.value,
+    };
+  }
+
+  public playerToDto(player: Player): PlayerDto {
+    let songId = null;
+    if (player.song) {
+      songId = player.song.id;
+    }
+    return {
+      songId: songId,
+      state: player.state,
     };
   }
 }
