@@ -4,6 +4,7 @@ import {
   Index,
   ManyToOne,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { SongRequest } from './song-request.entity';
@@ -12,6 +13,7 @@ import { Game } from './game.entity';
 import { SongBan } from './song-ban.entity';
 import { ChatServiceName } from '@steglasaurous/chat';
 import { Setting } from './setting.entity';
+import { Player } from './player.entity';
 
 @Entity()
 @Index(['channelName', 'chatServiceName'], { unique: true })
@@ -81,4 +83,7 @@ export class Channel {
 
   @OneToMany(() => Setting, (setting) => setting.channel)
   settings: Promise<Setting[]>;
+
+  @OneToOne(() => Player, (player) => player.channel)
+  player: Player;
 }
