@@ -17,6 +17,7 @@ import {
 import { SongRequestsActions } from '../../state/song-requests/song-requests.actions';
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
 import { Subscription } from 'rxjs';
+import { SongPlayerActions } from '../../state/song-player/song-player.actions';
 
 @Component({
   selector: 'app-queue-list',
@@ -27,6 +28,7 @@ import { Subscription } from 'rxjs';
     LocalSongStatusComponent,
     PanelComponent,
   ],
+  standalone: true,
   providers: [],
   templateUrl: './queue-list.component.html',
 })
@@ -103,5 +105,17 @@ export class QueueListComponent implements OnInit, OnDestroy {
     // TODO: Disable the next song button while the request is in progress, then re-enable when the request completes (or fails)
     // this.nextSongDisabled = true;
     this.store.dispatch(SongRequestsActions.nextSong());
+  }
+
+  playerPlay(id: number) {
+    this.store.dispatch(SongPlayerActions.play({ songId: id }));
+  }
+
+  playerStop() {
+    this.store.dispatch(SongPlayerActions.stop());
+  }
+
+  playerPause() {
+    this.store.dispatch(SongPlayerActions.pause());
   }
 }

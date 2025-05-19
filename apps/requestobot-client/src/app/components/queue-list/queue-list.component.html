@@ -26,15 +26,15 @@
       </div>
       <div class="pt-2 pb-2 pr-3 flex flex-row flex-nowrap items-baseline">
         @if (queueItem.song.gameName === 'youtube') {
-          <button class="btn-primary bg-green-400" title="Play on stream">
+          <button class="btn-primary bg-green-400" title="Play on stream" (click)="playerPlay(queueItem.song.id)">
             <mat-icon>play_arrow</mat-icon>
           </button>
-          <button class="btn-primary bg-red-400">
+          <button class="btn-primary bg-red-400" (click)="playerStop()">
             <mat-icon>stop</mat-icon>
           </button>
-<!--          <button class="btn-primary">-->
-<!--            <mat-icon>pause</mat-icon>-->
-<!--          </button>-->
+          <button class="btn-primary" (click)="playerPause()">
+            <mat-icon>pause</mat-icon>
+          </button>
           <button class="btn-primary">
             <mat-icon>forward_10</mat-icon>
           </button>
