@@ -3,8 +3,6 @@ FROM node:20 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /usr/src/app
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base dos2unix make python3 g++
-# Download yt-dlp for youtube videos
-RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp
 COPY apps apps
 COPY libs libs
 # NOTE: Including eslintrc as nx explodes without it with "Failed to process project graph."
@@ -17,6 +15,8 @@ RUN npx nx build requestobot-overlay --configuration=production --verbose
 FROM node:20
 WORKDIR /usr/src/app
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base dos2unix make python3 g++
+# Download yt-dlp for youtube videos
+RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp
 COPY --from=builder /usr/src/app/dist/apps/requestobot-server .
 RUN npm i
 EXPOSE 3000
