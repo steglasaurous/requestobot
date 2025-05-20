@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { SongPlayerActions } from '../../state/song-player/song-player.actions';
 
 @Component({
   selector: 'app-player-controls',
@@ -20,4 +21,10 @@ export class PlayerControlsComponent {
   playerStop() {}
 
   playerPause() {}
+
+  changeVolume(event: Event) {
+    this.store.dispatch(
+      SongPlayerActions.volumeChange({ volume: this.volume })
+    );
+  }
 }
