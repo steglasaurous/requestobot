@@ -62,7 +62,7 @@ export class YoutubeStrategy implements SongSearchStrategyInterface {
     // "duration" -> in seconds
     // const { stderr, stdout } = await exec('yt-dlp --skip-download --print title "' + query + '"');
     const { stderr, stdout } = await exec(
-      `${this.ytdlpPath} --skip-download --dump-json "${query}"`
+      `${this.ytdlpPath} --skip-download --no-playlist --dump-json "${query}"`
     );
     const videoMetadata = JSON.parse(stdout);
     if (!videoMetadata) {
