@@ -40,7 +40,7 @@ export class YoutubeDownloaderService {
 
     // Tries to download the m4a audio file.  It's possible this may not be available all the time, so if this fails, we can
     // fall back to extracting the original video's audio track.
-    const cmd = `${this.ytdlpPath} -f 140 --output "${this.downloadedSongsPath}/${songEvent.song.id}.%(ext)s" "${url}"`;
+    const cmd = `${this.ytdlpPath} -f 140 --no-playlist --output "${this.downloadedSongsPath}/${songEvent.song.id}.%(ext)s" "${url}"`;
     this.logger.log('Downloading song', { cmd: cmd });
     const { stdout, stderr } = await exec(cmd);
     this.logger.log('Download complete', { stdout: stdout, stderr: stderr });
@@ -54,7 +54,7 @@ export class YoutubeDownloaderService {
 
       // This will download the video, extract the audio and CONVERT it into m4a.  Use this if there's no audio track available directly.
       await exec(
-        `${this.ytdlpPath} --extract-audio --audio-format m4a --audio-quality 0 --output "${this.downloadedSongsPath}/${songEvent.song.id}.%(ext)s" "${url}"`
+        `${this.ytdlpPath} --extract-audio --audio-format m4a --audio-quality 0 --no-playlist --output "${this.downloadedSongsPath}/${songEvent.song.id}.%(ext)s" "${url}"`
       );
 
       // If we still don't have the file, we're out of luck.
