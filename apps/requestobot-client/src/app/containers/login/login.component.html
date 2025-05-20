@@ -7,7 +7,7 @@
   </div>
 
   <!-- When run in dev mode on localhost, this finishes the auth process -->
-  <div *ngIf="isDevMode()">
+  <div *ngIf="isDevMode() || !this.inElectron">
     <div class="font-bold">Auth Code Login</div>
     <form [formGroup]="formGroup" (ngSubmit)="submitAuthCodeForm()">
       <app-input-text formControlName="authCode"></app-input-text>
