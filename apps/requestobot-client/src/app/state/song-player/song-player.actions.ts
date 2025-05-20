@@ -6,5 +6,6 @@ export const SongPlayerActions = createActionGroup({
     Play: props<{ songId: number }>(),
     Pause: emptyProps(),
     Stop: emptyProps(),
+    VolumeChange: props<{ volume: number }>(),
   },
 });
