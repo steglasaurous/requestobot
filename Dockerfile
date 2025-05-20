@@ -19,5 +19,6 @@ RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base d
 RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp && chmod +x /usr/local/bin/yt-dlp
 COPY --from=builder /usr/src/app/dist/apps/requestobot-server .
 RUN npm i
+RUN chmod +x /usr/local/bin/yt-dlp
 EXPOSE 3000
 ENTRYPOINT ["node", "main.js", "--serve"]
