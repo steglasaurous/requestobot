@@ -8,7 +8,17 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+        types:
+          text[]: MartinGeorgiev\Doctrine\DBAL\Types\TextArray
+
     orm:
+        dql:
+          string_functions:
+            # text search specific
+            TO_TSQUERY: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\ToTsquery
+            TO_TSVECTOR: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\ToTsvector
+            TSMATCH: MartinGeorgiev\Doctrine\ORM\Query\AST\Functions\Tsmatch
+
         auto_generate_proxy_classes: true
         enable_lazy_ghost_objects: true
         report_fields_where_declared: true
