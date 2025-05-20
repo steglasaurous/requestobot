@@ -271,4 +271,16 @@ export class QueuebotApiService {
       }
     );
   }
+
+  playerVolumeChange(channelId: number, volume: number) {
+    return this.httpClient.put(
+      `${this.apiBaseUrl}/api/channels/${channelId}/player/state`,
+      {
+        volume: volume,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }

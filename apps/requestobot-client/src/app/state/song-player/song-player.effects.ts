@@ -48,6 +48,22 @@ export class SongPlayerEffects {
       ),
     { dispatch: false }
   );
+  volumeChange$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(SongPlayerActions.volumeChange),
+        concatLatestFrom((action) => this.store.select(selectChannel)),
+        exhaustMap(async ([action, channel]) => {
+          if (channel) {
+            this.queuebotApi
+              .playerVolumeChange(channel.id, action.volume)
+              .subscribe();
+          }
+        })
+      ),
+    { dispatch: false }
+  );
+
   constructor(
     private store: Store,
     private actions$: Actions,
