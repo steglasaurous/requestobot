@@ -168,6 +168,7 @@ export class QueueGateway implements OnGatewayDisconnect, OnGatewayConnection {
         channelName: event.channel.channelName,
         song: this.dtoMappingService.songToDto(event.song),
         state: event.state,
+        volume: event.volume,
       },
     });
   }

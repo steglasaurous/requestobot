@@ -32,4 +32,10 @@ export class Player {
     nullable: false,
   })
   state: PlayerState;
+
+  @Column({
+    default: 100,
+    type: 'int',
+  })
+  volume: number;
 }

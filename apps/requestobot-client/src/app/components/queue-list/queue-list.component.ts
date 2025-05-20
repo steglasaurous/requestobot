@@ -18,6 +18,9 @@ import { SongRequestsActions } from '../../state/song-requests/song-requests.act
 import { SongDownloadStates } from '../../state/song-requests/song-requests.reducer';
 import { Subscription } from 'rxjs';
 import { SongPlayerActions } from '../../state/song-player/song-player.actions';
+import { MatSlider, MatSliderThumb } from '@angular/material/slider';
+import { FormsModule } from '@angular/forms';
+import { PlayerControlsComponent } from '../player-controls/player-controls.component';
 
 @Component({
   selector: 'app-queue-list',
@@ -27,6 +30,10 @@ import { SongPlayerActions } from '../../state/song-player/song-player.actions';
     MatIcon,
     LocalSongStatusComponent,
     PanelComponent,
+    MatSlider,
+    MatSliderThumb,
+    FormsModule,
+    PlayerControlsComponent,
   ],
   standalone: true,
   providers: [],
@@ -43,6 +50,8 @@ export class QueueListComponent implements OnInit, OnDestroy {
   songDownloadStates$ = this.store.select(selectSongDownloadStates);
 
   private subscriptions: Subscription[] = [];
+  position = 0;
+  volume = 100;
   constructor(private store: Store) {}
 
   ngOnInit() {

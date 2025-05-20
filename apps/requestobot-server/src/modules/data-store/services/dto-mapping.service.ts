@@ -95,6 +95,7 @@ export class DtoMappingService {
     return {
       songId: songId,
       state: player.state,
+      volume: player.volume,
     };
   }
 }

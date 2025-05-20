@@ -89,6 +89,10 @@ export class PlayerController {
       player.song = song;
     }
 
+    if (playerDto.volume && player.volume != playerDto.volume) {
+      player.volume = playerDto.volume;
+    }
+
     await this.playerService.savePlayer(player);
 
     return this.dtoMappingService.playerToDto(player);

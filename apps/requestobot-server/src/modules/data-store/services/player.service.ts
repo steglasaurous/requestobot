@@ -35,6 +35,7 @@ export class PlayerService {
       song: player.song,
       channel: player.channel,
       state: player.state,
+      volume: player.volume,
     });
 
     return playerResponse;
