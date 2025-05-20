@@ -6,4 +6,5 @@ export class PlayerStateChangeEvent {
   channel: Channel;
   song: Song;
   state: PlayerState;
+  volume: number;
 }

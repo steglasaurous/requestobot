@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { WebsocketActions } from '@requestobot/util-requestobot-websocket';
-import { EMPTY, exhaustMap } from 'rxjs';
+import { EMPTY, exhaustMap, switchMap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { SongPlayerActions } from './song-player.actions';
 import { log } from 'electron-log';
+import { concatLatestFrom } from '@ngrx/operators';
+import { selectSongPlayer } from './song-player.selector';
 
 @Injectable()
 export class SongPlayerEffects {
@@ -12,9 +14,11 @@ export class SongPlayerEffects {
     () =>
       this.actions$.pipe(
         ofType(WebsocketActions.websocketEvent),
-        exhaustMap(({ event, data }) => {
+        concatLatestFrom((action) => this.store.select(selectSongPlayer)),
+        switchMap(([{ event, data }, state]) => {
           if (event == 'playerStateChangeEvent') {
             log('Got a playerStateChangeEvent');
+            log(data);
             switch (data.state) {
               case 'playing':
                 this.store.dispatch(
@@ -27,6 +31,10 @@ export class SongPlayerEffects {
               case 'stopped':
                 this.store.dispatch(SongPlayerActions.stop());
                 break;
+            }
+
+            if (state.volume !== data.volume) {
+              this.store.dispatch(SongPlayerActions.changeVolume(data.volume));
             }
           }
 
