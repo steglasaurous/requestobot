@@ -1,0 +1,31 @@
+<div>
+  <button class="btn-primary bg-green-400" title="Play on stream">
+    <mat-icon>play_arrow</mat-icon>
+  </button>
+  <button class="btn-primary bg-red-400" (click)="playerStop()">
+    <mat-icon>stop</mat-icon>
+  </button>
+  <button class="btn-primary" (click)="playerPause()">
+    <mat-icon>pause</mat-icon>
+  </button>
+  <button class="btn-primary">
+    <mat-icon>forward_10</mat-icon>
+  </button>
+  <button class="btn-primary">
+    <mat-icon>replay_10</mat-icon>
+  </button>
+</div>
+<div>
+  <mat-slider
+    [max]="100"
+    [min]="0"
+  >
+    <input matSliderThumb [(ngModel)]="position" #positionSlider>
+  </mat-slider>
+  <mat-slider
+    [max]="100"
+    [min]="0"
+  >
+    <input matSliderThumb [(ngModel)]="volume" #volumeSlider>
+  </mat-slider>
+</div>

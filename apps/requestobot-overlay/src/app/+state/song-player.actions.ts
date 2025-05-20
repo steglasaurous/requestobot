@@ -11,5 +11,6 @@ export const SongPlayerActions = createActionGroup({
     ChangePosition: props<{
       change: number;
     }>(),
+    ChangeVolume: props<{ volume: number }>(),
   },
 });

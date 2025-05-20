@@ -7,11 +7,13 @@ export interface SongPlayerState {
   // FIXME: I'd prefer to use the PlayerState defined in the backend, but typeorm gets funny about dependencies outside of
   //   the server app.  (can't resolve library references I think).  If I figure that out some time, replace this.
   playerState: string;
+  volume: number;
 }
 
 export const initialState: SongPlayerState = {
   song: null,
   playerState: 'stopped',
+  volume: 100,
 };
 
 export const songPlayerReducer = createReducer(
@@ -24,5 +26,8 @@ export const songPlayerReducer = createReducer(
   }),
   on(SongPlayerActions.stop, (state) => {
     return { ...state, playerState: 'stopped' };
+  }),
+  on(SongPlayerActions.changeVolume, (state, { volume }) => {
+    return { ...state, volume: volume };
   })
 );
