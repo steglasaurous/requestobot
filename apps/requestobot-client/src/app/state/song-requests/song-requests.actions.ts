@@ -28,7 +28,7 @@ export const SongRequestsActions = createActionGroup({
       songRequestId: number;
       error: HttpErrorResponse;
     }>(),
-    'Set Request Active': props<{ songRequestId: number }>(),
+    'Set Request Active': props<{ songRequest: SongRequestDto }>(),
     'Set Request Active Success': props<{ songRequestId: number }>(),
     'Set Request Active Fail': props<{
       songRequestId: number;
