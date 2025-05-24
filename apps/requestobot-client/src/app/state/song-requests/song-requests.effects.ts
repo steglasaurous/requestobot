@@ -16,6 +16,7 @@ import { LocalSongState } from '@requestobot/util-client-common';
 import log from 'electron-log/renderer';
 import { catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
+import { SongPlayerActions } from '../song-player/song-player.actions';
 
 declare let window: WindowWithElectron;
 
@@ -178,36 +179,49 @@ export class SongRequestsEffects {
     )
   );
 
-  setRequestActive$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(SongRequestsActions.setRequestActive),
-      concatLatestFrom(() => [this.store.select(selectChannel)]),
-      exhaustMap(([{ songRequestId }, channel]) => {
-        if (!channel) {
+  setRequestActive$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(SongRequestsActions.setRequestActive),
+        concatLatestFrom(() => [this.store.select(selectChannel)]),
+        exhaustMap(([{ songRequest }, channel]) => {
+          if (!channel) {
+            return EMPTY;
+          }
+          this.queuebotApiService
+            .setSongRequestActive(channel.id, songRequest.id)
+            .subscribe({
+              next: () => {
+                log.debug('setRequestActive done');
+                // If this is a youtube request, start the player.
+                if (channel.game.name === 'youtube') {
+                  // FIXME: Add song id - need to get it from state.
+                  this.store.dispatch(
+                    SongPlayerActions.play({ songId: songRequest.song.id })
+                  );
+                }
+
+                this.store.dispatch(
+                  SongRequestsActions.setRequestActiveSuccess({
+                    songRequestId: songRequest.id,
+                  })
+                );
+              },
+              error: (err) => {
+                log.debug('setRequestActive failed', err);
+                this.toastr.error('Failed to set request as active');
+                this.store.dispatch(
+                  SongRequestsActions.setRequestActiveFail({
+                    songRequestId: songRequest.id,
+                    error: err,
+                  })
+                );
+              },
+            });
           return EMPTY;
-        }
-        return this.queuebotApiService
-          .setSongRequestActive(channel.id, songRequestId)
-          .pipe(
-            map(() => {
-              log.debug('setRequestActive done');
-              return SongRequestsActions.setRequestActiveSuccess({
-                songRequestId: songRequestId,
-              });
-            }),
-            catchError((err) => {
-              log.debug('setRequestActive failed', err);
-              this.toastr.error('Failed to set request as active');
-              return of(
-                SongRequestsActions.setRequestActiveFail({
-                  songRequestId: songRequestId,
-                  error: err,
-                })
-              );
-            })
-          );
-      })
-    )
+        })
+      ),
+    { dispatch: false }
   );
 
   nextSong$ = createEffect(

@@ -119,9 +119,9 @@ export class QueueListComponent implements OnInit, OnDestroy {
     this.store.dispatch(SongRequestsActions.deleteRequest({ songRequestId }));
   }
 
-  setSongRequestActive(songRequestId: number) {
+  setSongRequestActive(songRequest: SongRequestDto) {
     this.store.dispatch(
-      SongRequestsActions.setRequestActive({ songRequestId })
+      SongRequestsActions.setRequestActive({ songRequest: songRequest })
     );
   }
 

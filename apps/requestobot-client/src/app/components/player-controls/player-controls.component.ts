@@ -9,6 +9,7 @@ import { selectSongPlayer } from '../../../../../requestobot-overlay/src/app/+st
 import { selectSongRequestQueue } from '../../state/song-requests/song-requests.selectors';
 import { SongDto } from '@requestobot/util-dto';
 import { MatProgressBar } from '@angular/material/progress-bar';
+import { ProgressBar } from 'primeng/progressbar';
 
 @Component({
   selector: 'app-player-controls',
@@ -19,6 +20,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
     MatSlider,
     MatSliderThumb,
     MatProgressBar,
+    ProgressBar,
   ],
   standalone: true,
   templateUrl: './player-controls.component.html',
