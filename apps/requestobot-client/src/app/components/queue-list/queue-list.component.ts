@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SongRequestDto } from '@requestobot/util-dto';
+import { GameDto, SongRequestDto } from '@requestobot/util-dto';
 import {
   CdkDragDrop,
   DragDropModule,
@@ -21,6 +21,8 @@ import { SongPlayerActions } from '../../state/song-player/song-player.actions';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
 import { FormsModule } from '@angular/forms';
 import { PlayerControlsComponent } from '../player-controls/player-controls.component';
+import { selectChannel } from '../../state/channel/channel.selectors';
+import log from 'electron-log/renderer';
 
 @Component({
   selector: 'app-queue-list',
@@ -52,6 +54,10 @@ export class QueueListComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
   position = 0;
   volume = 100;
+
+  channel$ = this.store.select(selectChannel);
+  game!: GameDto;
+
   constructor(private store: Store) {}
 
   ngOnInit() {
@@ -68,6 +74,15 @@ export class QueueListComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.songDownloadStates$.subscribe((downloadedSongStatus) => {
         this.downloadedSongStatus = downloadedSongStatus;
+      })
+    );
+
+    this.subscriptions.push(
+      this.channel$.subscribe((channel) => {
+        if (channel && channel.game) {
+          this.game = channel.game;
+          console.log(this.game.name);
+        }
       })
     );
 

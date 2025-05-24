@@ -58,6 +58,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
           SettingName.audioTripSongsDir,
           SettingName.spinRhythmSongsDir,
           SettingName.autoDownloadEnabled,
+          SettingName.autoAdvance,
         ],
       })
     );
@@ -88,7 +89,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       SettingsActions.setValue({
         key: SettingName.autoDownloadEnabled,
-        value: 'true',
+        value:
+          this.settings[SettingName.autoDownloadEnabled] == 'true'
+            ? 'false'
+            : 'true',
+      })
+    );
+  }
+
+  toggleAutoAdvance() {
+    this.store.dispatch(
+      SettingsActions.setValue({
+        key: SettingName.autoAdvance,
+        value:
+          this.settings[SettingName.autoAdvance] == 'true' ? 'false' : 'true',
       })
     );
   }

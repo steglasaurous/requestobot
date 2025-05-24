@@ -236,13 +236,15 @@ export class QueuebotApiService {
     );
   }
 
-  playerPlay(channelId: number, songId: number) {
+  playerPlay(channelId: number, songId?: number) {
+    let body: any = { state: 'playing' };
+    if (songId) {
+      body = { ...body, songId: songId };
+    }
+
     return this.httpClient.put(
       `${this.apiBaseUrl}/api/channels/${channelId}/player/state`,
-      {
-        state: 'playing',
-        songId: songId,
-      },
+      body,
       {
         withCredentials: true,
       }

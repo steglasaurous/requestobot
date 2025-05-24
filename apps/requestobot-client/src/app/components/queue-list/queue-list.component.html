@@ -1,6 +1,6 @@
 <div class="mb-5">
-  <app-panel title="Request Queue" class="w-full">
-    <div class="text-center mt-2">
+  <app-panel title="" class="w-full">
+    <div class="text-center mt-2" [hidden]="game.name === 'youtube'">
       <button class="btn-primary text-3xl font-bold" (click)="nextSong()" [disabled]="nextSongDisabled">&gt;&gt; Next
         Song
       </button>
