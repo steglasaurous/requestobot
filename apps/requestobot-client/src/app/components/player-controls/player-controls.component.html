@@ -1,27 +1,45 @@
-<div>
-  <button class="btn-primary bg-green-400" title="Play on stream">
+<div class="flex flex-row justify-center">
+  <button class="btn-primary w-32 h-20">
+    <mat-icon>skip_previous</mat-icon>
+  </button>
+  <button class="btn-primary w-32 h-20 bg-green-400" title="Play" (click)="playerPlay()" [hidden]="playerState === 'playing'">
     <mat-icon>play_arrow</mat-icon>
   </button>
-  <button class="btn-primary bg-red-400" (click)="playerStop()">
-    <mat-icon>stop</mat-icon>
-  </button>
-  <button class="btn-primary" (click)="playerPause()">
+  <button class="btn-primary w-32 h-20" (click)="playerPause()" [hidden]="playerState !== 'playing' && playerState !== 'paused'">
     <mat-icon>pause</mat-icon>
   </button>
-  <button class="btn-primary">
-    <mat-icon>forward_10</mat-icon>
-  </button>
-  <button class="btn-primary">
-    <mat-icon>replay_10</mat-icon>
+  <button class="btn-primary w-32 h-20">
+    <mat-icon>skip_next</mat-icon>
   </button>
 </div>
-<div>
-  <mat-slider
-    [max]="100"
-    [min]="0"
-  >
-    <input matSliderThumb [(ngModel)]="position" #positionSlider>
-  </mat-slider>
+<div class="flex flex-row justify-center mt-4">
+  <button class="btn-primary w-16">
+    <mat-icon>replay_10</mat-icon>
+  </button>
+  <button class="btn-primary w-16 h-16">
+    <mat-icon>forward_10</mat-icon>
+  </button>
+  <button class="btn-primary w-16 bg-red-400" (click)="playerStop()" [hidden]="playerState !== 'stopped'">
+    <mat-icon>stop</mat-icon>
+  </button>
+  <button class="btn-primary w-16" (click)="decrementVolume()">
+    <mat-icon>volume_down</mat-icon>
+  </button>
+  <button class="btn-primary w-16" (click)="incrementVolume()">
+    <mat-icon>volume_up</mat-icon>
+  </button>
+</div>
+<div class="flex flex-row content-center">
+<!--  <mat-slider-->
+<!--    [max]="100"-->
+<!--    [min]="0"-->
+<!--  >-->
+<!--    <input matSliderThumb [(ngModel)]="position" #positionSlider>-->
+<!--  </mat-slider>-->
+  0:00 <mat-progress-bar [mode]="'determinate'" [value]="position">
+
+  </mat-progress-bar>
+  3:25
   <mat-slider
     [max]="100"
     [min]="0"

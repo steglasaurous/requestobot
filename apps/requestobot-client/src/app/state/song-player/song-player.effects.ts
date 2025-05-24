@@ -16,7 +16,13 @@ export class SongPlayerEffects {
         concatLatestFrom((action) => this.store.select(selectChannel)),
         exhaustMap(async ([action, channel]) => {
           if (channel) {
-            this.queuebotApi.playerPlay(channel.id, action.songId).subscribe();
+
+            if (action.songId) {
+              this.queuebotApi.playerPlay(channel.id, action.songId).subscribe();
+            } else {
+              this.queuebotApi.playerPlay(channel.id).subscribe();
+            }
+
           }
         })
       ),
