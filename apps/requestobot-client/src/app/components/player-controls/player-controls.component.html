@@ -29,22 +29,14 @@
     <mat-icon>volume_up</mat-icon>
   </button>
 </div>
-<div class="flex flex-row content-center">
+<div class="flex flex-row mt-5">
+  <div class="font-bold pl-2 pr-2">{{ position | date:'m:ss':'UTC' }}</div>
+  <p-progress-bar [value]="position" [showValue]="false" class="w-full"></p-progress-bar>
 <!--  <mat-slider-->
 <!--    [max]="100"-->
 <!--    [min]="0"-->
+<!--    (change)="changeVolume($event)"-->
 <!--  >-->
-<!--    <input matSliderThumb [(ngModel)]="position" #positionSlider>-->
+<!--    <input matSliderThumb [(ngModel)]="volume" #volumeSlider>-->
 <!--  </mat-slider>-->
-  0:00 <mat-progress-bar [mode]="'determinate'" [value]="position">
-
-  </mat-progress-bar>
-  3:25
-  <mat-slider
-    [max]="100"
-    [min]="0"
-    (change)="changeVolume($event)"
-  >
-    <input matSliderThumb [(ngModel)]="volume" #volumeSlider>
-  </mat-slider>
 </div>
