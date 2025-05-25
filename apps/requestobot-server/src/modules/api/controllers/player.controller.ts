@@ -77,7 +77,7 @@ export class PlayerController {
     if (playerDto.state != player.state) {
       player.state = playerDto.state;
     }
-    if (!player.song || playerDto.songId != player.song.id) {
+    if (playerDto.songId && playerDto.songId != player.song.id) {
       const song = await this.songRepository.findOneBy({
         id: playerDto.songId,
       });

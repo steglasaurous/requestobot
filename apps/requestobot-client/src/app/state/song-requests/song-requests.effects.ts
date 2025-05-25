@@ -16,7 +16,7 @@ import { LocalSongState } from '@requestobot/util-client-common';
 import log from 'electron-log/renderer';
 import { catchError } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
-import { SongPlayerActions } from '../song-player/song-player.actions';
+import { SongPlayerActions } from '@requestobot/util-song-player';
 
 declare let window: WindowWithElectron;
 
@@ -197,7 +197,7 @@ export class SongRequestsEffects {
                 if (channel.game.name === 'youtube') {
                   // FIXME: Add song id - need to get it from state.
                   this.store.dispatch(
-                    SongPlayerActions.play({ songId: songRequest.song.id })
+                    SongPlayerActions.play({ song: songRequest.song })
                   );
                 }
 
@@ -234,9 +234,9 @@ export class SongRequestsEffects {
             return EMPTY;
           }
           this.queuebotApiService.nextSong(channel.id).subscribe({
-            next: () => {
+            next: (songRequest) => {
               // Dispatch a next song complete
-              this.store.dispatch(SongRequestsActions.nextSongSuccess());
+              this.store.dispatch(SongRequestsActions.nextSongSuccess({ songRequest }));
             },
             error: (err) => {
               log.warn('nextSong failed', err);
