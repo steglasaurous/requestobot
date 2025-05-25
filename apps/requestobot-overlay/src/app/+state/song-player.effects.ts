@@ -34,7 +34,7 @@ export class SongPlayerEffects {
             }
 
             if (state.volume !== data.volume) {
-              this.store.dispatch(SongPlayerActions.changeVolume(data.volume));
+              this.store.dispatch(SongPlayerActions.changeVolume({ volume: data.volume }));
             }
           }
 

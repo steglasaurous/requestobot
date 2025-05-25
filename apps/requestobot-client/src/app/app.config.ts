@@ -30,6 +30,7 @@ import { websocketReducer } from './state/websocket/websocket.reducer';
 import { SongPlayerEffects } from './state/song-player/song-player.effects';
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
+import { songPlayerReducer } from '@requestobot/util-song-player';
 
 export const QUEUEBOT_API_BASE_URL = 'queuebot_api_base_url';
 export const WEBSOCKET_URL = 'websocket_url';
@@ -52,6 +53,7 @@ export const appConfig: ApplicationConfig = {
       settings: settingsReducer,
       songRequests: songRequestsReducer,
       websocket: websocketReducer,
+      songPlayer: songPlayerReducer
     }),
     provideStoreDevtools({ logOnly: !isDevMode() }),
     provideZoneChangeDetection({ eventCoalescing: true }),
