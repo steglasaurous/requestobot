@@ -4,12 +4,10 @@ import { Store } from '@ngrx/store';
 import { FormsModule } from '@angular/forms';
 import { MatIcon } from '@angular/material/icon';
 import { MatSlider, MatSliderThumb } from '@angular/material/slider';
-import { SongPlayerActions } from '../../state/song-player/song-player.actions';
-import { selectSongPlayer } from '../../../../../requestobot-overlay/src/app/+state/song-player.selector';
-import { selectSongRequestQueue } from '../../state/song-requests/song-requests.selectors';
 import { SongDto } from '@requestobot/util-dto';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { ProgressBar } from 'primeng/progressbar';
+import { selectSongPlayer, SongPlayerActions } from '@requestobot/util-song-player';
 
 @Component({
   selector: 'app-player-controls',
@@ -58,7 +56,7 @@ export class PlayerControlsComponent implements OnInit {
     }
 
     this.store.dispatch(
-      SongPlayerActions.volumeChange({ volume: this.volume })
+      SongPlayerActions.changeVolume({ volume: this.volume })
     );
   }
 
@@ -69,12 +67,12 @@ export class PlayerControlsComponent implements OnInit {
     }
 
     this.store.dispatch(
-      SongPlayerActions.volumeChange({ volume: this.volume })
+      SongPlayerActions.changeVolume({ volume: this.volume })
     );
   }
   changeVolume(event: Event) {
     this.store.dispatch(
-      SongPlayerActions.volumeChange({ volume: this.volume })
+      SongPlayerActions.changeVolume({ volume: this.volume })
     );
   }
 
@@ -84,7 +82,11 @@ export class PlayerControlsComponent implements OnInit {
     this.store.dispatch(SongPlayerActions.play({}));
   }
 
-  nextSong() {}
+  nextSong() {
+    this.store.dispatch(SongPlayerActions.nextTrack());
+  }
 
-  prevSong() {}
+  prevSong() {
+
+  }
 }

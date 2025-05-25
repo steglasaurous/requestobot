@@ -5,10 +5,10 @@
   <button class="btn-primary w-32 h-20 bg-green-400" title="Play" (click)="playerPlay()" [hidden]="playerState === 'playing'">
     <mat-icon>play_arrow</mat-icon>
   </button>
-  <button class="btn-primary w-32 h-20" (click)="playerPause()" [hidden]="playerState !== 'playing' && playerState !== 'paused'">
+  <button class="btn-primary w-32 h-20" (click)="playerPause()" [hidden]="playerState === 'paused' || playerState === 'stopped'">
     <mat-icon>pause</mat-icon>
   </button>
-  <button class="btn-primary w-32 h-20">
+  <button class="btn-primary w-32 h-20" (click)="nextSong()">
     <mat-icon>skip_next</mat-icon>
   </button>
 </div>
@@ -19,7 +19,7 @@
   <button class="btn-primary w-16 h-16">
     <mat-icon>forward_10</mat-icon>
   </button>
-  <button class="btn-primary w-16 bg-red-400" (click)="playerStop()" [hidden]="playerState !== 'stopped'">
+  <button class="btn-primary w-16 bg-red-400" (click)="playerStop()">
     <mat-icon>stop</mat-icon>
   </button>
   <button class="btn-primary w-16" (click)="decrementVolume()">
@@ -28,6 +28,9 @@
   <button class="btn-primary w-16" (click)="incrementVolume()">
     <mat-icon>volume_up</mat-icon>
   </button>
+  <div class="mt-auto mb-auto pl-4">
+    {{ volume }}%
+  </div>
 </div>
 <div class="flex flex-row mt-5">
   <div class="font-bold pl-2 pr-2">{{ position | date:'m:ss':'UTC' }}</div>
