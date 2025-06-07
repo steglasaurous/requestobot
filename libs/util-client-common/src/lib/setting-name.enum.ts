@@ -6,4 +6,5 @@ export enum SettingName {
   spinRhythmSongsDir = 'spin_rhythm_songs_dir',
   audioTripSongsDir = 'audio_trip_songs_dir',
   autoDownloadEnabled = 'auto_download_enabled',
+  autoAdvance = 'auto_advance',
 }

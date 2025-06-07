@@ -23,6 +23,10 @@
       ],
       "@requestobot/util-dto": ["libs/util-dto/src/index.ts"],
       "@requestobot/util-neat-csv": ["libs/util-neat-csv/src/index.ts"],
+      "@requestobot/util-requestobot-websocket": [
+        "libs/util-requestobot-websocket/src/index.ts"
+      ],
+      "@requestobot/util-song-player": ["libs/util-song-player/src/index.ts"],
       "@steglasaurous/chat": ["libs/server/util-chat/src/index.ts"]
     }
   },

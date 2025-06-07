@@ -1,0 +1,6 @@
+@if (this.songPlayerState.song) {
+  <audio [src]="this.songPlayerState.song.downloadUrl" autoplay #audioPlayer (playing)="playing($event)"></audio>
+} @else {
+  <audio autoplay #audioPlayer></audio>
+}
+

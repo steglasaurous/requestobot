@@ -18,6 +18,7 @@ import { typeORMAppConfig } from './typeorm.config';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { UtilChatModule } from '@steglasaurous/chat';
 import { ChannelManagerModule } from './modules/channel-manager/channel-manager.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
   imports: [
@@ -75,6 +76,9 @@ import { ChannelManagerModule } from './modules/channel-manager/channel-manager.
     AuthModule,
     MetricsModule,
     ChannelManagerModule,
+    ServeStaticModule.forRoot({
+      rootPath: path.join(__dirname, 'assets'),
+    }),
   ],
   controllers: [AppController],
 })

@@ -1,0 +1,13 @@
+@if (overlayType === 'minivanillabot') {
+  <div class="container">
+    <h2>Speen Queue [{{ songRequests.length }}]</h2>
+
+    <ol>
+      @for (queueItem of songRequests; track queueItem.id) {
+        <li><b>
+          #{{ queueItem.song.songHash }}: {{ queueItem.song.title }} - {{ queueItem.song.mapper }} (0) ({{ queueItem.requesterName }})
+        </b></li>
+      }
+    </ol>
+  </div>
+}

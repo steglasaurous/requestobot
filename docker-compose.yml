@@ -1,19 +1,36 @@
 services:
   server:
-    image: localhost:5000/requestobot:latest
+    image: registry.steglasaurous.com/requestobot:dev
     build: .
     restart: unless-stopped
-#    networks:
-#      - proxynet
+    networks:
+      - default
+      - proxynet
     env_file:
       - .env
     ports:
-      - ${PORT}:${PORT}
+      - 3000
     volumes:
       - ./twitch_token.json:/usr/src/app/twitch_token.json
+      - ./static:/usr/src/app/static
+
+  static:
+    image: nginx
+    # FIXME: Configure appropriately - use with nginx proxy?
+    # alternatively, have this sit in front of node? Might be a lot..  nginx -> nginx -> node
+    # it would however allow everything to be served from the same domain, just different path
+    volumes:
+      # - static-content:/usr/share/nginx/html
+      - ./static:/usr/share/nginx/html
+    environment:
+      VIRTUAL_HOST: requestobot-dev-static.steglasaurous.com
+      LETSENCRYPT_HOST: requestobot-dev-static.steglasaurous.com
+      LETSENCRYPT_EMAIL: me@steglasaurous.com
+    networks:
+      - proxynet
 
   db:
-    image: localhost:5000/requestobot-db:latest
+    image: registry.steglasaurous.com/requestobot-db:dev
     build: docker/db
     restart: always
     ports:
@@ -24,10 +41,14 @@ services:
     environment:
       POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
       POSTGRES_USER: ${DATABASE_USER}
+    networks:
+      - default
+networks:
+  proxynet:
+    name: nginx_proxy-tier
+    external: true
 
-#networks:
-#  proxynet:
-#    name: nextcloud-docker_proxy-tier
-#    external: true
 volumes:
   requestobot-pgdata:
+  static-content:
+
