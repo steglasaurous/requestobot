@@ -6,9 +6,10 @@ RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base d
 COPY apps apps
 COPY libs libs
 # NOTE: Including eslintrc as nx explodes without it with "Failed to process project graph."
-COPY nx.json package.json package-lock.json tsconfig.base.json .eslintignore .eslintrc.json .prettierignore .prettierrc ./
+COPY nx.json package.json package-lock.json tsconfig.base.json .eslintignore .eslintrc.json .prettierignore .prettierrc project.json ./
 RUN npm i
 RUN npx nx build requestobot-server --configuration=production --verbose
+RUN npx nx build requestobot-overlay --configuration=production --verbose
 
 # For the final image
 FROM node:20
