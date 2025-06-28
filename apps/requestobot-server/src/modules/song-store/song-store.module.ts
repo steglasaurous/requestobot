@@ -29,6 +29,7 @@ import { YoutubeUrlValidator } from './utils/youtube-url.validator';
 import { YoutubeStrategy } from './services/song-search-strategies/youtube.strategy';
 import { SongSearchService } from './services/song-search.service';
 import { YoutubeDownloaderService } from './services/youtube-downloader.service';
+import { FreeformStrategy } from './services/song-search-strategies/freeform.strategy';
 
 @Module({
   imports: [
@@ -103,16 +104,18 @@ import { YoutubeDownloaderService } from './services/youtube-downloader.service'
       useValue: process.env.STATIC_SITE_BASE_URL,
     },
     YoutubeStrategy,
+    FreeformStrategy,
     SongSearchService,
     {
       provide: SONG_SEARCH_STRATEGIES,
-      inject: [LocalStrategy, YoutubeStrategy],
+      inject: [LocalStrategy, YoutubeStrategy, FreeformStrategy],
       useFactory: (
         localStrategy: LocalStrategy,
-        youtubeStrategy: YoutubeStrategy
+        youtubeStrategy: YoutubeStrategy,
+        freeformStrategy: FreeformStrategy
       ) => {
         // Add back spinRhythmStrategy to this array to query the spinsha.re API directly.
-        return [localStrategy, youtubeStrategy];
+        return [localStrategy, youtubeStrategy, freeformStrategy];
       },
     },
     YoutubeDownloaderService,
