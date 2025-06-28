@@ -63,6 +63,6 @@ export class LocalStrategy implements SongSearchStrategyInterface {
     // Put exceptions here. Local should be the
     // fallback mechanism if no other
     // strategies are in use.
-    return game.name != 'youtube';
+    return game.name != 'youtube' && game.name != 'freeform';
   }
 }
