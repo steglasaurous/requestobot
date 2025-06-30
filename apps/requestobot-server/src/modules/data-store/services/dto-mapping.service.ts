@@ -60,6 +60,7 @@ export class DtoMappingService {
       setGameName: game.setGameName,
       twitchCategoryId: game.twitchCategoryId,
       coverArtUrl: game.coverArtUrl,
+      enablePlayerControls: game.enablePlayerControls,
     };
   }
 

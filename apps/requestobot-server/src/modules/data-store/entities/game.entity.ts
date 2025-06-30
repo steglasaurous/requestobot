@@ -28,4 +28,11 @@ export class Game {
   // URL to the game's cover art, if available.  I try to use links to igdb.com.
   @Column({ nullable: true })
   coverArtUrl?: string;
+
+  /**
+   * If set to true, this will expose traditional player controls on the client
+   * (play/pause, next/previous track, volume, etc)
+   */
+  @Column({ default: false })
+  enablePlayerControls: boolean;
 }

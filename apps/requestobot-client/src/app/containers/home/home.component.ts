@@ -64,6 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       setGameName: '',
       twitchCategoryId: '0',
       name: '',
+      enablePlayerControls: false,
     },
   };
 
