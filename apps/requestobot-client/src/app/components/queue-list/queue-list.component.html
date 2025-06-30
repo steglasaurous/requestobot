@@ -1,11 +1,11 @@
 <div class="mb-5">
   <app-panel title="" class="w-full">
-    <div class="text-center mt-2" [hidden]="game.name === 'youtube'">
+    <div class="text-center mt-2" [hidden]="game.enablePlayerControls">
       <button class="btn-primary text-3xl font-bold" (click)="nextSong()" [disabled]="nextSongDisabled">&gt;&gt; Next
         Song
       </button>
     </div>
-    <app-player-controls></app-player-controls>
+    <app-player-controls [hidden]="!game.enablePlayerControls"></app-player-controls>
   </app-panel>
 </div>
 

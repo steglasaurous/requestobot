@@ -19,4 +19,7 @@ export class GameDto implements GameDtoInterface {
 
   @ApiProperty()
   coverArtUrl?: string;
+
+  @ApiProperty()
+  enablePlayerControls: boolean;
 }
