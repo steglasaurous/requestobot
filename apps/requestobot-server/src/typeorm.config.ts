@@ -28,6 +28,7 @@ import { entityList } from './modules/data-store/models/entity-list';
 import { Migration1747529799555 } from './migrations/1747529799555-migration';
 import { Migration1747770998744 } from './migrations/1747770998744-migration';
 import { Migration1747770998745 } from './migrations/1747770998745-migration';
+import { Migration1751123172797 } from './migrations/1751123172797-migration';
 
 export const typeORMAppConfig: DataSourceOptions = {
   type: 'postgres',
@@ -62,6 +63,7 @@ export const typeORMAppConfig: DataSourceOptions = {
     Migration1747529799555,
     Migration1747770998744,
     Migration1747770998745,
+    Migration1751123172797,
   ],
   migrationsRun: true,
 };
