@@ -76,7 +76,8 @@ import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
         danceDash: DanceDashSongImporterService,
         synthRiderz: SynthRiderzSongImporterService
       ) => {
-        return [audioTrip, spin, pistolWhip, danceDash, synthRiderz];
+        // return [audioTrip, spin, pistolWhip, danceDash, synthRiderz];
+        return [spin, pistolWhip, danceDash, synthRiderz];
       },
     },
     LocalStrategy,
