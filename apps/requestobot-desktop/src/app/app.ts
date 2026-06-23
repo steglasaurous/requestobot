@@ -9,6 +9,7 @@ import * as cookie from 'cookie';
 import { SettingName } from '@requestobot/util-client-common';
 import { getDownloaderService } from './services/downloader/get-song-downloader';
 import { SongDownloader } from './services/downloader/song-downloader';
+import { NestIpcBridgeService } from './services/nest-ipc-bridge.service';
 import log from 'electron-log/main';
 
 const IPC_PROTOCOL_HANDLER = 'login.protocolHandler';
@@ -22,6 +23,7 @@ export default class App {
   static BrowserWindow;
   static settingsStoreService: SettingsStoreService;
   static songDownloader: SongDownloader;
+  static nestIpcBridge: NestIpcBridgeService;
 
   public static isDevelopmentMode() {
     const isEnvironmentSet: boolean = 'ELECTRON_IS_DEV' in process.env;
@@ -37,10 +39,16 @@ export default class App {
     }
   }
 
-  private static onClose() {
+  private static async onClose() {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
+    
+    // Shutdown NestJS application context
+    if (App.nestIpcBridge) {
+      await App.nestIpcBridge.shutdown();
+    }
+    
     App.mainWindow = null;
   }
 
@@ -52,10 +60,18 @@ export default class App {
     }
   }
 
-  private static onReady() {
+  private static async onReady() {
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
+
+    // Initialize NestJS application context first
+    try {
+      await App.nestIpcBridge.initialize(App.mainWindow);
+    } catch (error) {
+      log.error('Failed to initialize NestJS application context', error);
+      // Continue with app initialization even if NestJS fails
+    }
 
     if (App.isDevelopmentMode()) {
       // This is a dynamic import so that the production build doesn't explode
@@ -224,7 +240,7 @@ export default class App {
     log.initialize();
 
     App.application.on('window-all-closed', App.onWindowAllClosed); // Quit when all windows are closed.
-    App.application.on('ready', App.onReady); // App is ready to load data
+    App.application.on('ready', () => App.onReady()); // App is ready to load data
     App.application.on('activate', App.onActivate); // App is activated
 
     App.settingsStoreService = new SettingsStoreService(
@@ -244,6 +260,9 @@ export default class App {
 
     // Note this requires settingsStoreService setup for the service to be setup properly.
     App.songDownloader = getDownloaderService();
+
+    // Initialize NestJS IPC bridge
+    App.nestIpcBridge = new NestIpcBridgeService();
 
     // Windows and Linux
     const gotTheLock = app.requestSingleInstanceLock();

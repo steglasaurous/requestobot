@@ -19,7 +19,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { DtoMappingService } from '../../data-store/services/dto-mapping.service';
 import { SongRequestDto } from '@requestobot/util-dto';
 import { SwapOrderDto } from '../dto/swap-order.dto';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+// import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard'; // Removed for Electron IPC
 import {
   ApiBody,
   ApiCookieAuth,
@@ -95,7 +95,7 @@ export class SongRequestsController {
     tags: ['Request Queue'],
   })
   @ApiOkResponse({ type: 'boolean' })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put('/:songRequestId/swapOrder')
   async swapOrder(
     @Param('channelId') channelId: number,
@@ -131,7 +131,7 @@ export class SongRequestsController {
     tags: ['Request Queue'],
   })
   @ApiOkResponse({ type: 'boolean' })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put('next-song')
   async nextSong(
     @Param('channelId') channelId: number,
@@ -182,7 +182,7 @@ export class SongRequestsController {
     tags: ['Request Queue'],
   })
   @ApiBody({ type: SongRequestDtoClass })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put(`/:songRequestId`)
   async updateSongRequest(
     @Param('channelId') channelId: string,
@@ -241,7 +241,7 @@ export class SongRequestsController {
     tags: ['Request Queue'],
   })
   @ApiNoContentResponse()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Delete(`/:songRequestId`)
   async deleteSongRequest(
     @Param('channelId') id: string,
@@ -277,7 +277,7 @@ export class SongRequestsController {
     tags: ['Request Queue'],
   })
   @ApiNoContentResponse()
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Delete()
   async clearQueue(
     @Param('channelId') channelId: number,

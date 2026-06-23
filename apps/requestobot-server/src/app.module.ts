@@ -9,16 +9,16 @@ import { SongStoreModule } from './modules/song-store/song-store.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { AcceptLanguageResolver, I18nModule, QueryResolver } from 'nestjs-i18n';
 import { SongRequestModule } from './modules/song-request/song-request.module';
-import { WebsocketModule } from './modules/websocket/websocket.module';
+// import { WebsocketModule } from './modules/websocket/websocket.module'; // Removed for Electron IPC
 import { ApiModule } from './modules/api/api.module';
 import { ClientLauncherModule } from './modules/client-launcher/client-launcher.module';
 import * as path from 'path';
 import { AuthModule } from './modules/auth/auth.module';
-import { typeORMAppConfig } from './typeorm.config';
+import { getTypeORMConfig } from './typeorm.config';
 import { MetricsModule } from './modules/metrics/metrics.module';
 import { UtilChatModule } from '@steglasaurous/chat';
 import { ChannelManagerModule } from './modules/channel-manager/channel-manager.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
+// import { ServeStaticModule } from '@nestjs/serve-static'; // Removed for Electron IPC
 
 @Module({
   imports: [
@@ -55,7 +55,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
       },
     }),
     BotCommandsModule,
-    TypeOrmModule.forRoot(typeORMAppConfig),
+    TypeOrmModule.forRoot(getTypeORMConfig()),
     ScheduleModule.forRoot(),
     I18nModule.forRoot({
       fallbackLanguage: 'en',
@@ -70,15 +70,15 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     }),
     SongStoreModule,
     SongRequestModule,
-    WebsocketModule,
+    // WebsocketModule, // Removed for Electron IPC
     ApiModule,
     ClientLauncherModule,
     AuthModule,
     MetricsModule,
     ChannelManagerModule,
-    ServeStaticModule.forRoot({
-      rootPath: path.join(__dirname, 'assets'),
-    }),
+    // ServeStaticModule.forRoot({ // Removed for Electron IPC
+    //   rootPath: path.join(__dirname, 'assets'),
+    // }),
   ],
   controllers: [AppController],
 })

@@ -90,7 +90,7 @@ export class ChannelController {
     type: ChannelDtoClass,
   })
   @ApiCookieAuth('jwt')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Get('/:channelId')
   async getChannelDetailsById(
     @Param('channelId') channelId: number
@@ -110,7 +110,7 @@ export class ChannelController {
       'Modify a channel.  Note only enabled, queueOpen and game are modifiable, all others are read-only.',
     tags: ['Channel'],
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put('/:chatServiceName/:channelName')
   async updateChannelDetails(
     @Param('channelName') channelName: string,
@@ -143,7 +143,7 @@ export class ChannelController {
       'Modify a channel by channelId.  Note only enabled, queueOpen and game are modifiable, all others are read-only.',
     tags: ['Channel'],
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put('/:channelId')
   public async updateChannelDetailsById(
     @Param('channelId') channelId: number,
@@ -184,7 +184,7 @@ export class ChannelController {
   @ApiUnprocessableEntityResponse({
     description: 'If the channel already exists.',
   })
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Post()
   async createChannel(
     @Body() channelDto: ChannelDto,

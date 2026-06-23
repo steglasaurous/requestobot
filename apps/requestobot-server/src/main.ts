@@ -1,41 +1,42 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { WsAdapter } from '@nestjs/platform-ws';
+// import { WsAdapter } from '@nestjs/platform-ws'; // Removed for Electron IPC
 import { ConfigService } from '@nestjs/config';
 import { isMainThread } from 'worker_threads';
 import { ImportWorkerModule } from './import-worker.module';
 import { SongImporterManagerService } from './modules/song-store/services/song-importer-manager.service';
 import { Logger } from '@nestjs/common';
-import cookieParser from 'cookie-parser';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ApiModule } from './modules/api/api.module';
+// import cookieParser from 'cookie-parser'; // Removed for Electron IPC
+// import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'; // Removed for Electron IPC
+// import { ApiModule } from './modules/api/api.module'; // Removed for Electron IPC
 import { CommandFactory } from 'nest-commander';
 import { CliCommandsModule } from './modules/cli-commands/cli-commands.module';
-import { AuthModule } from './modules/auth/auth.module';
+// import { AuthModule } from './modules/auth/auth.module'; // Removed for Electron IPC
 
 async function bootstrap() {
   if (isMainThread && process.argv[2] == '--serve') {
     console.log('NODE_ENV', { nodeEnv: process.env.NODE_ENV });
 
     const app = await NestFactory.create(AppModule);
-    app.useWebSocketAdapter(new WsAdapter(app));
+    // app.useWebSocketAdapter(new WsAdapter(app)); // Removed for Electron IPC
     const config = app.get(ConfigService);
     app.enableCors({
       credentials: true,
       origin: true,
     });
-    app.use(cookieParser());
+    // app.use(cookieParser()); // Removed for Electron IPC
 
-    const swaggerConfig = new DocumentBuilder()
-      .setTitle('Requestobot API')
-      .setDescription('The Requestobot API')
-      .setVersion('1.4.2')
-      .addCookieAuth('jwt')
-      .build();
-    const document = SwaggerModule.createDocument(app, swaggerConfig, {
-      include: [ApiModule, AuthModule],
-    });
-    SwaggerModule.setup('api', app, document);
+    // Swagger setup removed for Electron IPC
+    // const swaggerConfig = new DocumentBuilder()
+    //   .setTitle('Requestobot API')
+    //   .setDescription('The Requestobot API')
+    //   .setVersion('1.4.2')
+    //   .addCookieAuth('jwt')
+    //   .build();
+    // const document = SwaggerModule.createDocument(app, swaggerConfig, {
+    //   include: [ApiModule, AuthModule],
+    // });
+    // SwaggerModule.setup('api', app, document);
 
     const logger = app.get(Logger);
     const port = config.get('PORT') ?? 3000;

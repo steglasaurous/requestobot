@@ -32,7 +32,7 @@ export class SettingController {
     type: SettingDtoClass,
   })
   @ApiCookieAuth('jwt')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put('/:settingName')
   async updateSetting(
     @Param('channelId') channelId: number,

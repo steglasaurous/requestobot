@@ -30,40 +30,91 @@ import { Migration1747770998744 } from './migrations/1747770998744-migration';
 import { Migration1747770998745 } from './migrations/1747770998745-migration';
 import { Migration1751123172797 } from './migrations/1751123172797-migration';
 
-export const typeORMAppConfig: DataSourceOptions = {
-  type: 'postgres',
-  host: process.env.DATABASE_HOST,
-  port: parseInt(process.env.DATABASE_PORT ?? '3306'),
-  username: process.env.DATABASE_USER,
-  password: process.env.DATABASE_PASSWORD,
-  database: process.env.DATABASE_NAME,
-  entities: entityList,
-  migrations: [
-    Migration1703611705901,
-    InitialStaticDataMigration1703611705901,
-    Migration1703732675188,
-    Migration1703793463813,
-    Migration1703896119654,
-    Migration1707708934544,
-    Migration1709249266296,
-    Migration1709249266297,
-    Migration1709865668612,
-    Migration1709872065282,
-    Migration1709872297346,
-    Migration1712350029931,
-    Migration1712701179751,
-    Migration1719683478090,
-    Migration1721952141794,
-    Migration1729968981299,
-    Migration1734838703767,
-    Migration1736277542330,
-    Migration1738416054868,
-    Migration1742419946333,
-    Migration1746966895500,
-    Migration1747529799555,
-    Migration1747770998744,
-    Migration1747770998745,
-    Migration1751123172797,
-  ],
-  migrationsRun: true,
-};
+// Function to get database configuration based on environment
+export function getTypeORMConfig(): DataSourceOptions {
+  const isElectron = typeof process !== 'undefined' && process.versions && process.versions.electron;
+  
+  if (isElectron) {
+    // Electron environment - use SQLite
+    const { app } = require('electron');
+    const path = require('path');
+    const databasePath = path.join(app.getPath('userData'), 'requestobot.sqlite');
+    
+    return {
+      type: 'sqlite',
+      database: databasePath,
+      entities: entityList,
+      migrations: [
+        Migration1703611705901,
+        InitialStaticDataMigration1703611705901,
+        Migration1703732675188,
+        Migration1703793463813,
+        Migration1703896119654,
+        Migration1707708934544,
+        Migration1709249266296,
+        Migration1709249266297,
+        Migration1709865668612,
+        Migration1709872065282,
+        Migration1709872297346,
+        Migration1712350029931,
+        Migration1712701179751,
+        Migration1719683478090,
+        Migration1721952141794,
+        Migration1729968981299,
+        Migration1734838703767,
+        Migration1736277542330,
+        Migration1738416054868,
+        Migration1742419946333,
+        Migration1746966895500,
+        Migration1747529799555,
+        Migration1747770998744,
+        Migration1747770998745,
+        Migration1751123172797,
+      ],
+      migrationsRun: true,
+      synchronize: false, // Use migrations for schema changes
+    };
+  } else {
+    // Standalone server environment - use PostgreSQL
+    return {
+      type: 'postgres',
+      host: process.env.DATABASE_HOST,
+      port: parseInt(process.env.DATABASE_PORT ?? '3306'),
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      entities: entityList,
+      migrations: [
+        Migration1703611705901,
+        InitialStaticDataMigration1703611705901,
+        Migration1703732675188,
+        Migration1703793463813,
+        Migration1703896119654,
+        Migration1707708934544,
+        Migration1709249266296,
+        Migration1709249266297,
+        Migration1709865668612,
+        Migration1709872065282,
+        Migration1709872297346,
+        Migration1712350029931,
+        Migration1712701179751,
+        Migration1719683478090,
+        Migration1721952141794,
+        Migration1729968981299,
+        Migration1734838703767,
+        Migration1736277542330,
+        Migration1738416054868,
+        Migration1742419946333,
+        Migration1746966895500,
+        Migration1747529799555,
+        Migration1747770998744,
+        Migration1747770998745,
+        Migration1751123172797,
+      ],
+      migrationsRun: true,
+    };
+  }
+}
+
+// Keep the old export for backward compatibility
+export const typeORMAppConfig: DataSourceOptions = getTypeORMConfig();

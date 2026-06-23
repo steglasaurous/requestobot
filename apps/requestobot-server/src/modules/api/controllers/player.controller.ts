@@ -34,7 +34,7 @@ export class PlayerController {
     tags: ['Player'],
   })
   @ApiCookieAuth('jwt')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Get('/state')
   async getPlayerState(
     @Param('channelId') channelId: number
@@ -54,7 +54,7 @@ export class PlayerController {
     tags: ['Player'],
   })
   @ApiCookieAuth('jwt')
-  @UseGuards(JwtAuthGuard)
+  // @UseGuards(JwtAuthGuard) // Removed for Electron IPC
   @Put('/state')
   async putPlayerState(
     @Param('channelId') channelId: number,

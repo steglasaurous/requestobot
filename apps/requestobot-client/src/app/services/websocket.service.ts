@@ -4,6 +4,7 @@ import { WebSocketSubject } from 'rxjs/webSocket';
 import { Inject, Injectable } from '@angular/core';
 import { WEBSOCKET_URL } from '../app.config';
 import { WsEvent } from '../models/ws-event';
+import { ElectronApiService } from './electron-api.service';
 import log from 'electron-log/renderer';
 
 // NOTES:
@@ -26,6 +27,8 @@ export class WebsocketService {
     isConnected: boolean;
     errorMessage?: string;
   }> = new Subject();
+
+  private isElectron = typeof window !== 'undefined' && window.api;
 
   /**
    * Whether the websocket is in a connected state.
@@ -62,7 +65,8 @@ export class WebsocketService {
   }
 
   constructor(
-    @Inject(WEBSOCKET_URL) private websocketUrl = 'ws://localhost:9000'
+    @Inject(WEBSOCKET_URL) private websocketUrl = 'ws://localhost:9000',
+    private electronApi: ElectronApiService
   ) {}
 
   public connect(openObserver?: Observer<any>, onClose?: Function): void {
@@ -74,7 +78,37 @@ export class WebsocketService {
       this.closeFunction = onClose;
     }
 
-    this.doConnect();
+    if (this.isElectron) {
+      this.connectViaIpc();
+    } else {
+      this.doConnect();
+    }
+  }
+
+  private connectViaIpc() {
+    this.active = true;
+    this.connected = true;
+    
+    // Subscribe to IPC events
+    this.electronApi.songRequestQueueChanged$.subscribe((data) => {
+      this.messagesSubject$.next({
+        event: 'songRequestQueueChanged',
+        data: data
+      });
+    });
+
+    this.electronApi.playerStateChange$.subscribe((data) => {
+      this.messagesSubject$.next({
+        event: 'playerStateChangeEvent',
+        data: data
+      });
+    });
+
+    this.connectionStatus$.next({
+      isConnected: true
+    });
+
+    this.logger.log('Connected via IPC');
   }
 
   /**

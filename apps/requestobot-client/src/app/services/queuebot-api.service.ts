@@ -8,14 +8,18 @@ import {
   ChannelDto,
   AuthValidateDto,
 } from '@requestobot/util-dto';
+import { ElectronApiService } from './electron-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class QueuebotApiService {
+  private isElectron = typeof window !== 'undefined' && window.api;
+
   constructor(
     @Inject(QUEUEBOT_API_BASE_URL) private apiBaseUrl: string,
-    private httpClient: HttpClient
+    private httpClient: HttpClient,
+    private electronApi: ElectronApiService
   ) {}
 
   getAuthCodeResult(authCode: string): Observable<any> {
@@ -44,6 +48,9 @@ export class QueuebotApiService {
     chatServiceName: string,
     channelName: string
   ): Observable<ChannelDto> {
+    if (this.isElectron) {
+      return this.electronApi.createChannel(chatServiceName, channelName);
+    }
     return this.httpClient.post<ChannelDto>(
       `${this.apiBaseUrl}/api/channels`,
       {
@@ -64,6 +71,9 @@ export class QueuebotApiService {
     chatServiceName: string,
     channelName: string
   ): Observable<ChannelDto> {
+    if (this.isElectron) {
+      return this.electronApi.joinChannel(chatServiceName, channelName);
+    }
     return this.httpClient.put<ChannelDto>(
       `${this.apiBaseUrl}/api/channels/${chatServiceName}/${channelName}`,
       {
@@ -80,6 +90,9 @@ export class QueuebotApiService {
     sourceSongRequestId: number,
     destinationSongRequestId: number
   ): Observable<boolean> {
+    if (this.isElectron) {
+      return this.electronApi.swapSongRequestOrder(channelId, sourceSongRequestId, destinationSongRequestId);
+    }
     return this.httpClient.put<boolean>(
       `${this.apiBaseUrl}/api/channels/${channelId}/song-requests/${sourceSongRequestId}/swapOrder`,
       {
@@ -95,6 +108,9 @@ export class QueuebotApiService {
     channelId: number,
     songRequestId: number
   ): Observable<boolean> {
+    if (this.isElectron) {
+      return this.electronApi.deleteSongRequest(channelId, songRequestId);
+    }
     return this.httpClient.delete<boolean>(
       `${this.apiBaseUrl}/api/channels/${channelId}/song-requests/${songRequestId}`,
       {
@@ -154,6 +170,9 @@ export class QueuebotApiService {
   }
 
   getGames(): Observable<GameDto[]> {
+    if (this.isElectron) {
+      return this.electronApi.getGames();
+    }
     return this.httpClient.get<GameDto[]>(`${this.apiBaseUrl}/api/games`);
   }
 
