@@ -64,6 +64,7 @@
       },
       "defaultConfiguration": "development",
       "options": {
+        "host": "0.0.0.0",
         "proxyConfig": "apps/requestobot-client/proxy.conf.json"
       }
     },

@@ -45,4 +45,5 @@ Thumbs.db
 
 # Other
 .env
+.devcontainer/.env
 twitch_token.json
