@@ -1,0 +1,37 @@
+{
+  "name": "Requestobot",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/requestobot",
+  "initializeCommand": "bash \"${localWorkspaceFolder}/.devcontainer/scripts/init-env.sh\" \"${localWorkspaceFolder}\"",
+  "forwardPorts": [4000, 4200, 5432],
+  "portsAttributes": {
+    "4000": {
+      "label": "Backend API / WebSocket",
+      "onAutoForward": "notify"
+    },
+    "4200": {
+      "label": "Angular client",
+      "onAutoForward": "notify"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
+  "remoteEnv": {
+    "DATABASE_HOST": "db",
+    "DATABASE_PORT": "5432",
+    "PORT": "4000"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "nrwl.angular-console"
+      ]
+    }
+  }
+}

@@ -149,6 +149,87 @@ You will need the following installed:
 > If you run into an error during npm install that includes `ModuleNotFoundError: No module named 'distutils'`, make sure to install
 > Python's `setuptools` package on your OS.  For Ubuntu, use: `sudo apt install python3-setuptools`.  On Windows use `pip install setuptools`
 
+## Dev Container
+
+An alternative to local setup is the dev container in [`.devcontainer/`](.devcontainer/). It provides Node 20, native build tools, and a PostgreSQL database via Docker Compose.
+
+### Prerequisites
+
+Before opening the dev container, on your host machine:
+
+1. Copy `.env.dist` to `.env` and fill in Twitch, JWT, and database credentials.
+2. Create `twitch_token.json` at the repo root (see note in Setup above).
+3. Install Docker Desktop (or Docker Engine) and the Dev Containers extension in Cursor/VS Code.
+
+The dev container sets `DATABASE_HOST=db` and `PORT=4000` automatically so the backend matches the client/desktop environment files.
+
+On container start, a symlink is created from `.devcontainer/.env` to the repo root `.env` so Docker Compose can read `DATABASE_USER` and `DATABASE_PASSWORD` when starting the database service (Compose only loads `.env` from the same directory as its compose file).
+
+### Open in Container
+
+Use **Dev Containers: Reopen in Container** from the command palette. On first open, `postCreateCommand` runs `npm install` and builds all apps/libs.
+
+### Running services
+
+**Inside the dev container:**
+
+```bash
+# Terminal 1
+nx serve requestobot-server
+
+# Terminal 2
+nx serve requestobot-client
+```
+
+Or start both with the helper script:
+
+```bash
+.devcontainer/scripts/start-dev.sh
+```
+
+**On your macOS host** (for Electron testing), in a separate terminal from the same repo checkout:
+
+```bash
+rm -rf node_modules   # only needed once after switching to the dev container volume setup
+npm install
+npx nx serve requestobot-desktop
+```
+
+The Electron app loads the Angular client from `http://localhost:4200` and talks to the API at `http://localhost:4000`. Both ports are forwarded from the dev container to your host.
+
+### Separate `node_modules` for host and container
+
+The dev container uses a Docker volume for `node_modules` so the container's Linux `npm install` does not overwrite dependencies on your Mac. Electron and other native packages are platform-specific — if the host tries to run a Linux Electron binary you will see `spawn ENOEXEC`.
+
+- **Inside the container:** `node_modules` lives in the Docker volume (Linux deps for server/client).
+- **On the macOS host:** `node_modules` on disk is independent; run `npm install` on the host for darwin Electron.
+
+After enabling this setup (or if Electron fails with `spawn ENOEXEC`):
+
+1. **Rebuild the dev container** (Dev Containers: Rebuild Container).
+2. On the host: `rm -rf node_modules && npm install`
+3. Run `npx nx serve requestobot-desktop`
+
+> **NOTE**
+> Use the project name `requestobot-desktop`, not `desktop`.
+
+If container rebuild fails with `EACCES` on `node_modules`, remove the stale Docker volume and rebuild:
+
+```bash
+docker volume ls | grep node_modules
+docker volume rm <volume_name>   # e.g. requestobot_devcontainer_node_modules
+```
+
+### Port map
+
+| Port | Service |
+|------|---------|
+| 4000 | Backend API and WebSocket (`/api` for Swagger) |
+| 4200 | Angular dev server (`requestobot-client`) |
+| 5432 | PostgreSQL (optional, for host-side DB tools) |
+
+When using the dev container, you do not need to run `docker compose up -d db` separately — the database starts as part of the dev container compose stack.
+
 ## Unit tests
 
 Unit tests are an ongoing saga, but the goal is to have most things covered with tests, if not all.  requestobot-server in particular is of particular
