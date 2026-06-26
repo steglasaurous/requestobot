@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Store } from '@ngrx/store';
 import { WebsocketActions } from '@requestobot/util-requestobot-websocket';
 import { environment } from '../../environments/environment';
@@ -9,7 +9,7 @@ import { QueueOverlayComponent } from '../queue-overlay/queue-overlay.component'
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, SongPlayerComponent, QueueOverlayComponent],
+  imports: [SongPlayerComponent, QueueOverlayComponent],
   standalone: true,
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',

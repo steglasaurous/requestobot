@@ -1,7 +1,7 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { QueueListComponent } from '../../components/queue-list/queue-list.component';
 import { SettingsService } from '../../services/settings.service';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ChannelDto, GameDto } from '@requestobot/util-dto';
 import { Router } from '@angular/router';
@@ -33,16 +33,14 @@ import { Subscription } from 'rxjs';
   selector: 'app-home',
   imports: [
     QueueListComponent,
-    NgIf,
     MatSlideToggleModule,
     ButtonPrimaryComponent,
     PanelComponent,
-    NgForOf,
     NgClass,
     MatProgressSpinner,
     MatIcon,
-    MatTooltip,
-  ],
+    MatTooltip
+],
   providers: [],
   templateUrl: './home.component.html',
 })

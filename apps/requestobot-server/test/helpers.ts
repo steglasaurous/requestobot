@@ -1,6 +1,6 @@
 // Helper functions for unit tests.  Put utilities here that will be available globally
 // in specs.
-import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import { ModuleMocker } from 'jest-mock';
 import { Channel } from '../src/modules/data-store/entities/channel.entity';
 import { I18nService } from 'nestjs-i18n';
 import { Game } from '../src/modules/data-store/entities/game.entity';
@@ -41,13 +41,10 @@ export const getGenericNestMock = (token) => {
   //     debug: jest.fn(),
   //   };
   // }
-  const mockMetadata = moduleMocker.getMetadata(token) as MockFunctionMetadata<
-    any,
-    any
-  >;
+  const mockMetadata = moduleMocker.getMetadata(token);
   const Mock = moduleMocker.generateFromMetadata(mockMetadata);
   try {
-    return new Mock();
+    return new (Mock as { new (): unknown })();
   } catch (err: any) {
     console.log(`Cannot create token ${token}`, err);
     // throw err;

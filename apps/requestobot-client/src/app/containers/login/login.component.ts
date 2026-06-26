@@ -18,7 +18,7 @@ import {
   LoginProcessState,
 } from '../../state/auth/auth.reducer';
 import { ToastrService } from 'ngx-toastr';
-import { NgIf } from '@angular/common';
+
 import log from 'electron-log/renderer';
 import { Subscription } from 'rxjs';
 
@@ -29,9 +29,8 @@ declare let window: WindowWithElectron;
   imports: [
     ButtonPrimaryComponent,
     InputTextComponent,
-    ReactiveFormsModule,
-    NgIf,
-  ],
+    ReactiveFormsModule
+],
   providers: [],
   templateUrl: './login.component.html',
 })
