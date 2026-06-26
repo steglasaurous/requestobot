@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -24,15 +24,14 @@ declare let window: WindowWithElectron;
 @Component({
   selector: 'app-settings',
   imports: [
-    CommonModule,
     MatButton,
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
     MatDialogTitle,
     MatTabsModule,
-    MatSlideToggle,
-  ],
+    MatSlideToggle
+],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })

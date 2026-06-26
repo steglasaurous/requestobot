@@ -1,12 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { Store } from '@ngrx/store';
 import { SongRequestDto } from '@requestobot/util-dto';
 import { selectSongRequestQueue } from '../../+state/song-requests/song-requests.selector';
 
 @Component({
   selector: 'app-queue-overlay',
-  imports: [CommonModule],
+  imports: [],
   standalone: true,
   templateUrl: './queue-overlay.component.html',
   styleUrl: './queue-overlay.component.css',

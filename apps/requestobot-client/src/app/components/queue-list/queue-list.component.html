@@ -12,7 +12,7 @@
     [ngClass]="{
     'bg-yellow-500': queueItem.isActive
     }"
-    >
+      >
       <div class="pt-2 pb-2 pl-2 pr-2">
         <app-local-song-status [song]="queueItem.song"></app-local-song-status>
       </div>
@@ -21,7 +21,9 @@
         <div>{{ queueItem.requesterName }}</div>
       </div>
       <div class="pt-2 pb-2 pr-3 flex flex-row flex-nowrap items-baseline">
-        <button class="btn-primary" *ngIf="!queueItem.isActive" (click)="setSongRequestActive(queueItem.id)" title="Set as active song"><mat-icon>play_circle</mat-icon></button>
+        @if (!queueItem.isActive) {
+          <button class="btn-primary" (click)="setSongRequestActive(queueItem.id)" title="Set as active song"><mat-icon>play_circle</mat-icon></button>
+        }
         <button class="btn-primary" (click)="deleteSongRequest(queueItem.id)" title="Delete song from queue"><mat-icon>delete</mat-icon></button>
       </div>
       <div class="bg-contain bg-no-repeat w-[70px] flex-nowrap" [style]="'background-image: url(\'' + queueItem.song.coverArtUrl + '\')'" >

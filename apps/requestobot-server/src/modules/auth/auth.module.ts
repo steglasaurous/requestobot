@@ -31,11 +31,11 @@ import { AuthCodeController } from './controllers/auth-code.controller';
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
+      useFactory: (configService: ConfigService) => ({
         // FIXME: Should use JWT_SECRET and JWT_EXPIRE_TIME from injection, but apparently I can't use @Inject() in this context.
         secret: configService.get<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRE_TIME'),
+          expiresIn: configService.get<string>('JWT_EXPIRE_TIME') as `${number}${'s' | 'm' | 'h' | 'd'}`,
         },
       }),
       inject: [ConfigService],
