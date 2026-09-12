@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { Channel } from '../../data-store/entities/channel.entity';
 import { ChatMessage } from '@steglasaurous/chat';
 import { Song } from '../../data-store/entities/song.entity';
-import { SongService } from '../../song-store/services/song.service';
+import { SongSearchService } from '../../song-store/services/song-search.service';
 
 @Injectable()
 export class BanSongRemoveBotCommand extends BaseBotCommand {
@@ -16,7 +16,7 @@ export class BanSongRemoveBotCommand extends BaseBotCommand {
   constructor(
     private i18n: I18nService,
     @InjectRepository(SongBan) private songBanRepository: Repository<SongBan>,
-    private songService: SongService
+    private songSearchService: SongSearchService
   ) {
     super();
     this.triggers = ['!removesongban'];
@@ -39,7 +39,7 @@ export class BanSongRemoveBotCommand extends BaseBotCommand {
 
     let searchResults: Song[];
     try {
-      searchResults = await this.songService.searchSongs(
+      searchResults = await this.songSearchService.searchSongs(
         searchTerms,
         channel.game,
         chatMessage.username,
@@ -87,7 +87,7 @@ export class BanSongRemoveBotCommand extends BaseBotCommand {
         },
       });
     } else if (searchResults.length > 1) {
-      return this.songService.getSongSelectionOutput(
+      return this.songSearchService.getSongSelectionOutput(
         channel.lang,
         searchResults
       );

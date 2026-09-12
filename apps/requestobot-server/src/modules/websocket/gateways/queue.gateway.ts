@@ -17,6 +17,7 @@ import { QueueDto, SongRequestDto } from '@requestobot/util-dto';
 import { OnEvent } from '@nestjs/event-emitter';
 import { DtoMappingService } from '../../data-store/services/dto-mapping.service';
 import { SongRequestQueueChangedEvent } from '../../song-request/events/song-request-queue-changed.event';
+import { PlayerStateChangeEvent } from '../../data-store/events/player-state-change.event';
 
 @WebSocketGateway({})
 export class QueueGateway implements OnGatewayDisconnect, OnGatewayConnection {
@@ -34,14 +35,14 @@ export class QueueGateway implements OnGatewayDisconnect, OnGatewayConnection {
   constructor(
     @InjectRepository(Channel) private channelRepository: Repository<Channel>,
     private songRequestService: SongRequestService,
-    private dtoMappingService: DtoMappingService,
+    private dtoMappingService: DtoMappingService
   ) {}
 
   @SubscribeMessage('subscribe')
   async subscribeToChannel(
     @ConnectedSocket() client,
     @MessageBody('channelName')
-    channelName: string,
+    channelName: string
   ): Promise<WsResponse> {
     const channel = await this.channelRepository.findOneBy({
       channelName: channelName,
@@ -115,13 +116,14 @@ export class QueueGateway implements OnGatewayDisconnect, OnGatewayConnection {
       const channel = await this.channelRepository.findOneBy({
         channelName: this.clientIdToChannelMap.get(client.id),
       });
-      const songRequests =
-        await this.songRequestService.getAllRequests(channel);
+      const songRequests = await this.songRequestService.getAllRequests(
+        channel
+      );
 
       const songRequestsDtos: SongRequestDto[] = songRequests.map(
         (songRequest) => {
           return this.dtoMappingService.songRequestToDto(songRequest);
-        },
+        }
       );
 
       const queueDto: QueueDto = {
@@ -158,6 +160,18 @@ export class QueueGateway implements OnGatewayDisconnect, OnGatewayConnection {
     });
   }
 
+  @OnEvent(PlayerStateChangeEvent.name)
+  handlePlayerStateChange(event: PlayerStateChangeEvent) {
+    this.sendMessageToChannelSubscribers(event.channel.channelName, {
+      event: 'playerStateChangeEvent',
+      data: {
+        channelName: event.channel.channelName,
+        song: this.dtoMappingService.songToDto(event.song),
+        state: event.state,
+        volume: event.volume,
+      },
+    });
+  }
   private sendMessageToChannelSubscribers(channelName: string, message: any) {
     this.getClientsSubscribedToChannel(channelName).forEach((client) => {
       this.logger.debug('WS message to client', {

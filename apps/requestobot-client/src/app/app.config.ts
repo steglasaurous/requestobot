@@ -27,6 +27,11 @@ import { WebsocketService } from './services/websocket.service';
 import { provideToastr } from 'ngx-toastr';
 import { WebsocketEffects } from './state/websocket/websocket.effects';
 import { websocketReducer } from './state/websocket/websocket.reducer';
+import { SongPlayerEffects } from './state/song-player/song-player.effects';
+import { providePrimeNG } from 'primeng/config';
+import Aura from '@primeng/themes/aura';
+import { songPlayerReducer } from '@requestobot/util-song-player';
+
 export const QUEUEBOT_API_BASE_URL = 'queuebot_api_base_url';
 export const WEBSOCKET_URL = 'websocket_url';
 
@@ -38,7 +43,8 @@ export const appConfig: ApplicationConfig = {
       AuthEffects,
       SettingsEffects,
       SongRequestsEffects,
-      WebsocketEffects
+      WebsocketEffects,
+      SongPlayerEffects
     ),
     provideStore({
       channel: channelReducer,
@@ -47,6 +53,7 @@ export const appConfig: ApplicationConfig = {
       settings: settingsReducer,
       songRequests: songRequestsReducer,
       websocket: websocketReducer,
+      songPlayer: songPlayerReducer
     }),
     provideStoreDevtools({ logOnly: !isDevMode() }),
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -56,6 +63,12 @@ export const appConfig: ApplicationConfig = {
       useValue: environment.queuebotApiBaseUrl,
     },
     provideAnimations(),
+    provideAnimationsAsync(),
+    providePrimeNG({
+      theme: {
+        preset: Aura,
+      },
+    }),
     {
       provide: WEBSOCKET_URL,
       useValue: environment.websocketUrl,

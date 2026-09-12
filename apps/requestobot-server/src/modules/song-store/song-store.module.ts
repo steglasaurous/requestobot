@@ -8,11 +8,14 @@ import { SongImporterManagerService } from './services/song-importer-manager.ser
 import { LocalStrategy } from './services/song-search-strategies/local.strategy';
 import { SpinRhythmSearchStrategy } from './services/song-search-strategies/spin-rhythm-search.strategy';
 import {
+  DOWNLOADED_SONGS_PATH,
   MOD_IO_API_KEY,
   MOD_IO_BASE_URL,
   SONG_IMPORTERS,
   SONG_SEARCH_STRATEGIES,
+  STATIC_SITE_BASE_URL,
   TRIPPY_TUNES_BASE_URL,
+  YTDLP_PATH,
 } from './injection-tokens';
 import { SpinRhythmSongImporterService } from './services/song-importers/spin-rhythm-song-importer.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -22,6 +25,11 @@ import { DanceDashSongImporterService } from './services/song-importers/dance-da
 import { SynthRiderzSongImporterService } from './services/song-importers/synth-riderz-song-importer.service';
 import { ZipFileExtractorService } from './services/zip-file-extractor.service';
 import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
+import { YoutubeUrlValidator } from './utils/youtube-url.validator';
+import { YoutubeStrategy } from './services/song-search-strategies/youtube.strategy';
+import { SongSearchService } from './services/song-search.service';
+import { YoutubeDownloaderService } from './services/youtube-downloader.service';
+import { FreeformStrategy } from './services/song-search-strategies/freeform.strategy';
 
 @Module({
   imports: [
@@ -82,17 +90,38 @@ import { TrippyTunesApiService } from './services/trippy-tunes-api.service';
     },
     LocalStrategy,
     SpinRhythmSearchStrategy,
+    YoutubeUrlValidator,
+    {
+      provide: YTDLP_PATH,
+      useValue: process.env.YTDLP_PATH,
+    },
+    {
+      provide: DOWNLOADED_SONGS_PATH,
+      useValue: process.env.DOWNLOADED_SONGS_PATH,
+    },
+    {
+      provide: STATIC_SITE_BASE_URL,
+      useValue: process.env.STATIC_SITE_BASE_URL,
+    },
+    YoutubeStrategy,
+    FreeformStrategy,
+    SongSearchService,
     {
       provide: SONG_SEARCH_STRATEGIES,
-      inject: [LocalStrategy, SpinRhythmSearchStrategy],
-      useFactory: (localStrategy: LocalStrategy) => {
+      inject: [LocalStrategy, YoutubeStrategy, FreeformStrategy],
+      useFactory: (
+        localStrategy: LocalStrategy,
+        youtubeStrategy: YoutubeStrategy,
+        freeformStrategy: FreeformStrategy
+      ) => {
         // Add back spinRhythmStrategy to this array to query the spinsha.re API directly.
-        return [localStrategy];
+        return [localStrategy, youtubeStrategy, freeformStrategy];
       },
     },
+    YoutubeDownloaderService,
     SongImporterManagerService,
     ModIoApiService,
   ],
-  exports: [SongService],
+  exports: [SongService, SongSearchService],
 })
 export class SongStoreModule {}

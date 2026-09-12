@@ -27,6 +27,8 @@
   "RequestHelp_pistol_whip": "How to request songs: Goto https://mod.io/g/pistol-whip for available songs.  (OST songs also available!) To request, type !req title in chat.",
   "RequestHelp_dance_dash": "How to request songs: Goto https://mod.io/g/dancedash for available songs.  (OST songs also available!) To request, type !req title in chat.",
   "RequestHelp_synth_riders": "How to request songs: Goto https://synthriderz.com/beatmaps for available songs.  To request, type !req title in chat.",
+  "RequestHelp_youtube": "How to request songs: Copy the youtube video link and in chat paste it after !req.  Ex: !req https://youtube.com/watch?v=1234457.",
+  "RequestHelp_freeform": "How to request songs: Goto https://www.karafun.com/karaoke/ for available songs. Requestobot is in freeform mode - just type !req your_song_title and it will be added to the queue as-is. Ex: !req vogue by madonna",
   "QueueCleared": "Queue cleared.",
   "QueueAlreadyClosed": "Queue is already closed.",
   "QueueClosed": "Queue is now closed.",
