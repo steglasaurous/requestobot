@@ -147,5 +147,17 @@
   },
   "nx": {
     "includedScripts": []
+  },
+  "allowScripts": {
+    "electron@36.9.5": true,
+    "esbuild@0.25.9": true,
+    "esbuild@0.25.5": true,
+    "nx@21.6.4": true,
+    "typeorm-fixtures-cli@4.1.0": true,
+    "lmdb@3.4.2": true,
+    "msgpackr-extract@3.0.4": true,
+    "unrs-resolver@1.12.2": true,
+    "@parcel/watcher@2.5.6": true,
+    "@swc/core@1.5.29": true
   }
 }
