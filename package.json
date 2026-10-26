@@ -14,6 +14,9 @@
     "prepare": "husky"
   },
   "private": true,
+  "engines": {
+    "node": ">=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1"
+  },
   "dependencies": {
     "@angular/animations": "19.1.4",
     "@angular/cdk": "19.1.2",
@@ -115,7 +118,7 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "4.17.21",
     "@types/jest": "29.5.14",
-    "@types/node": "^18.16.9",
+    "@types/node": "^22",
     "@types/supertest": "^6.0.2",
     "@types/yauzl": "^2.10.3",
     "@typescript-eslint/eslint-plugin": "7.18.0",
