@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "postinstall": "electron-builder install-app-deps && electron-builder install-app-deps",
+    "install:host": "bash .devcontainer/scripts/install-host-electron.sh",
     "typeorm": "ts-node -P ./apps/requestobot-server/tsconfig.app.json ./node_modules/typeorm/cli -d ./apps/requestobot-server/src/typeorm-cli.config.ts",
     "typeorm:run-migrations": "npm run typeorm migration:run",
     "typeorm:generate-migration": "npm run typeorm migration:generate ./apps/requestobot-server/src/migrations/migration",
@@ -122,7 +123,7 @@
     "@typescript-eslint/parser": "7.18.0",
     "@typescript-eslint/utils": "7.18.0",
     "autoprefixer": "^10.4.0",
-    "electron": "^28.2.3",
+    "electron": "^28.3.3",
     "electron-devtools-installer": "^4.0.0",
     "eslint": "~8.57.0",
     "eslint-config-prettier": "^9.0.0",

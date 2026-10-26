@@ -190,10 +190,11 @@ Or start both with the helper script:
 **On your macOS host** (for Electron testing), in a separate terminal from the same repo checkout:
 
 ```bash
-rm -rf node_modules   # only needed once after switching to the dev container volume setup
-npm install
+npm run install:host
 npx nx serve requestobot-desktop
 ```
+
+`install:host` runs `npm install` and verifies Electron's postinstall completed (it writes `node_modules/electron/path.txt`). If the binary is present but `path.txt` is missing — which causes *"Electron failed to install correctly"* — the script repairs it automatically.
 
 The Electron app loads the Angular client from `http://localhost:4200` and talks to the API at `http://localhost:4000`. Both ports are forwarded from the dev container to your host.
 
@@ -207,8 +208,15 @@ The dev container uses a Docker volume for `node_modules` so the container's Lin
 After enabling this setup (or if Electron fails with `spawn ENOEXEC`):
 
 1. **Rebuild the dev container** (Dev Containers: Rebuild Container).
-2. On the host: `rm -rf node_modules && npm install`
+2. On the host: `npm run install:host`
 3. Run `npx nx serve requestobot-desktop`
+
+If Electron reports *"failed to install correctly"* after a plain `npm install`, run `npm run install:host` or manually:
+
+```bash
+rm -rf node_modules/electron
+npm install electron --foreground-scripts
+```
 
 > **NOTE**
 > Use the project name `requestobot-desktop`, not `desktop`.
