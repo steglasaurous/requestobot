@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { selectSongPlayer } from '../../+state/song-player/song-player.selector';
 import { Store } from '@ngrx/store';
 import {
@@ -11,7 +11,7 @@ import { log } from 'electron-log';
 
 @Component({
   selector: 'app-song-player',
-  imports: [CommonModule],
+  imports: [],
   standalone: true,
   templateUrl: './song-player.component.html',
   styleUrl: './song-player.component.css',

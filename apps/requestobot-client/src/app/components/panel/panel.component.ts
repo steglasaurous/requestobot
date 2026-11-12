@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
     selector: 'app-panel',
-    imports: [CommonModule],
+    imports: [],
     templateUrl: './panel.component.html',
     styleUrl: './panel.component.css'
 })

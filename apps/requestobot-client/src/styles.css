@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; touch-action: manipulation; }
 
 @layer components {
   .btn-primary {
@@ -11,5 +11,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
   .btn-primary-selected {
     @apply bg-purple-400;
+  }
+
+  .btn-primary:active::after {
+    @apply bg-blue-400;
   }
 }

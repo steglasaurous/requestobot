@@ -22,7 +22,12 @@
         <div><input type="text" class="border rounded p-2 text-black w-[400px]" [value]="settings[SettingName.audioTripSongsDir]" /><br/><button class="btn-primary" (click)="chooseDirectory(SettingName.audioTripSongsDir, settings[SettingName.audioTripSongsDir])">Browse...</button></div>
       </div>
     </mat-tab>
-<!--    <mat-tab label="General"></mat-tab>-->
+    <mat-tab label="Youtube">
+      <div class="border rounded bg-purple-800 text-white p-5">
+        <div>Auto-advance to next song</div>
+        <mat-slide-toggle [checked]="settings[SettingName.autoAdvance] !== '' && settings[SettingName.autoAdvance] !== 'false'" (change)="toggleAutoAdvance()"></mat-slide-toggle>
+      </div>
+    </mat-tab>
   </mat-tab-group>
 
 </mat-dialog-content>

@@ -235,4 +235,54 @@ export class QueuebotApiService {
       }
     );
   }
+
+  playerPlay(channelId: number, songId?: number) {
+    let body: any = { state: 'playing' };
+    if (songId) {
+      body = { ...body, songId: songId };
+    }
+
+    return this.httpClient.put(
+      `${this.apiBaseUrl}/api/channels/${channelId}/player/state`,
+      body,
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  playerPause(channelId: number) {
+    return this.httpClient.put(
+      `${this.apiBaseUrl}/api/channels/${channelId}/player/state`,
+      {
+        state: 'paused',
+      },
+      {
+        withCredentials: true,
+      }
+    );
+  }
+  playerStop(channelId: number) {
+    return this.httpClient.put(
+      `${this.apiBaseUrl}/api/channels/${channelId}/player/state`,
+      {
+        state: 'stopped',
+      },
+      {
+        withCredentials: true,
+      }
+    );
+  }
+
+  playerVolumeChange(channelId: number, volume: number) {
+    return this.httpClient.put(
+      `${this.apiBaseUrl}/api/channels/${channelId}/player/state`,
+      {
+        volume: volume,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }

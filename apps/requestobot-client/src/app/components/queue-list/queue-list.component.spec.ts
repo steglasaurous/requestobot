@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { provideMockStore } from '@ngrx/store/testing';
 import { QueueListComponent } from './queue-list.component';
 
 describe('QueueListComponent', () => {
@@ -8,13 +8,12 @@ describe('QueueListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QueueListComponent]
-    })
-    .compileComponents();
-    
+      imports: [QueueListComponent],
+      providers: [provideMockStore()],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(QueueListComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

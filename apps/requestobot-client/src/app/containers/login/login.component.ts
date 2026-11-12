@@ -18,7 +18,7 @@ import {
   LoginProcessState,
 } from '../../state/auth/auth.reducer';
 import { ToastrService } from 'ngx-toastr';
-import { NgIf } from '@angular/common';
+
 import log from 'electron-log/renderer';
 import { Subscription } from 'rxjs';
 
@@ -29,9 +29,8 @@ declare let window: WindowWithElectron;
   imports: [
     ButtonPrimaryComponent,
     InputTextComponent,
-    ReactiveFormsModule,
-    NgIf,
-  ],
+    ReactiveFormsModule
+],
   providers: [],
   templateUrl: './login.component.html',
 })
@@ -45,11 +44,19 @@ export class LoginComponent implements OnInit, OnDestroy {
   auth$ = this.store.select(selectAuth);
   auth: AuthState = initialState;
   private subscriptions: Subscription[] = [];
+
+  inElectron = false;
+
   constructor(
     @Inject(QUEUEBOT_API_BASE_URL) private apiBaseUrl: string,
     private store: Store,
     private toastr: ToastrService
-  ) {}
+  ) {
+    if (window['settings']) {
+      this.inElectron = true;
+    }
+
+  }
   ngOnInit() {
     // If we're authenticated, go right to the good stuff.
     if (window.login) {

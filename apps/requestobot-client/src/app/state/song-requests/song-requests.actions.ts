@@ -28,7 +28,7 @@ export const SongRequestsActions = createActionGroup({
       songRequestId: number;
       error: HttpErrorResponse;
     }>(),
-    'Set Request Active': props<{ songRequestId: number }>(),
+    'Set Request Active': props<{ songRequest: SongRequestDto }>(),
     'Set Request Active Success': props<{ songRequestId: number }>(),
     'Set Request Active Fail': props<{
       songRequestId: number;
@@ -36,7 +36,7 @@ export const SongRequestsActions = createActionGroup({
     }>(),
     'Next Song': emptyProps(),
     'Next Song Fail': props<{ error: HttpErrorResponse }>(),
-    'Next Song Success': emptyProps(),
+    'Next Song Success': props<{ songRequest?: SongRequestDto }>(),
     'Reprocess Songs': emptyProps(),
     Logout: emptyProps(),
   },

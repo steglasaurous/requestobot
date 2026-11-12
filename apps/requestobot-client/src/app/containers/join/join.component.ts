@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { SettingsService } from '../../services/settings.service';
 import { Store } from '@ngrx/store';
 import { ChannelActions } from '../../state/channel/channel.actions';
@@ -10,7 +10,7 @@ import log from 'electron-log/renderer';
 
 @Component({
   selector: 'app-join',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './join.component.html',
 })
 export class JoinComponent implements OnInit, OnDestroy {

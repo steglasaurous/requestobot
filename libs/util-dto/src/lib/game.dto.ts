@@ -5,4 +5,5 @@ export interface GameDto {
   setGameName: string;
   twitchCategoryId: string;
   coverArtUrl?: string;
+  enablePlayerControls: boolean;
 }

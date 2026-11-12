@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { MatButton } from '@angular/material/button';
 import {
   MatDialogActions,
@@ -24,15 +24,14 @@ declare let window: WindowWithElectron;
 @Component({
   selector: 'app-settings',
   imports: [
-    CommonModule,
     MatButton,
     MatDialogActions,
     MatDialogClose,
     MatDialogContent,
     MatDialogTitle,
     MatTabsModule,
-    MatSlideToggle,
-  ],
+    MatSlideToggle
+],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css',
 })
@@ -59,6 +58,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
           SettingName.audioTripSongsDir,
           SettingName.spinRhythmSongsDir,
           SettingName.autoDownloadEnabled,
+          SettingName.autoAdvance,
         ],
       })
     );
@@ -89,7 +89,20 @@ export class SettingsComponent implements OnInit, OnDestroy {
     this.store.dispatch(
       SettingsActions.setValue({
         key: SettingName.autoDownloadEnabled,
-        value: 'true',
+        value:
+          this.settings[SettingName.autoDownloadEnabled] == 'true'
+            ? 'false'
+            : 'true',
+      })
+    );
+  }
+
+  toggleAutoAdvance() {
+    this.store.dispatch(
+      SettingsActions.setValue({
+        key: SettingName.autoAdvance,
+        value:
+          this.settings[SettingName.autoAdvance] == 'true' ? 'false' : 'true',
       })
     );
   }

@@ -9,6 +9,7 @@ import { SongRequestErrorType } from '../../song-request/models/song-request-err
 import { Song } from '../../data-store/entities/song.entity';
 import { Game } from '../../data-store/entities/game.entity';
 import { BaseBotCommand } from './base.bot-command';
+import { SongSearchService } from '../../song-store/services/song-search.service';
 
 export class SongRequestBotCommand extends BaseBotCommand {
   private logger: Logger = new Logger(this.constructor.name);
@@ -18,7 +19,8 @@ export class SongRequestBotCommand extends BaseBotCommand {
     // Adding @Inject() makes an explicit reference to the dependency that NestJS seems to resolve.
     @Inject(BotStateService) private botStateService: BotStateService,
     private readonly i18n: I18nService,
-    private songRequestService: SongRequestService
+    private songRequestService: SongRequestService,
+    private songSearchService: SongSearchService
   ) {
     super();
 
@@ -51,7 +53,7 @@ export class SongRequestBotCommand extends BaseBotCommand {
 
     let searchResults: Song[];
     try {
-      searchResults = await this.songService.searchSongs(
+      searchResults = await this.songSearchService.searchSongs(
         searchTerms,
         channel.game,
         chatMessage.username,
@@ -72,7 +74,7 @@ export class SongRequestBotCommand extends BaseBotCommand {
       // Only one? perfect! Let's throw it in the queue.
       return await this.addSongToQueue(channel, chatMessage, searchResults[0]);
     } else if (searchResults.length > 1) {
-      return this.songService.getSongSelectionOutput(
+      return this.songSearchService.getSongSelectionOutput(
         channel.lang,
         searchResults
       );
