@@ -165,7 +165,7 @@ nx test requestobot-server
 ### Requirements
 
 * Docker and docker compose plugin (for spinning up the database)
-* node 20.x+ (for running the server itself locally)
+* Node.js 22.23.4 or any later patched release (22.23.4+, 24.22.1+, or 26.12.1+) for running the server locally. Node 20 is end of life and has no fix for CVE-2026-111497.
 
 ### Usage
 

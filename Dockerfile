@@ -1,5 +1,5 @@
 # For building the thing
-FROM node:20 AS builder
+FROM node:22.23.4-bookworm AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /usr/src/app
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base dos2unix make python3 g++
@@ -8,11 +8,14 @@ COPY libs libs
 # NOTE: Including eslintrc as nx explodes without it with "Failed to process project graph."
 COPY nx.json package.json package-lock.json tsconfig.base.json .eslintignore .eslintrc.json .prettierignore .prettierrc project.json ./
 RUN npm i
+# Nx 20's project-graph daemon exits during the image build on Node 22 and
+# reports "[object Object]". Build in-process instead.
+ENV NX_DAEMON=false
 RUN npx nx build requestobot-server --configuration=production --verbose
 RUN npx nx build requestobot-overlay --configuration=production --verbose
 
 # For the final image
-FROM node:20
+FROM node:22.23.4-bookworm
 WORKDIR /usr/src/app
 RUN apt-get -y update && apt-get -y upgrade && apt-get install -y gettext-base dos2unix make python3 g++
 COPY --from=builder /usr/src/app/dist/apps/requestobot-server .
